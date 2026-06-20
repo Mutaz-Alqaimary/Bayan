@@ -1,0 +1,12 @@
+{
+  "_comment": "Copy this file to .claude/settings.local.json (already gitignored) and adjust. This layer is for YOUR machine only — personal overrides, sandbox URLs, looser permissions for your own workflow. Never put secrets directly in settings files; use a real .env that stays out of git instead.",
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev -- --turbo)"
+    ]
+  },
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": ""
+  }
+}

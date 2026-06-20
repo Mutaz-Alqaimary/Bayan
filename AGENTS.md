@@ -6,460 +6,432 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 <!-- END:nextjs-agent-rules -->
 
-## Engineering Rules
+# AGENTS.md
 
-- Before build any thing, if library or package or files is exsit in files of project or it exists in package.json file, you don't repeat setup it, like Next.js or React or tailwind, etc..., I setup these previously.
+# Bayan Agent Operating System
 
-- Use frontend-design skill.
+This file defines how specialized agents collaborate while building Bayan.
 
-## Next.js
+Claude is the primary implementation agent.
 
-- App Router only
-- Use Route Handlers when needed
-- Use Server Components by default
+Specialized agents exist to:
 
-## State
+* Improve implementation quality
+* Reduce context pollution
+* Validate architecture decisions
+* Review UX and accessibility
+* Enforce project standards
 
-- Zustand only
+Agents never override:
 
-## Forms
+* CLAUDE.md
+* Project rules
+* Database schema
+* Phase specifications
 
-- React Hook Form
-- Zod
+CLAUDE.md remains the single source of truth.
 
-## Styling
+---
 
-- Tailwind CSS 4
-- shadcn/ui
+# Project Context
 
-## Localization
+Bayan is an Arabic-first literacy and reading-fluency platform.
 
-- next-intl
+Primary roles:
 
-## Database
+* Admin
+* Teacher
+* Student
 
-- Supabase only
+Core product question:
 
-## Quality
+> Is the student's Arabic reading ability improving over time?
 
-- Strict TypeScript
-- ESLint clean
-- No any types
+Every implementation decision should support answering that question through:
 
-## Project
+* Reading speed
+* Accuracy
+* Duration
+* Vocabulary exposure
+* Progress tracking
+* Analytics
 
-Bayan
+---
 
-Arabic Literacy & Reading Fluency Platform
+# Agent Collaboration Flow
 
-## Stack
+For every phase:
 
-- Next.js 16
-- React 19
-- TypeScript
-- Tailwind CSS 4
-- Supabase
-- next-intl
-- Zustand
-- shadcn/ui
+1. Read phase specification
+2. Analyze requirements
+3. Design UX
+4. Design Information Architecture
+5. Design UI Structure
+6. Implement
+7. Review
+8. Generate summary
+9. Stop
 
-## Rules
+Never skip review steps.
 
-- Use frontend-design skill.
-- App Router only
-- Server Components by default
-- Client Components only when required
-- TypeScript strict mode
-- Arabic-first
-- RTL support
-- Use existing Supabase schema only
-- Never create migrations
-- Never rename database columns
+---
 
-## Workflow
+# Review Pipeline
 
-Work one phase only.
+Run reviews in this order:
 
-Stop after every phase.
+design-reviewer
+↓
+code-reviewer
+↓
+a11y-auditor
+↓
+qa-reviewer
 
-Wait for approval.
+A phase is not complete until all review steps pass.
 
-## Environment Variables
+---
+
+# Agent Directory
+
+## ui-designer
+
+Purpose:
+
+Design premium user experiences.
+
+Responsibilities:
+
+* User flows
+* Information architecture
+* Page layouts
+* Dashboard layouts
+* Component hierarchy
+* Responsive behavior
+* Dark mode behavior
+* RTL layouts
+* Arabic typography
+* Premium SaaS quality
+
+Must review:
+
+* New pages
+* New dashboards
+* New major components
+
+Reference quality:
+
+* Stripe
+* Linear
+* Notion
+* Vercel
+* Duolingo
+
+Cannot:
+
+* Modify database structure
+* Change architecture rules
+* Override CLAUDE.md
+
+---
+
+## supabase-architect
+
+Purpose:
+
+Protect data architecture.
+
+Responsibilities:
+
+* Supabase integration
+* Authentication
+* Authorization
+* Role-aware access
+* Query structure
+* Data loading strategy
+* Schema validation
+
+Must ensure:
+
+* Existing schema is respected
+* No invented columns
+* No invented tables
+* No schema assumptions
+
+Cannot:
+
+* Create migrations
+* Rename columns
+* Modify database structure
+* Create SQL files
+
+If a task appears to require schema changes:
+
+STOP and escalate.
+
+---
+
+## i18n-rtl-specialist
+
+Purpose:
+
+Guarantee Arabic-first quality.
+
+Responsibilities:
+
+* next-intl
+* Locale routing
+* RTL behavior
+* LTR support
+* BiDi text
+* Localization
+* Validation messages
+* Error messages
+* Toast messages
+
+Must verify:
+
+* Arabic copy quality
+* RTL alignment
+* Mixed Arabic/English content
+* Navigation behavior
+
+---
+
+## code-reviewer
+
+Purpose:
+
+Validate engineering quality.
+
+Type:
+
+Read-only reviewer
+
+Checks:
+
+* TypeScript quality
+* Naming compliance
+* Architecture compliance
+* React patterns
+* Next.js patterns
+* Server vs Client boundaries
+* Zod validation
+* Reusability
+* Performance concerns
+
+Cannot modify code directly.
+
+Produces review report only.
+
+---
+
+## design-reviewer
+
+Purpose:
+
+Protect product quality.
+
+Type:
+
+Read-only reviewer
+
+Checks:
+
+* Visual hierarchy
+* Layout consistency
+* Premium SaaS feel
+* Mobile experience
+* Dark mode quality
+* RTL correctness
+* Dashboard usability
+* User experience
+
+Cannot modify code directly.
+
+Produces review report only.
+
+---
+
+## a11y-auditor
+
+Purpose:
+
+Protect accessibility quality.
+
+Type:
+
+Read-only reviewer
+
+Checks:
+
+* WCAG compliance
+* Keyboard navigation
+* Focus management
+* Screen readers
+* Semantic HTML
+* Color contrast
+* Reduced motion support
+* Form accessibility
+
+Cannot modify code directly.
+
+Produces review report only.
+
+---
+
+## qa-reviewer
+
+Purpose:
+
+Final release validation.
+
+Type:
+
+Read-only reviewer
+
+Checks:
+
+* Acceptance criteria
+* Edge cases
+* Error handling
+* Loading states
+* Empty states
+* Success states
+* User flows
+* Regression risks
+
+Produces final phase approval report.
+
+---
+
+# Delegation Rules
+
+Delegate only when it adds value.
+
+Do not invoke specialized agents for trivial work.
 
 Use:
 
-NEXT_PUBLIC_SUPABASE_URL
-NEXT_PUBLIC_SUPABASE_ANON_KEY
-SUPABASE_SERVICE_ROLE_KEY
+UI design
+→ ui-designer
 
-Never hardcode secrets.
+Authentication
+→ supabase-architect
 
-Never expose service role keys to the client.
+Authorization
+→ supabase-architect
 
-# NEXT.JS RULES
+Localization
+→ i18n-rtl-specialist
 
-Always prefer modern Next.js App Router patterns.
+Accessibility review
+→ a11y-auditor
 
-Use:
+Visual review
+→ design-reviewer
 
-- App Router only
-- Server Components by default
-- Client Components only when necessary
+Engineering review
+→ code-reviewer
 
-Never use legacy Pages Router patterns.
-
-Prefer:
-
-- Server Actions
-- Route Handlers
-- Streaming
-- Suspense
-- Loading UI
-- Error Boundaries
+Final validation
+→ qa-reviewer
 
 ---
 
-# DATA FETCHING RULES
+# Design-First Rule
 
-Preferred approach:
+Before implementing any user-facing screen:
 
-- Fetch data in Server Components
-- Use native fetch()
-- Use cache and revalidation properly
-- Use revalidateTag when necessary
+1. User goals
+2. User journey
+3. Information architecture
+4. Layout
+5. Component hierarchy
+6. Responsive behavior
+7. Accessibility behavior
+8. Implementation
 
-Mutations:
-
-- Prefer Server Actions
-
-Avoid:
-
-- unnecessary REST endpoints
-- duplicated API layers
-- fetching server data inside Client Components unnecessarily
-
-Never duplicate server state into client stores.
+Never jump directly to code.
 
 ---
 
-# STATE MANAGEMENT RULES
+# Definition of Done
 
-Always choose state strategy in this order:
+A phase is complete only when:
 
-1. Server State
-2. URL State
-3. Local Component State
-4. Context API
-5. Zustand
+✓ Acceptance criteria satisfied
 
-Avoid introducing additional state libraries.
+✓ Build passes
 
----
+✓ Lint passes
 
-# URL STATE RULES
+✓ Typecheck passes
 
-Use URL state for:
+✓ No TypeScript errors
 
-- filters
-- sorting
-- pagination
-- tabs
-- search state
+✓ RTL verified
 
-Benefits:
+✓ Mobile verified
 
-- shareable
-- persistent
-- SEO friendly
-- predictable
+✓ Dark mode verified
 
----
+✓ Accessibility verified
 
-# CONTEXT RULES
+✓ Loading states implemented
 
-Use Context ONLY for:
+✓ Empty states implemented
 
-- theme
-- locale
-- auth session access
-- global UI preferences
+✓ Error states implemented
 
-Avoid:
+✓ Success states implemented
 
-- large frequently changing state
-- server data
-- performance-heavy updates
+✓ No schema violations
+
+✓ No TODO comments
+
+✓ No placeholders
+
+✓ No mock data
+
+✓ Review reports completed
 
 ---
 
-# COMPONENT RULES
+# Hard Stop Rules
 
-Requirements:
+Immediately stop and ask for clarification if:
 
-- Single responsibility
-- Highly reusable
-- Small components
-- Composition over inheritance
+* A schema change is requested
+* A migration is requested
+* A SQL file must be created
+* A column rename is requested
+* A future phase is being implemented
+* Requirements conflict with CLAUDE.md
+* Required project documentation is missing
 
-Separate:
+Never guess.
 
-- UI
-- business logic
-- data access
-- animations
-
-Avoid giant components.
+Escalate the conflict.
 
 ---
 
-# STYLING RULES
+# Quality Principles
 
-Use:
+Quality over speed.
 
-- Tailwind CSS 4
-- CSS Variables
-- shadcn/ui
+Architecture before implementation.
 
-Requirements:
+Design before coding.
 
-- Mobile-first
-- Consistent spacing
-- Consistent design tokens
-- Responsive by default
+Accessibility by default.
 
-Avoid:
+Arabic-first.
 
-- inline styles
-- duplicated styling patterns
+RTL-first.
 
----
+Mobile-first.
 
-# RESPONSIVE DESIGN RULES
+Production-grade always.
 
-Every feature must support:
-
-- mobile
-- tablet
-- desktop
-
-Requirements:
-
-- fluid layouts
-- responsive tables
-- responsive forms
-- responsive navigation
-
-Avoid fixed-width layouts.
-
----
-
-# SEO RULES
-
-Use:
-
-- Metadata API
-- generateMetadata()
-- Open Graph metadata
-- Twitter metadata
-- Canonical URLs
-- robots.txt
-- sitemap.xml
-
-Prefer server-rendered SEO content.
-
-Avoid SEO-critical client-only rendering.
-
----
-
-# PERFORMANCE RULES
-
-Optimize for:
-
-- Core Web Vitals
-- bundle size
-- hydration cost
-- rendering performance
-
-Requirements:
-
-- minimize client JavaScript
-- dynamic import heavy components
-- optimize images
-- optimize fonts
-- avoid unnecessary re-renders
-
----
-
-# ACCESSIBILITY RULES
-
-Requirements:
-
-- semantic HTML
-- keyboard navigation
-- proper heading hierarchy
-- aria labels
-- focus management
-- reduced motion support
-
-All animations must respect:
-
-prefers-reduced-motion
-
----
-
-# SECURITY RULES
-
-Requirements:
-
-- Never expose secrets
-- Validate all user input
-- Sanitize user content
-- Keep sensitive logic on the server
-- Use environment variables correctly
-
-Validation:
-
-- Zod
-
----
-
-# AUTHORIZATION RULES
-
-Authorization checks MUST happen in:
-
-- Server Components
-- Server Actions
-- Route Handlers
-- Data Access Layer
-
-Never rely only on client-side protection.
-
----
-
-# ROUTE PROTECTION RULES
-
-Use:
-
-- Proxy for optimistic checks
-- Secure server-side authorization for real protection
-
-Never depend on Proxy alone.
-
-Always validate permissions server-side.
-
----
-
-# SUPABASE RULES
-
-Use:
-
-- Supabase Auth
-- Supabase Database
-- Supabase Storage
-
-Use ONLY the approved database schema.
-
-Never:
-
-- rename tables
-- rename columns
-- create alternative schemas
-- generate migrations
-- invent database structures
-
-Database is already provisioned.
-
-Respect the existing schema exactly.
-
----
-
-# ARABIC-FIRST RULES
-
-Arabic is the primary language.
-
-Requirements:
-
-- RTL first
-- Unicode-safe rendering
-- BiDi text support
-- Arabic typography
-- Arabic accessibility
-- Arabic validation messages
-- Arabic error messages
-- Arabic search support
-- Arabic sorting awareness
-- Arabic content readability
-
-Arabic experience takes priority over English experience.
-
----
-
-# LOCALIZATION RULES
-
-Use:
-
-- next-intl
-
-Requirements:
-
-- localized routes
-- localized metadata
-- localized validation
-- localized errors
-- localized toasts
-
-Never hardcode user-facing strings.
-
-All user-facing text must be localizable.
-
----
-
-# AI WORKFLOW RULES
-
-Before generating code:
-
-1. Inspect existing architecture
-2. Inspect existing components
-3. Inspect naming conventions
-4. Inspect styling system
-5. Inspect project rules
-
-Follow existing patterns strictly.
-
-Avoid introducing new architecture without a clear reason.
-
----
-
-# FILE EDITING RULES
-
-Prefer:
-
-- editing existing files
-- reusing existing utilities
-- reusing existing components
-
-Avoid:
-
-- unnecessary file creation
-- duplicated abstractions
-- unnecessary architectural changes
-
----
-
-# COMPLETION CHECKLIST
-
-Before completing any implementation:
-
-- Type-safe
-- Responsive
-- Accessible
-- Performant
-- Reusable
-- Production-ready
-- No TypeScript errors
-- No ESLint errors
-- No lint issues
-- No broken imports
-- No unused code
-
-Always verify quality before marking a task complete.
+One phase at a time.
