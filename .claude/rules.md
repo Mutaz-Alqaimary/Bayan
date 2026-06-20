@@ -15,3 +15,4 @@ Always:
 - follow existing architecture
 - use reusable components
 - prefer composition over duplication
+- Use frontend-design skill.

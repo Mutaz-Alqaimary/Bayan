@@ -2,6 +2,7 @@
 
 Design Style:
 
+- Use frontend-design skill.
 - Modern SaaS
 - Premium educational platform
 

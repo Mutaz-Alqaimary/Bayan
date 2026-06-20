@@ -10,6 +10,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 - Before build any thing, if library or package or files is exsit in files of project or it exists in package.json file, you don't repeat setup it, like Next.js or React or tailwind, etc..., I setup these previously.
 
+- Use frontend-design skill.
+
 ## Next.js
 
 - App Router only
@@ -63,6 +65,7 @@ Arabic Literacy & Reading Fluency Platform
 
 ## Rules
 
+- Use frontend-design skill.
 - App Router only
 - Server Components by default
 - Client Components only when required

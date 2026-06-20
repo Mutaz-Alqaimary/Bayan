@@ -2,6 +2,8 @@
 
 You are a Staff Frontend Engineer and Technical Lead.
 
+Use frontend-design skill.
+
 Build a production-grade Arabic-first educational platform.
 
 Project Name:
@@ -17,7 +19,7 @@ The project must be:
 * Maintainable
 * Scalable
 
-# PRODUCT OVERVIEW
+## PRODUCT OVERVIEW
 
 Bayan is an Arabic-first literacy and reading fluency platform.
 
@@ -44,7 +46,7 @@ Primary users:
 
 ---
 
-# USER JOURNEYS
+## USER JOURNEYS
 
 Admin:
 
@@ -72,7 +74,7 @@ Student:
 
 ---
 
-# CORE BUSINESS GOAL
+## CORE BUSINESS GOAL
 
 The platform must help teachers answer:
 
@@ -88,7 +90,7 @@ The platform must measure:
 
 ---
 
-# UX REQUIREMENTS
+## UX REQUIREMENTS
 
 The platform is Arabic-first.
 
@@ -113,7 +115,7 @@ Requirements:
 
 ---
 
-# UI DESIGN & DESIGN ENGINEERING REQUIREMENTS
+## UI DESIGN & DESIGN ENGINEERING REQUIREMENTS
 
 Create a premium educational SaaS interface.
 
@@ -123,7 +125,7 @@ The platform must feel like a modern commercial product that could be used by re
 
 ---
 
-# DESIGN PHILOSOPHY
+## DESIGN PHILOSOPHY
 
 Act as:
 
@@ -155,7 +157,7 @@ Always think about:
 
 ---
 
-# DESIGN STYLE
+## DESIGN STYLE
 
 Create a:
 
@@ -188,7 +190,7 @@ Avoid:
 
 ---
 
-# VISUAL DESIGN SYSTEM
+## VISUAL DESIGN SYSTEM
 
 Requirements:
 
@@ -212,7 +214,7 @@ The platform should feel polished and intentional.
 
 ---
 
-# TYPOGRAPHY
+## TYPOGRAPHY
 
 Arabic is the primary language.
 
@@ -235,7 +237,7 @@ Use a single typography system across the application.
 
 ---
 
-# DASHBOARD DESIGN
+## DASHBOARD DESIGN
 
 Admin Dashboard:
 
@@ -265,7 +267,7 @@ Dashboards must feel modern, clean, and premium.
 
 ---
 
-# COMPONENT DESIGN
+## COMPONENT DESIGN
 
 Forms:
 
@@ -304,7 +306,7 @@ Navigation:
 
 ---
 
-# RESPONSIVE DESIGN
+## RESPONSIVE DESIGN
 
 Use mobile-first design.
 
@@ -326,7 +328,7 @@ The experience must remain professional across all screen sizes.
 
 ---
 
-# DARK MODE
+## DARK MODE
 
 Requirements:
 
@@ -340,7 +342,7 @@ Dark mode must feel fully designed, not automatically generated.
 
 ---
 
-# MOTION DESIGN
+## MOTION DESIGN
 
 Use subtle animations only.
 
@@ -359,7 +361,7 @@ Avoid distracting animations.
 
 ---
 
-# LOADING STATES
+## LOADING STATES
 
 Requirements:
 
@@ -371,7 +373,7 @@ Avoid layout shifts.
 
 ---
 
-# EMPTY STATES
+## EMPTY STATES
 
 Create meaningful empty states.
 
@@ -389,7 +391,7 @@ Each empty state should:
 
 ---
 
-# ERROR STATES
+## ERROR STATES
 
 Create user-friendly error experiences.
 
@@ -403,7 +405,7 @@ Avoid technical jargon.
 
 ---
 
-# ACCESSIBILITY
+## ACCESSIBILITY
 
 Requirements:
 
@@ -418,7 +420,7 @@ Accessibility must be considered during design, not added later.
 
 ---
 
-# FINAL UI GOAL
+## FINAL UI GOAL
 
 The finished platform should feel comparable to a modern SaaS product.
 
@@ -441,7 +443,7 @@ Every page should look intentionally designed.
 
 ---
 
-# SUCCESS METRICS
+## SUCCESS METRICS
 
 The platform should allow teachers to:
 
@@ -460,7 +462,7 @@ The platform should allow students to:
 
 ---
 
-# IMPORTANT
+## IMPORTANT
 
 The database already exists in Supabase.
 
@@ -478,7 +480,7 @@ Never use placeholders, mock implementations, TODO comments, fake APIs, fake dat
 
 ---
 
-# TECH STACK
+## TECH STACK
 
 Use:
 
@@ -503,7 +505,7 @@ Optional:
 
 ---
 
-# ARABIC-FIRST REQUIREMENTS
+## ARABIC-FIRST REQUIREMENTS
 
 Requirements:
 
@@ -524,7 +526,7 @@ Requirements:
 
 ---
 
-# ARCHITECTURE RULES
+## ARCHITECTURE RULES
 
 Use:
 
@@ -547,7 +549,7 @@ Avoid:
 
 ---
 
-# DATABASE TABLES
+## DATABASE TABLES
 
 profiles
 
@@ -620,7 +622,7 @@ updated_at
 
 ---
 
-# STORAGE
+## STORAGE
 
 Bucket:
 
@@ -628,7 +630,7 @@ avatars
 
 ---
 
-# ENV VARIABLES
+## ENV VARIABLES
 
 NEXT_PUBLIC_SUPABASE_URL
 
@@ -638,7 +640,7 @@ SUPABASE_SERVICE_ROLE_KEY
 
 ---
 
-# NAMING RULES
+## NAMING RULES
 
 Database Types:
 
@@ -671,7 +673,7 @@ Never invent alternative names.
 
 ---
 
-# AUTHORIZATION RULES
+## AUTHORIZATION RULES
 
 Roles:
 
@@ -705,7 +707,7 @@ Student:
 
 ---
 
-# CODE QUALITY RULES
+## CODE QUALITY RULES
 
 Requirements:
 
@@ -722,7 +724,7 @@ Requirements:
 
 ---
 
-# WORKFLOW RULES
+## WORKFLOW RULES
 
 Work ONLY ONE PHASE at a time.
 
