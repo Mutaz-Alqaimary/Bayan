@@ -36,7 +36,18 @@
       "mcp__next-devtools__browser_eval",
       "PowerShell(taskkill /PID 10680 /F 2>&1)",
       "PowerShell(Get-Process node -ErrorAction SilentlyContinue)",
-      "Bash(python3 -)"
+      "Bash(python3 -)",
+      "Bash(curl -s http://localhost:3000/ar/ui)",
+      "Bash(taskkill //PID 1508 //F)",
+      "Bash(curl -s http://localhost:3000/ar/ui -w \"\\\\nHTTP:%{http_code}\\\\n\" -o /tmp/ui_ar.html)",
+      "Read(//tmp/**)",
+      "Bash(taskkill //PID 9652 //F)",
+      "Bash(netstat -ano)",
+      "Bash(curl -s http://localhost:3000/ar/ui -w \"\\\\nHTTP:%{http_code}\\\\n\" -o /tmp/ui_ar4.html)",
+      "Bash(node -e \"console.log\\(require\\('./node_modules/zod/package.json'\\).version\\)\")",
+      "Bash(npx eslint *)",
+      "Bash(curl -s -H \"Cache-Control: no-cache\" \"http://localhost:3000/ar/ui\")",
+      "Bash(curl -s \"http://localhost:3000/ar/ui\")"
     ],
     "deny": [
       "Read(./.env)",

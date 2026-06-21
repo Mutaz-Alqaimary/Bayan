@@ -45,6 +45,21 @@ supabaseClient        // browser/client-side
 supabaseServerClient   // server-side
 ```
 
+## Localized message helpers
+
+Client/server-paired accessors for shared, cross-feature copy (validation, generic error
+states) — same `client.ts`/`server.ts` split as the Supabase clients above.
+
+```
+useValidationMessages  // client — lib/validation/client.ts
+getValidationMessages  // server — lib/validation/server.ts
+ValidationMessages     // shared type — lib/validation/types.ts
+
+useErrorMessages        // client — lib/errors/client.ts
+getErrorMessages        // server — lib/errors/server.ts
+ErrorMessages            // shared type — lib/errors/types.ts
+```
+
 If a later phase needs something not listed here, derive it by following the same pattern
 (e.g. `<Entity>Record`, `use<Domain>Store`) rather than picking an arbitrary name, and add it to
 this file once decided so it stays the single source of truth.

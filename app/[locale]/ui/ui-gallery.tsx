@@ -7,6 +7,9 @@
  */
 
 import { Bell, Plus, Search, Settings, User } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
+import { z } from "zod";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -94,6 +97,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { toast } from "@/components/ui/use-toast";
+import { useErrorMessages } from "@/lib/errors/client";
+import { useValidationMessages } from "@/lib/validation/client";
 
 function Section({
   id,
@@ -123,6 +128,19 @@ const students = [
 ];
 
 export function UiGallery() {
+  const tCommon = useTranslations("common");
+  const errorMessages = useErrorMessages();
+  const validationMessages = useValidationMessages();
+  const [emailValue, setEmailValue] = useState("");
+
+  const emailSchema = z
+    .string()
+    .min(3, { error: validationMessages.tooShort(3) })
+    .max(40, { error: validationMessages.tooLong(40) })
+    .email({ error: validationMessages.invalidEmail() });
+  const emailResult = emailValue ? emailSchema.safeParse(emailValue) : null;
+  const emailError = emailResult && !emailResult.success ? emailResult.error.issues[0]?.message : undefined;
+
   return (
     <div className="space-y-2">
       <header className="py-4">
@@ -433,15 +451,41 @@ export function UiGallery() {
         </Tabs>
       </Section>
 
-      {/* Toast */}
+      {/* Validation — live, localized, dynamic Zod messages (lib/validation) */}
+      <Section id="validation" title="Validation (Zod + next-intl)">
+        <div className="grid max-w-md gap-1.5">
+          <div className="grid gap-2">
+            <Label htmlFor="validation-email">Email</Label>
+            <Input
+              id="validation-email"
+              type="email"
+              value={emailValue}
+              onChange={(event) => setEmailValue(event.target.value)}
+              aria-invalid={Boolean(emailError)}
+              aria-describedby="validation-email-error"
+              placeholder="name@school.edu"
+            />
+          </div>
+          <p
+            id="validation-email-error"
+            aria-live="polite"
+            aria-atomic="true"
+            className="min-h-5 text-sm text-destructive-text"
+          >
+            {emailError ?? ""}
+          </p>
+        </div>
+      </Section>
+
+      {/* Toast — localized via lib/errors (destructive) and the common namespace (success) */}
       <Section id="toast" title="Toast">
         <div className="flex flex-wrap gap-3">
           <Button
             variant="outline"
             onClick={() =>
               toast({
-                title: "تم الحفظ",
-                description: "تم حفظ التغييرات بنجاح.",
+                title: tCommon("savedTitle"),
+                description: tCommon("savedDescription"),
               })
             }
           >
@@ -452,8 +496,8 @@ export function UiGallery() {
             onClick={() =>
               toast({
                 variant: "destructive",
-                title: "حدث خطأ",
-                description: "تعذّر حفظ التغييرات. حاول مرة أخرى.",
+                title: errorMessages.generic.title,
+                description: errorMessages.generic.description,
               })
             }
           >

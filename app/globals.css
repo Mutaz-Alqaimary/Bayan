@@ -44,6 +44,9 @@
 
   --destructive: oklch(0.58 0.21 27);
   --destructive-foreground: oklch(0.985 0.01 27);
+  /* Same hue as --destructive; already clears AA (~4.76:1) as body text on
+     light card/background, so no separate light-mode value is needed. */
+  --destructive-text: oklch(0.58 0.21 27);
 
   --border: oklch(0.922 0.005 258);
   --input: oklch(0.922 0.005 258);
@@ -91,6 +94,14 @@
      on destructive surfaces in dark mode (Button/Badge/Toast). */
   --destructive: oklch(0.52 0.2 25);
   --destructive-foreground: oklch(0.98 0.01 25);
+  /* --destructive itself only clears ~2.9:1 as body text directly on
+     --card/--background in dark mode (it's tuned for the foreground-on-surface
+     case above, not text-on-background). Lightened separately to clear AA
+     (~6.6:1) for inline error/validation copy, e.g. ui-gallery.tsx's
+     Validation section. error-state.tsx uses --destructive only on a
+     decorative aria-hidden icon, where the 3:1 non-text contrast threshold
+     applies instead. */
+  --destructive-text: oklch(0.72 0.16 25);
 
   --border: oklch(1 0 0 / 9%);
   --input: oklch(1 0 0 / 13%);
@@ -136,6 +147,7 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-text: var(--destructive-text);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);

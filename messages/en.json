@@ -4,7 +4,35 @@
     "description": "An Arabic-first platform that helps schools, teachers, and students measure and improve reading fluency over time: reading speed, accuracy, vocabulary, and progress tracking."
   },
   "common": {
-    "close": "Close"
+    "close": "Close",
+    "savedTitle": "Changes saved",
+    "savedDescription": "Your changes were saved successfully."
+  },
+  "validation": {
+    "required": "This field is required.",
+    "invalidType": "This value isn't the right type.",
+    "invalidEmail": "Enter a valid email address.",
+    "tooShort": "Must be at least {min, plural, one {# character} other {# characters}}.",
+    "tooLong": "Must be at most {max, plural, one {# character} other {# characters}}."
+  },
+  "errors": {
+    "tryAgain": "Try again",
+    "generic": {
+      "title": "Something went wrong",
+      "description": "An unexpected error occurred. Please try again."
+    },
+    "network": {
+      "title": "Connection problem",
+      "description": "Check your internet connection and try again."
+    },
+    "unauthorized": {
+      "title": "Sign-in required",
+      "description": "Please sign in to continue."
+    },
+    "forbidden": {
+      "title": "Access denied",
+      "description": "You don't have permission to view this."
+    }
   },
   "pagination": {
     "label": "Pagination",
