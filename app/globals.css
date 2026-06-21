@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 /*
  * Bayan design tokens — Tailwind CSS v4 (CSS-first config).
@@ -86,8 +87,10 @@
   --accent: oklch(0.3 0.03 173);
   --accent-foreground: oklch(0.92 0.02 173);
 
-  --destructive: oklch(0.66 0.19 25);
-  --destructive-foreground: oklch(0.97 0.01 25);
+  /* Darkened so destructive-foreground (near-white) clears WCAG AA (>=4.5:1)
+     on destructive surfaces in dark mode (Button/Badge/Toast). */
+  --destructive: oklch(0.52 0.2 25);
+  --destructive-foreground: oklch(0.98 0.01 25);
 
   --border: oklch(1 0 0 / 9%);
   --input: oklch(1 0 0 / 13%);

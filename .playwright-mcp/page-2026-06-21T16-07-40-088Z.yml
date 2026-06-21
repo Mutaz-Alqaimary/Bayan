@@ -1,0 +1,217 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "Bayan Arabic Reading Fluency" [ref=e5] [cursor=pointer]:
+          - /url: /en
+          - img [ref=e7]
+          - generic [ref=e9]:
+            - generic [ref=e10]: Bayan
+            - generic [ref=e11]: Arabic Reading Fluency
+        - navigation "Primary" [ref=e12]:
+          - button "Change language" [ref=e13]:
+            - img [ref=e14]
+            - generic [ref=e17]: العربية
+          - button "Switch to dark theme" [ref=e18]:
+            - img [ref=e19]
+    - main [ref=e21]:
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - heading "Design System" [level=1] [ref=e24]
+          - paragraph [ref=e25]: Phase 3 component gallery — toggle language/theme in the header to verify RTL/LTR and light/dark.
+        - generic [ref=e26]:
+          - heading "Button" [level=2] [ref=e27]
+          - generic [ref=e28]:
+            - generic [ref=e29]:
+              - button "Default" [ref=e30]
+              - button "Secondary" [ref=e31]
+              - button "Outline" [ref=e32]
+              - button "Ghost" [ref=e33]
+              - button "Destructive" [ref=e34]
+              - button "Link" [ref=e35]
+            - generic [ref=e36]:
+              - button "Small" [ref=e37]
+              - button "Default" [ref=e38]
+              - button "Large" [ref=e39]
+              - button "Add" [ref=e40]:
+                - img
+              - button "With icon" [ref=e41]:
+                - img
+                - text: With icon
+              - button "Disabled" [disabled]
+        - generic [ref=e42]:
+          - heading "Input · Textarea · Label" [level=2] [ref=e43]
+          - generic [ref=e45]:
+            - generic [ref=e46]:
+              - generic [ref=e47]: Email
+              - textbox "Email" [ref=e48]:
+                - /placeholder: name@school.edu
+            - generic [ref=e49]:
+              - generic [ref=e50]: الاسم الكامل
+              - textbox "الاسم الكامل" [ref=e51]:
+                - /placeholder: اكتب اسم الطالب
+            - generic [ref=e52]:
+              - generic [ref=e53]: Notes
+              - textbox "Notes" [ref=e54]:
+                - /placeholder: Add a note…
+            - generic [ref=e55]:
+              - generic [ref=e56]: Invalid example
+              - textbox "Invalid example" [invalid] [ref=e57]: bad value
+        - generic [ref=e58]:
+          - heading "Select" [level=2] [ref=e59]
+          - generic [ref=e60]:
+            - combobox [ref=e61]:
+              - generic: اختر المستوى
+              - img [ref=e62]
+            - combobox [ref=e64]
+        - generic [ref=e65]:
+          - heading "Checkbox · Radio Group · Switch" [level=2] [ref=e66]
+          - generic [ref=e68]:
+            - generic [ref=e69]:
+              - generic [ref=e70]:
+                - checkbox "تفعيل الإشعارات" [checked] [ref=e71]:
+                  - generic:
+                    - img
+                - checkbox [checked]
+                - generic [ref=e72]: تفعيل الإشعارات
+              - generic [ref=e73]:
+                - checkbox "Weekly report" [ref=e74]
+                - checkbox
+                - generic [ref=e75]: Weekly report
+            - radiogroup [ref=e76]:
+              - generic [ref=e77]:
+                - radio "مدير" [ref=e78]
+                - radio
+                - generic [ref=e79]: مدير
+              - generic [ref=e80]:
+                - radio "معلم" [checked] [ref=e81]:
+                  - img [ref=e83]
+                - radio [checked]
+                - generic [ref=e85]: معلم
+              - generic [ref=e86]:
+                - radio "طالب" [ref=e87]
+                - radio
+                - generic [ref=e88]: طالب
+            - generic [ref=e89]:
+              - switch "الوضع الداكن" [checked] [ref=e90] [cursor=pointer]
+              - checkbox [checked]
+              - generic [ref=e91]: الوضع الداكن
+        - generic [ref=e92]:
+          - heading "Card" [level=2] [ref=e93]
+          - generic [ref=e95]:
+            - generic [ref=e96]:
+              - generic [ref=e97]: تقدّم القراءة
+              - generic [ref=e98]: آخر ٣٠ يومًا
+            - generic [ref=e99]: متوسط سرعة القراءة ٩٢ كلمة في الدقيقة بدقة ٩٤٪.
+            - button "عرض التفاصيل" [ref=e101]
+        - generic [ref=e102]:
+          - heading "Badge" [level=2] [ref=e103]
+          - generic [ref=e105]:
+            - generic [ref=e106]: Default
+            - generic [ref=e107]: Secondary
+            - generic [ref=e108]: Destructive
+            - generic [ref=e109]: Outline
+            - generic [ref=e110]:
+              - img [ref=e111]
+              - text: مع أيقونة
+        - heading "Skeleton" [level=2] [ref=e115]
+        - generic [ref=e122]:
+          - heading "Table" [level=2] [ref=e123]
+          - table "قائمة الطلاب (بيانات تجريبية)" [ref=e126]:
+            - caption [ref=e127]: قائمة الطلاب (بيانات تجريبية)
+            - rowgroup [ref=e128]:
+              - row "رقم الطالب الاسم الصف WPM" [ref=e129]:
+                - columnheader "رقم الطالب" [ref=e130]
+                - columnheader "الاسم" [ref=e131]
+                - columnheader "الصف" [ref=e132]
+                - columnheader "WPM" [ref=e133]
+            - rowgroup [ref=e134]:
+              - row "1023 سارة المنصوري الصف الرابع 96" [ref=e135]:
+                - cell "1023" [ref=e136]
+                - cell "سارة المنصوري" [ref=e137]
+                - cell "الصف الرابع" [ref=e138]
+                - cell "96" [ref=e139]
+              - row "1024 Omar Haddad Grade 4 88" [ref=e140]:
+                - cell "1024" [ref=e141]
+                - cell "Omar Haddad" [ref=e142]
+                - cell "Grade 4" [ref=e143]
+                - cell "88" [ref=e144]
+              - row "1025 ليان عبدالله الصف الخامس 74" [ref=e145]:
+                - cell "1025" [ref=e146]
+                - cell "ليان عبدالله" [ref=e147]
+                - cell "الصف الخامس" [ref=e148]
+                - cell "74" [ref=e149]
+        - generic [ref=e150]:
+          - heading "Pagination" [level=2] [ref=e151]
+          - navigation "Pagination" [ref=e153]:
+            - list [ref=e154]:
+              - listitem [ref=e155]:
+                - link "Go to previous page" [ref=e156] [cursor=pointer]:
+                  - /url: "#pagination"
+                  - img
+                  - text: السابق
+              - listitem [ref=e157]:
+                - link "١" [ref=e158] [cursor=pointer]:
+                  - /url: "#pagination"
+              - listitem [ref=e159]:
+                - link "٢" [ref=e160] [cursor=pointer]:
+                  - /url: "#pagination"
+              - listitem [ref=e161]:
+                - link "٣" [ref=e162] [cursor=pointer]:
+                  - /url: "#pagination"
+              - listitem [ref=e163]:
+                - generic [ref=e164]:
+                  - img [ref=e165]
+                  - generic [ref=e169]: More pages
+              - listitem [ref=e170]:
+                - link "Go to next page" [ref=e171] [cursor=pointer]:
+                  - /url: "#pagination"
+                  - text: التالي
+                  - img
+        - generic [ref=e172]:
+          - heading "Dialog · Drawer · Dropdown · Tooltip" [level=2] [ref=e173]
+          - generic [ref=e175]:
+            - button "Open Dialog" [ref=e176]
+            - 'button "Drawer: start" [ref=e177]'
+            - 'button "Drawer: end" [ref=e178]'
+            - 'button "Drawer: top" [ref=e179]'
+            - 'button "Drawer: bottom" [ref=e180]'
+            - button "Menu" [ref=e181]:
+              - img
+              - text: Menu
+            - button "Notifications" [ref=e182]:
+              - img
+        - generic [ref=e183]:
+          - heading "Tabs" [level=2] [ref=e184]
+          - generic [ref=e186]:
+            - tablist [ref=e187]:
+              - tab "نظرة عامة" [selected] [ref=e188]
+              - tab "الجلسات" [ref=e189]
+              - tab "المفردات" [ref=e190]
+            - tabpanel "نظرة عامة" [ref=e191]: ملخص أداء الطالب.
+        - generic [ref=e192]:
+          - heading "Toast" [level=2] [ref=e193]
+          - generic [ref=e195]:
+            - button "Show toast" [ref=e196]
+            - button "Show error toast" [ref=e197]
+        - generic [ref=e198]:
+          - heading "EmptyState · ErrorState" [level=2] [ref=e199]
+          - generic [ref=e201]:
+            - generic [ref=e202]:
+              - img [ref=e204]
+              - generic [ref=e207]:
+                - heading "لا يوجد طلاب بعد" [level=3] [ref=e208]
+                - paragraph [ref=e209]: ابدأ بإضافة أول طالب لمتابعة تقدّمه في القراءة.
+              - button "إضافة طالب" [ref=e211]:
+                - img
+                - text: إضافة طالب
+            - alert [ref=e212]:
+              - img [ref=e214]
+              - generic [ref=e216]:
+                - heading "تعذّر تحميل البيانات" [level=3] [ref=e217]
+                - paragraph [ref=e218]: حدث خطأ غير متوقع أثناء جلب البيانات.
+              - button "إعادة المحاولة" [ref=e220]
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e226] [cursor=pointer]:
+    - img [ref=e227]

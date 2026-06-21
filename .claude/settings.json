@@ -31,7 +31,12 @@
       "PowerShell(npm install @supabase/supabase-js @supabase/ssr --silent 2>&1 | Select-Object -Last 3; Write-Output \"supabase-js: $\\(\\(Get-Content node_modules/@supabase/supabase-js/package.json | ConvertFrom-Json\\).version\\)  ssr: $\\(\\(Get-Content node_modules/@supabase/ssr/package.json | ConvertFrom-Json\\).version\\)\")",
       "Bash(node -e \"console.log\\(Object.keys\\(require\\('@supabase/ssr'\\)\\)\\)\")",
       "Bash(xargs grep -ln \"returns<\\\\|overrideTypes\\\\|single\\(\")",
-      "PowerShell(npm install server-only --silent 2>&1 | Select-Object -Last 3; Write-Output \"server-only: $\\(\\(Get-Content node_modules/server-only/package.json | ConvertFrom-Json\\).version\\)\")"
+      "PowerShell(npm install server-only --silent 2>&1 | Select-Object -Last 3; Write-Output \"server-only: $\\(\\(Get-Content node_modules/server-only/package.json | ConvertFrom-Json\\).version\\)\")",
+      "PowerShell(npm run lint 2>&1 | Out-String; Write-Output \"=== LINT EXIT: $LASTEXITCODE ===\"; npm run build 2>&1 | Out-String | Select-String -Pattern \"Compiled successfully|error|Error|warning\"; Write-Output \"=== BUILD EXIT: $LASTEXITCODE ===\")",
+      "mcp__next-devtools__browser_eval",
+      "PowerShell(taskkill /PID 10680 /F 2>&1)",
+      "PowerShell(Get-Process node -ErrorAction SilentlyContinue)",
+      "Bash(python3 -)"
     ],
     "deny": [
       "Read(./.env)",

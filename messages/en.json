@@ -3,6 +3,15 @@
     "title": "Bayan — Arabic Literacy & Reading Fluency Platform",
     "description": "An Arabic-first platform that helps schools, teachers, and students measure and improve reading fluency over time: reading speed, accuracy, vocabulary, and progress tracking."
   },
+  "common": {
+    "close": "Close"
+  },
+  "pagination": {
+    "label": "Pagination",
+    "previous": "Go to previous page",
+    "next": "Go to next page",
+    "more": "More pages"
+  },
   "brand": {
     "name": "Bayan",
     "tagline": "Arabic Reading Fluency"
