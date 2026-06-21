@@ -1,5 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {},
   "permissions": {
     "allow": [
       "Bash(npm run dev)",
@@ -17,13 +18,16 @@
       "Bash(git add *)",
       "Bash(git commit *)",
       "Read(./docs/**)",
-      "Read(./.claude/**)"
-    ],
-    "ask": [
-      "Bash(npx supabase db push *)",
-      "Bash(npx supabase db reset *)",
-      "Bash(npx supabase migration *)",
-      "Bash(git push *)"
+      "Read(./.claude/**)",
+      "PowerShell(npm run build 2>&1 | Out-String; Write-Output \"=== BUILD EXIT: $LASTEXITCODE ===\")",
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null http://localhost:3000/ar)",
+      "Bash(break)",
+      "Bash(curl -s http://localhost:3000/ar)",
+      "Bash(curl -s http://localhost:3000/en)",
+      "Bash(curl -s -o /dev/null -w \"status=%{http_code} location=%{redirect_url}\\\\n\" http://localhost:3000/)",
+      "PowerShell(npm run lint 2>&1 | Out-String; Write-Output \"=== LINT EXIT: $LASTEXITCODE ===\"; npx tsc --noEmit 2>&1 | Out-String; Write-Output \"=== TSC EXIT: $LASTEXITCODE ===\")",
+      "PowerShell(npm run lint 2>&1 | Out-String; Write-Output \"=== LINT EXIT: $LASTEXITCODE ===\")"
     ],
     "deny": [
       "Read(./.env)",
@@ -31,7 +35,12 @@
       "Read(./secrets/**)",
       "Edit(./supabase/migrations/**)",
       "Edit(./**/*.sql)"
+    ],
+    "ask": [
+      "Bash(npx supabase db push *)",
+      "Bash(npx supabase db reset *)",
+      "Bash(npx supabase migration *)",
+      "Bash(git push *)"
     ]
-  },
-  "env": {}
+  }
 }

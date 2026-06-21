@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "title": "Bayan — Arabic Literacy & Reading Fluency Platform",
+    "description": "An Arabic-first platform that helps schools, teachers, and students measure and improve reading fluency over time: reading speed, accuracy, vocabulary, and progress tracking."
+  },
+  "brand": {
+    "name": "Bayan",
+    "tagline": "Arabic Reading Fluency"
+  },
+  "nav": {
+    "skipToContent": "Skip to content",
+    "primary": "Primary navigation",
+    "home": "Home"
+  },
+  "theme": {
+    "label": "Theme",
+    "toggle": "Toggle theme",
+    "switchToDark": "Switch to dark theme",
+    "switchToLight": "Switch to light theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "locale": {
+    "label": "Language",
+    "switch": "Change language",
+    "ar": "Arabic",
+    "en": "English"
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Literacy & reading fluency platform",
+      "title": "Is the student's Arabic reading ability improving over time?",
+      "subtitle": "Bayan helps schools, Arabic language centers, and teachers measure and improve reading fluency through reading passages, vocabulary, reading sessions, and precise progress analytics.",
+      "ctaPrimary": "Get started",
+      "ctaSecondary": "Explore the platform"
+    },
+    "metrics": {
+      "title": "What Bayan measures",
+      "items": {
+        "speed": {
+          "title": "Reading speed",
+          "description": "Words per minute for every reading session, with trends tracked over time."
+        },
+        "accuracy": {
+          "title": "Reading accuracy",
+          "description": "Accuracy percentage per session to surface and address recurring errors."
+        },
+        "vocabulary": {
+          "title": "Vocabulary growth",
+          "description": "Track vocabulary exposure and comprehension alongside every passage."
+        },
+        "progress": {
+          "title": "Progress tracking",
+          "description": "Clear analytics that reveal a struggling reader before they fall behind."
+        }
+      }
+    },
+    "foundation": {
+      "title": "A solid foundation from day one",
+      "subtitle": "This phase establishes the platform's technical foundation.",
+      "items": {
+        "rtl": "RTL-by-default for Arabic and LTR for English, mirrored correctly throughout.",
+        "i18n": "Fully localized routing, metadata, and messages powered by next-intl.",
+        "theme": "First-class light and dark modes that respect system preference with no flash.",
+        "a11y": "An accessible, keyboard-navigable structure with correct reading order."
+      }
+    }
+  },
+  "footer": {
+    "rights": "All rights reserved.",
+    "builtFor": "Built for schools, Arabic language centers, and reading teachers."
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Page not found",
+    "description": "Sorry, the page you're looking for doesn't exist or has been moved.",
+    "back": "Back to home"
+  }
+}
