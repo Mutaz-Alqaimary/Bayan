@@ -47,7 +47,9 @@
       "Bash(node -e \"console.log\\(require\\('./node_modules/zod/package.json'\\).version\\)\")",
       "Bash(npx eslint *)",
       "Bash(curl -s -H \"Cache-Control: no-cache\" \"http://localhost:3000/ar/ui\")",
-      "Bash(curl -s \"http://localhost:3000/ar/ui\")"
+      "Bash(curl -s \"http://localhost:3000/ar/ui\")",
+      "Bash(python -c ' *)",
+      "PowerShell(npm run build 2>&1)"
     ],
     "deny": [
       "Read(./.env)",

@@ -22,6 +22,8 @@ VocabularyTermRecord
 ```
 LoginFormValues
 RegisterFormValues
+ForgotPasswordFormValues
+ResetPasswordFormValues
 CreateStudentFormValues
 UpdateStudentFormValues
 ```
@@ -43,6 +45,7 @@ useReadingStore
 ```
 supabaseClient        // browser/client-side
 supabaseServerClient   // server-side
+supabaseAdminClient    // server-only, service-role (bypasses RLS) — added Phase 5
 ```
 
 ## Localized message helpers

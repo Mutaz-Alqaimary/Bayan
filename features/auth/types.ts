@@ -31,3 +31,30 @@ export type SessionUser = {
   role: UserRole;
   profile: ProfileRecord;
 };
+
+/**
+ * Auth form value types (Phase 5). Names are fixed by
+ * `.claude/rules/naming-conventions.md`. These are the single source of truth
+ * for each form's shape — the Zod schemas in `features/auth/schemas.ts` are
+ * typed against them and `react-hook-form` is parameterized with them.
+ */
+export type LoginFormValues = {
+  email: string;
+  password: string;
+};
+
+export type RegisterFormValues = {
+  fullName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+
+export type ForgotPasswordFormValues = {
+  email: string;
+};
+
+export type ResetPasswordFormValues = {
+  password: string;
+  confirmPassword: string;
+};

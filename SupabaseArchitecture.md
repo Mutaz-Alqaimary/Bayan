@@ -91,6 +91,47 @@ Phase 5, dashboard: Phase 6); the guards already reference the constants so noth
 > protected read/write must also be gated server-side (guards + role helpers, and — where
 > configured — Supabase Row Level Security).
 
+## Registration & the service-role client (Phase 5)
+
+The locked schema has **no `profiles` INSERT policy** and **no `on auth.users` signup trigger**, and
+`profiles.full_name` / `profiles.role` are `NOT NULL`. A self-service registrant therefore cannot
+create their own `profiles` row under RLS. Per the "elevated access" note above, Phase 5 adds a
+**server-only service-role client** — never imported into client code:
+
+| Client | File | Use in | Notes |
+|---|---|---|---|
+| `supabaseAdminClient()` | [`lib/supabase/admin.ts`](lib/supabase/admin.ts) | Server Actions / Route Handlers only | Reads `SUPABASE_SERVICE_ROLE_KEY`; `persistSession: false`, no cookies. Guarded with `import "server-only"`. **Bypasses RLS — only ever use it to perform an explicitly authorized, server-validated operation.** |
+
+### Role assignment (locked policy)
+
+Self-registration **always** creates a `student`. The role is hard-coded server-side; it is never
+read from client input, so a user cannot self-assign `teacher` or `admin`. Teacher/admin accounts
+are provisioned or promoted by an administrator in a later phase. Email confirmation is **off**: a
+successful registration creates the user, creates the profile, signs them in, and redirects.
+
+### Atomic registration — failure strategy (saga + compensating delete)
+
+`signUpAction` makes registration atomic so the system is never left with an auth user that has no
+profile (which `getSessionUser()` treats as unauthenticated, permanently stranding the email):
+
+1. **Create the auth user** with `auth.admin.createUser({ email_confirm: true })` (admin client).
+   - On error → map to `emailTaken` (duplicate email) or a generic error. Nothing was created, so
+     no cleanup is needed.
+2. **Insert the `profiles` row** (`id`, `full_name`, `role: "student"`, `locale`) with the admin
+   client.
+   - On error → **compensating action: delete the just-created auth user**
+     (`auth.admin.deleteUser`), then return a generic "registration failed" error. The email is
+     freed for a clean retry. The session is *not yet* established, so there is no half-signed-in
+     state.
+3. **Establish the session** with the cookie-bound `supabaseServerClient().auth.signInWithPassword`
+   — only after **both** the user and profile exist.
+4. **Redirect** to the dashboard.
+
+Residual risk: if the profile insert fails *and* the compensating delete also fails, an orphaned
+auth user remains. This is logged server-side and defended at the login boundary — `signInAction`
+calls `getSessionUser()` after sign-in and, if no profile exists, signs the user out and returns an
+error instead of granting a broken session.
+
 ## Type-safe data layer
 
 - Every query/mutation is wrapped in a typed function in a feature's `data`/`queries` module —

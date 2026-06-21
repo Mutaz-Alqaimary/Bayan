@@ -104,6 +104,85 @@
       }
     }
   },
+  "auth": {
+    "validation": {
+      "passwordMismatch": "Passwords don't match."
+    },
+    "fields": {
+      "fullName": "Full name",
+      "fullNamePlaceholder": "e.g. Sara Ahmed",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "confirmPassword": "Confirm password",
+      "confirmPasswordPlaceholder": "Re-enter your password",
+      "newPassword": "New password",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password"
+    },
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to continue to Bayan.",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "forgotPassword": "Forgot password?",
+      "noAccount": "Don't have an account?",
+      "registerLink": "Create one"
+    },
+    "register": {
+      "title": "Create your account",
+      "subtitle": "Start measuring and improving Arabic reading fluency.",
+      "submit": "Create account",
+      "submitting": "Creating account…",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Sign in"
+    },
+    "forgot": {
+      "title": "Reset your password",
+      "subtitle": "Enter your email and we'll send you a reset link.",
+      "submit": "Send reset link",
+      "submitting": "Sending…",
+      "backToLogin": "Back to sign in",
+      "successTitle": "Check your email",
+      "successDescription": "If an account exists for that address, we've sent a link to reset your password."
+    },
+    "reset": {
+      "title": "Set a new password",
+      "subtitle": "Choose a strong password you haven't used before.",
+      "submit": "Update password",
+      "submitting": "Updating…",
+      "invalidLinkTitle": "Link expired or invalid",
+      "invalidLinkDescription": "This password reset link is no longer valid. Request a new one to continue.",
+      "requestNewLink": "Request a new link"
+    },
+    "errors": {
+      "invalidCredentials": {
+        "title": "Incorrect email or password",
+        "description": "Check your details and try again."
+      },
+      "emailTaken": {
+        "title": "Email already registered",
+        "description": "An account with this email already exists. Try signing in instead."
+      },
+      "signUpFailed": {
+        "title": "Couldn't create your account",
+        "description": "Something went wrong during registration. Please try again."
+      },
+      "resetFailed": {
+        "title": "Couldn't update your password",
+        "description": "Something went wrong. Please request a new reset link and try again."
+      },
+      "weakPassword": {
+        "title": "Password too weak",
+        "description": "Choose a longer, stronger password and try again."
+      },
+      "profileMissing": {
+        "title": "Account setup incomplete",
+        "description": "Your account isn't fully set up yet. Please contact your administrator."
+      }
+    }
+  },
   "footer": {
     "rights": "All rights reserved.",
     "builtFor": "Built for schools, Arabic language centers, and reading teachers."

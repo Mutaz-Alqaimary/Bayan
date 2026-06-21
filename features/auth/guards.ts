@@ -17,6 +17,22 @@ import { ROUTES } from "@/lib/routes";
  * `redirect` (which is typed `never`, so control flow terminates cleanly).
  */
 
+/**
+ * The inverse of `requireUser`: send an already-authenticated user away from a
+ * public-only page (login, register, forgot-password) to their dashboard.
+ *
+ * Deliberately *not* applied to the reset-password page — completing a password
+ * reset relies on the recovery session being active, so that page must remain
+ * reachable while authenticated.
+ */
+export async function redirectIfAuthenticated(): Promise<void> {
+  const user = await getSessionUser();
+  if (user) {
+    const locale = await getLocale();
+    redirect(getPathname({ href: ROUTES.dashboard, locale }));
+  }
+}
+
 /** Require an authenticated user; redirect to login otherwise. */
 export async function requireUser(): Promise<SessionUser> {
   const user = await getSessionUser();
