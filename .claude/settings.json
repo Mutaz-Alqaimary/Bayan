@@ -27,7 +27,11 @@
       "Bash(curl -s http://localhost:3000/en)",
       "Bash(curl -s -o /dev/null -w \"status=%{http_code} location=%{redirect_url}\\\\n\" http://localhost:3000/)",
       "PowerShell(npm run lint 2>&1 | Out-String; Write-Output \"=== LINT EXIT: $LASTEXITCODE ===\"; npx tsc --noEmit 2>&1 | Out-String; Write-Output \"=== TSC EXIT: $LASTEXITCODE ===\")",
-      "PowerShell(npm run lint 2>&1 | Out-String; Write-Output \"=== LINT EXIT: $LASTEXITCODE ===\")"
+      "PowerShell(npm run lint 2>&1 | Out-String; Write-Output \"=== LINT EXIT: $LASTEXITCODE ===\")",
+      "PowerShell(npm install @supabase/supabase-js @supabase/ssr --silent 2>&1 | Select-Object -Last 3; Write-Output \"supabase-js: $\\(\\(Get-Content node_modules/@supabase/supabase-js/package.json | ConvertFrom-Json\\).version\\)  ssr: $\\(\\(Get-Content node_modules/@supabase/ssr/package.json | ConvertFrom-Json\\).version\\)\")",
+      "Bash(node -e \"console.log\\(Object.keys\\(require\\('@supabase/ssr'\\)\\)\\)\")",
+      "Bash(xargs grep -ln \"returns<\\\\|overrideTypes\\\\|single\\(\")",
+      "PowerShell(npm install server-only --silent 2>&1 | Select-Object -Last 3; Write-Output \"server-only: $\\(\\(Get-Content node_modules/server-only/package.json | ConvertFrom-Json\\).version\\)\")"
     ],
     "deny": [
       "Read(./.env)",
