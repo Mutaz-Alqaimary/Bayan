@@ -47,7 +47,21 @@
   "nav": {
     "skipToContent": "Skip to content",
     "primary": "Primary navigation",
-    "home": "Home"
+    "home": "Home",
+    "comingSoon": "Soon",
+    "openMenu": "Open menu",
+    "account": "Account menu",
+    "signOut": "Sign out",
+    "items": {
+      "dashboard": "Dashboard",
+      "students": "Students",
+      "passages": "Passages",
+      "vocabulary": "Vocabulary",
+      "myReading": "My reading",
+      "analytics": "Analytics",
+      "reports": "Reports",
+      "settings": "Settings"
+    }
   },
   "theme": {
     "label": "Theme",
@@ -180,6 +194,80 @@
       "profileMissing": {
         "title": "Account setup incomplete",
         "description": "Your account isn't fully set up yet. Please contact your administrator."
+      }
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "loading": "Loading dashboard…",
+    "kpis": { "label": "Key metrics" },
+    "units": { "wpm": "{value} wpm" },
+    "metrics": {
+      "title": "Reading metrics",
+      "description": "Recent reading performance across sessions.",
+      "avgWpm": "Average speed",
+      "avgAccuracy": "Average accuracy",
+      "sessionsLast7": "Sessions (last 7 days)"
+    },
+    "activity": {
+      "title": "Recent activity",
+      "emptyTitle": "No reading sessions yet",
+      "emptyDescription": "Completed reading sessions will appear here.",
+      "notScored": "Not scored"
+    },
+    "insights": {
+      "title": "Needs attention",
+      "description": "Students with the lowest recent reading performance.",
+      "emptyTitle": "No reading data yet",
+      "emptyDescription": "Once students complete reading sessions, those who need support will show up here.",
+      "grade": "Grade {grade}"
+    },
+    "quickActions": {
+      "title": "Quick actions",
+      "addStudent": "Add student",
+      "addPassage": "Add passage",
+      "createPassage": "Create passage",
+      "addVocabulary": "Add vocabulary",
+      "viewAnalytics": "View analytics",
+      "viewReports": "View reports",
+      "startReading": "Start reading",
+      "viewHistory": "Reading history"
+    },
+    "admin": {
+      "title": "Admin dashboard",
+      "subtitle": "Platform health and reading activity at a glance.",
+      "kpis": {
+        "students": "Students",
+        "teachers": "Teachers",
+        "passages": "Passages",
+        "sessions": "Reading sessions"
+      }
+    },
+    "teacher": {
+      "title": "Teacher dashboard",
+      "subtitle": "Track your students' reading progress.",
+      "kpis": {
+        "students": "Students",
+        "sessions": "Reading sessions",
+        "passages": "Passages",
+        "vocabulary": "Vocabulary terms"
+      }
+    },
+    "student": {
+      "title": "Welcome back, {name}",
+      "subtitle": "Grade {grade}",
+      "unlinkedHeading": "Your dashboard",
+      "unlinkedTitle": "Your reading profile isn't set up yet",
+      "unlinkedDescription": "Your teacher hasn't linked a student profile to your account yet. Please ask your teacher or administrator to set it up — your reading progress will appear here once they do.",
+      "progressTitle": "Your progress",
+      "historyTitle": "Reading history",
+      "weeklyLabel": "This week's reading",
+      "weeklyAria": "Completed {completed} of {target} reading sessions this week.",
+      "kpis": {
+        "sessions": "Sessions completed",
+        "passages": "Passages read",
+        "vocabulary": "Vocabulary seen",
+        "bestWpm": "Best speed (wpm)"
       }
     }
   },

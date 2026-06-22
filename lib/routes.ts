@@ -20,4 +20,41 @@ export const ROUTES = {
   resetPassword: "/reset-password",
   dashboard: "/dashboard",
   authCallback: "/api/auth/callback",
+
+  // Destinations for sections built in later phases. The constants exist now so
+  // navigation and quick actions reference them without hardcoding, but those
+  // pages don't exist yet — nav/quick-action items mark them as not-yet-built
+  // and render a disabled "coming soon" state instead of linking to a 404.
+  // (students: Phase 7, passages/vocabulary: Phase 8, sessions: Phase 10,
+  // analytics: Phase 13, reports: Phase 18, settings: Phase 12.)
+  students: "/students",
+  passages: "/passages",
+  vocabulary: "/vocabulary",
+  readingSessions: "/reading-sessions",
+  analytics: "/analytics",
+  reports: "/reports",
+  settings: "/settings",
 } as const;
+
+/** A locale-agnostic route path value from `ROUTES`. */
+export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES];
+
+/**
+ * Routes whose pages actually exist today. Anything not listed is "coming soon"
+ * — navigation and quick-action items use this to disable links to unbuilt
+ * destinations rather than send users to a 404. Add a route here in the phase
+ * that builds its page.
+ */
+export const IMPLEMENTED_ROUTES: ReadonlySet<AppRoute> = new Set([
+  ROUTES.home,
+  ROUTES.login,
+  ROUTES.register,
+  ROUTES.forgotPassword,
+  ROUTES.resetPassword,
+  ROUTES.dashboard,
+]);
+
+/** Whether a route's page exists yet (vs. a planned, not-yet-built phase). */
+export function isRouteImplemented(route: AppRoute): boolean {
+  return IMPLEMENTED_ROUTES.has(route);
+}

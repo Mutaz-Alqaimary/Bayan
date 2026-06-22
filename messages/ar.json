@@ -47,7 +47,21 @@
   "nav": {
     "skipToContent": "تخطَّ إلى المحتوى",
     "primary": "التنقّل الرئيسي",
-    "home": "الرئيسية"
+    "home": "الرئيسية",
+    "comingSoon": "قريبًا",
+    "openMenu": "فتح القائمة",
+    "account": "قائمة الحساب",
+    "signOut": "تسجيل الخروج",
+    "items": {
+      "dashboard": "لوحة التحكم",
+      "students": "الطلاب",
+      "passages": "النصوص",
+      "vocabulary": "المفردات",
+      "myReading": "قراءاتي",
+      "analytics": "التحليلات",
+      "reports": "التقارير",
+      "settings": "الإعدادات"
+    }
   },
   "theme": {
     "label": "السمة",
@@ -180,6 +194,80 @@
       "profileMissing": {
         "title": "إعداد الحساب غير مكتمل",
         "description": "لم يكتمل إعداد حسابك بعد. يرجى التواصل مع المسؤول."
+      }
+    }
+  },
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "loading": "جارٍ تحميل لوحة التحكم…",
+    "kpis": { "label": "المؤشرات الرئيسية" },
+    "units": { "wpm": "{value} كلمة/د" },
+    "metrics": {
+      "title": "مؤشرات القراءة",
+      "description": "أداء القراءة الأخير عبر الجلسات.",
+      "avgWpm": "متوسط السرعة",
+      "avgAccuracy": "متوسط الدقة",
+      "sessionsLast7": "الجلسات (آخر 7 أيام)"
+    },
+    "activity": {
+      "title": "النشاط الأخير",
+      "emptyTitle": "لا توجد جلسات قراءة بعد",
+      "emptyDescription": "ستظهر هنا جلسات القراءة المكتملة.",
+      "notScored": "غير مُقيَّمة"
+    },
+    "insights": {
+      "title": "بحاجة إلى متابعة",
+      "description": "الطلاب الأقل أداءً في القراءة مؤخرًا.",
+      "emptyTitle": "لا توجد بيانات قراءة بعد",
+      "emptyDescription": "بمجرد أن يُكمل الطلاب جلسات القراءة، سيظهر هنا من يحتاجون إلى دعم.",
+      "grade": "الصف {grade}"
+    },
+    "quickActions": {
+      "title": "إجراءات سريعة",
+      "addStudent": "إضافة طالب",
+      "addPassage": "إضافة نص",
+      "createPassage": "إنشاء نص",
+      "addVocabulary": "إضافة مفردات",
+      "viewAnalytics": "عرض التحليلات",
+      "viewReports": "عرض التقارير",
+      "startReading": "ابدأ القراءة",
+      "viewHistory": "سجل القراءة"
+    },
+    "admin": {
+      "title": "لوحة تحكم المسؤول",
+      "subtitle": "نظرة سريعة على صحة المنصة ونشاط القراءة.",
+      "kpis": {
+        "students": "الطلاب",
+        "teachers": "المعلمون",
+        "passages": "النصوص",
+        "sessions": "جلسات القراءة"
+      }
+    },
+    "teacher": {
+      "title": "لوحة تحكم المعلم",
+      "subtitle": "تابِع تقدّم طلابك في القراءة.",
+      "kpis": {
+        "students": "الطلاب",
+        "sessions": "جلسات القراءة",
+        "passages": "النصوص",
+        "vocabulary": "المفردات"
+      }
+    },
+    "student": {
+      "title": "مرحبًا بعودتك، {name}",
+      "subtitle": "الصف {grade}",
+      "unlinkedHeading": "لوحتك",
+      "unlinkedTitle": "لم يتم إعداد ملف القراءة الخاص بك بعد",
+      "unlinkedDescription": "لم يربط معلمك ملف طالب بحسابك بعد. يرجى أن تطلب من معلمك أو المسؤول إعداده — وسيظهر تقدّمك في القراءة هنا بمجرد أن يفعل ذلك.",
+      "progressTitle": "تقدّمك",
+      "historyTitle": "سجل القراءة",
+      "weeklyLabel": "قراءة هذا الأسبوع",
+      "weeklyAria": "أكملت {completed} من {target} جلسات قراءة هذا الأسبوع.",
+      "kpis": {
+        "sessions": "الجلسات المكتملة",
+        "passages": "النصوص المقروءة",
+        "vocabulary": "المفردات المعروضة",
+        "bestWpm": "أفضل سرعة (كلمة/د)"
       }
     }
   },

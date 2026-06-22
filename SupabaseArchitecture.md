@@ -91,6 +91,25 @@ Phase 5, dashboard: Phase 6); the guards already reference the constants so noth
 > protected read/write must also be gated server-side (guards + role helpers, and — where
 > configured — Supabase Row Level Security).
 
+### RLS SELECT policies (current contract)
+
+RLS is enabled on every table. The policies that exist today (from the Supabase setup) determine
+what the **anon/authenticated** client can read, and therefore where app-layer scoping or the
+service-role client is required:
+
+| Table | SELECT policy | Implication |
+|---|---|---|
+| `profiles` | own row only (`auth.uid() = id`) | Cross-user/role reads (e.g. admin counting teachers) need `supabaseAdminClient`, role-gated. **No INSERT policy** → registration profile insert uses the service-role client (Phase 5). |
+| `user_settings` | own row only (`auth.uid() = user_id`) | Each user reads/writes only their own settings. |
+| `students` | any authenticated (`true`) | Admin/teacher read all; **student dashboards must scope to their own `student_id` in-query** (RLS does not). |
+| `reading_passages` | any authenticated (`true`) | Readable by all roles. |
+| `vocabulary_terms` | any authenticated (`true`) | Readable by all roles. |
+| `reading_sessions` | any authenticated (`true`) | Same as `students` — scope per student in app code; never rely on RLS for student isolation. |
+
+Because `students` / `reading_passages` / `reading_sessions` SELECT is permissive for authenticated
+users, the admin/teacher dashboard totals over those tables use the normal `supabaseServerClient`;
+only the `profiles`-derived counts cross RLS and use the role-gated `supabaseAdminClient`.
+
 ## Registration & the service-role client (Phase 5)
 
 The locked schema has **no `profiles` INSERT policy** and **no `on auth.users` signup trigger**, and
