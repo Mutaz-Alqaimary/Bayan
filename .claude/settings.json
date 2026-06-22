@@ -51,7 +51,12 @@
       "Bash(python -c ' *)",
       "PowerShell(npm run build 2>&1)",
       "Bash(node -e ' *)",
-      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\(JSON.stringify\\(p.scripts,null,1\\)\\)\")"
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\(JSON.stringify\\(p.scripts,null,1\\)\\)\")",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\(JSON.stringify\\({dep:p.dependencies,dev:p.devDependencies},null,1\\)\\);\")",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\('table:',p.dependencies['@tanstack/react-table']\\);\")",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('messages/en.json','utf8'\\)\\); JSON.parse\\(require\\('fs'\\).readFileSync\\('messages/ar.json','utf8'\\)\\); console.log\\('JSON OK'\\);\")",
+      "Bash(find app *)",
+      "Bash(node -e \"let d='';process.stdin.on\\('data',c=>d+=c\\);process.stdin.on\\('end',\\(\\)=>{const p=JSON.parse\\(d\\);console.log\\(JSON.stringify\\(p.scripts,null,2\\)\\);}\\)\")"
     ],
     "deny": [
       "Read(./.env)",

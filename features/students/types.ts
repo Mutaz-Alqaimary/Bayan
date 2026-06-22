@@ -44,3 +44,32 @@ export function studentDisplayName(
   }
   return `${student.first_name_ar} ${student.last_name_ar}`;
 }
+
+/**
+ * Form value types for the Phase 7 student CRUD forms. Names are fixed by
+ * `.claude/rules/naming-conventions.md`.
+ *
+ * These describe the **form input** shape — every field is a string because
+ * that is what the inputs hold (a number input still yields a string, an empty
+ * optional field yields `""`). The Zod schemas in `schemas.ts` parse these into
+ * the typed insert/update payload (`grade` → number, optional fields → `null`).
+ * `react-hook-form` is parameterized with these types, so any drift between a
+ * form and its schema surfaces as a type error at the call site.
+ *
+ * `profile_id` is intentionally absent: Phase 7 manages roster records only and
+ * never links them to auth/profile rows (linking is a future dedicated
+ * workflow).
+ */
+export type CreateStudentFormValues = {
+  student_number: string;
+  first_name_ar: string;
+  last_name_ar: string;
+  first_name_en: string;
+  last_name_en: string;
+  email: string;
+  grade: string;
+  birth_date: string;
+};
+
+/** Same editable fields as create — the id is passed separately to the action. */
+export type UpdateStudentFormValues = CreateStudentFormValues;

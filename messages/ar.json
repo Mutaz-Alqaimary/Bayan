@@ -271,6 +271,116 @@
       }
     }
   },
+  "students": {
+    "title": "الطلاب",
+    "subtitle": "أدِر سجلّ طلابك — الأسماء والصف وبيانات التواصل.",
+    "loading": "جارٍ تحميل الطلاب…",
+    "addStudent": "إضافة طالب",
+    "validation": {
+      "wholeNumber": "أدخل الصف كرقم صحيح.",
+      "positive": "يجب أن يكون الصف أكبر من صفر.",
+      "invalidDate": "أدخل تاريخًا صحيحًا.",
+      "dateInFuture": "لا يمكن أن يكون التاريخ في المستقبل."
+    },
+    "fields": {
+      "firstNameAr": "الاسم الأول (بالعربية)",
+      "lastNameAr": "اسم العائلة (بالعربية)",
+      "firstNameEn": "الاسم الأول (بالإنجليزية)",
+      "lastNameEn": "اسم العائلة (بالإنجليزية)",
+      "studentNumber": "رقم الطالب",
+      "email": "البريد الإلكتروني",
+      "grade": "الصف",
+      "birthDate": "تاريخ الميلاد"
+    },
+    "columns": {
+      "name": "الاسم",
+      "studentNumber": "رقم الطالب",
+      "grade": "الصف",
+      "email": "البريد الإلكتروني",
+      "createdAt": "تاريخ الإضافة",
+      "actions": "إجراءات"
+    },
+    "actions": {
+      "edit": "تعديل",
+      "delete": "حذف",
+      "rowActions": "فتح الإجراءات"
+    },
+    "toolbar": {
+      "searchLabel": "البحث عن الطلاب",
+      "searchPlaceholder": "ابحث بالاسم أو الرقم أو البريد الإلكتروني",
+      "gradeLabel": "تصفية حسب الصف",
+      "gradeAll": "كل الصفوف",
+      "gradeOption": "الصف {grade}",
+      "count": "إجمالي الطلاب: {count}",
+      "countFiltered": "عرض {count} من {total}"
+    },
+    "table": {
+      "label": "سجلّ الطلاب",
+      "sortAsc": "ترتيب تصاعدي",
+      "sortDesc": "ترتيب تنازلي",
+      "pagination": "تنقّل سجلّ الطلاب",
+      "pageStatus": "الصفحة {page} من {total}",
+      "previous": "السابق",
+      "next": "التالي"
+    },
+    "card": {
+      "grade": "الصف",
+      "studentNumber": "رقم الطالب",
+      "email": "البريد الإلكتروني",
+      "added": "تاريخ الإضافة"
+    },
+    "form": {
+      "createTitle": "إضافة طالب",
+      "createDescription": "أنشئ سجلًّا جديدًا. الأسماء بالعربية مطلوبة.",
+      "editTitle": "تعديل بيانات الطالب",
+      "editDescription": "حدِّث بيانات هذا الطالب في السجل.",
+      "cancel": "إلغاء",
+      "saving": "جارٍ الحفظ…",
+      "saveCreate": "إضافة طالب",
+      "saveEdit": "حفظ التغييرات"
+    },
+    "delete": {
+      "title": "حذف الطالب؟",
+      "description": "سيؤدّي هذا إلى إزالة {name} نهائيًّا من السجل. لا يمكن التراجع عن ذلك.",
+      "cancel": "إلغاء",
+      "confirm": "حذف",
+      "deleting": "جارٍ الحذف…"
+    },
+    "empty": {
+      "title": "لا يوجد طلاب بعد",
+      "description": "أضِف أول طالب لبدء تتبّع تقدّم القراءة.",
+      "action": "أضِف أول طالب"
+    },
+    "noResults": {
+      "title": "لا يوجد طلاب مطابقون",
+      "description": "لا يوجد طلاب يطابقون بحثك أو عوامل التصفية. جرّب تعديلها.",
+      "action": "مسح عوامل التصفية"
+    },
+    "error": {
+      "title": "تعذّر تحميل الطلاب",
+      "description": "حدث خطأ أثناء تحميل السجل. يرجى المحاولة مرة أخرى."
+    },
+    "toasts": {
+      "createdTitle": "تمت إضافة الطالب",
+      "createdDescription": "تمت إضافة الطالب إلى السجل.",
+      "updatedTitle": "تم حفظ التغييرات",
+      "updatedDescription": "تم تحديث بيانات الطالب.",
+      "deletedTitle": "تمت إزالة الطالب",
+      "deletedDescription": "تمت إزالة {name} من السجل."
+    },
+    "errors": {
+      "duplicate": {
+        "title": "تعذّر حفظ الطالب",
+        "description": "يرجى تصحيح الحقل المميَّز والمحاولة مرة أخرى."
+      },
+      "duplicateNumber": "رقم الطالب هذا مُستخدَم بالفعل.",
+      "duplicateEmail": "هذا البريد الإلكتروني مُستخدَم بالفعل.",
+      "hasHistory": {
+        "title": "تعذّر إزالة هذا الطالب",
+        "description": "لدى هذا الطالب سجلّ قراءة ولا يمكن إزالته."
+      }
+    }
+  },
   "footer": {
     "rights": "جميع الحقوق محفوظة.",
     "builtFor": "مصمَّمة للمدارس ومراكز اللغة العربية ومعلّمي القراءة."

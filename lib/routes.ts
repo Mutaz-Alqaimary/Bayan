@@ -52,6 +52,7 @@ export const IMPLEMENTED_ROUTES: ReadonlySet<AppRoute> = new Set([
   ROUTES.forgotPassword,
   ROUTES.resetPassword,
   ROUTES.dashboard,
+  ROUTES.students,
 ]);
 
 /** Whether a route's page exists yet (vs. a planned, not-yet-built phase). */

@@ -271,6 +271,116 @@
       }
     }
   },
+  "students": {
+    "title": "Students",
+    "subtitle": "Manage your students' roster — names, grade, and contact details.",
+    "loading": "Loading students…",
+    "addStudent": "Add student",
+    "validation": {
+      "wholeNumber": "Enter the grade as a whole number.",
+      "positive": "Grade must be greater than zero.",
+      "invalidDate": "Enter a valid date.",
+      "dateInFuture": "The date can't be in the future."
+    },
+    "fields": {
+      "firstNameAr": "First name (Arabic)",
+      "lastNameAr": "Last name (Arabic)",
+      "firstNameEn": "First name (English)",
+      "lastNameEn": "Last name (English)",
+      "studentNumber": "Student number",
+      "email": "Email",
+      "grade": "Grade",
+      "birthDate": "Birth date"
+    },
+    "columns": {
+      "name": "Name",
+      "studentNumber": "Student number",
+      "grade": "Grade",
+      "email": "Email",
+      "createdAt": "Added",
+      "actions": "Actions"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "rowActions": "Open actions"
+    },
+    "toolbar": {
+      "searchLabel": "Search students",
+      "searchPlaceholder": "Search by name, number, or email",
+      "gradeLabel": "Filter by grade",
+      "gradeAll": "All grades",
+      "gradeOption": "Grade {grade}",
+      "count": "{count} students total",
+      "countFiltered": "Showing {count} of {total}"
+    },
+    "table": {
+      "label": "Students roster",
+      "sortAsc": "sort ascending",
+      "sortDesc": "sort descending",
+      "pagination": "Roster pagination",
+      "pageStatus": "Page {page} of {total}",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "card": {
+      "grade": "Grade",
+      "studentNumber": "Student number",
+      "email": "Email",
+      "added": "Added"
+    },
+    "form": {
+      "createTitle": "Add student",
+      "createDescription": "Create a new roster record. Arabic names are required.",
+      "editTitle": "Edit student",
+      "editDescription": "Update this student's roster details.",
+      "cancel": "Cancel",
+      "saving": "Saving…",
+      "saveCreate": "Add student",
+      "saveEdit": "Save changes"
+    },
+    "delete": {
+      "title": "Delete student?",
+      "description": "This will permanently remove {name} from the roster. This can't be undone.",
+      "cancel": "Cancel",
+      "confirm": "Delete",
+      "deleting": "Deleting…"
+    },
+    "empty": {
+      "title": "No students yet",
+      "description": "Add your first student to start tracking reading progress.",
+      "action": "Add your first student"
+    },
+    "noResults": {
+      "title": "No students found",
+      "description": "No students match your search or filters. Try adjusting them.",
+      "action": "Clear filters"
+    },
+    "error": {
+      "title": "Couldn't load students",
+      "description": "Something went wrong while loading the roster. Please try again."
+    },
+    "toasts": {
+      "createdTitle": "Student added",
+      "createdDescription": "The student was added to the roster.",
+      "updatedTitle": "Changes saved",
+      "updatedDescription": "The student's details were updated.",
+      "deletedTitle": "Student removed",
+      "deletedDescription": "{name} was removed from the roster."
+    },
+    "errors": {
+      "duplicate": {
+        "title": "Couldn't save student",
+        "description": "Please fix the highlighted field and try again."
+      },
+      "duplicateNumber": "This student number is already in use.",
+      "duplicateEmail": "This email is already in use.",
+      "hasHistory": {
+        "title": "Can't remove this student",
+        "description": "This student has reading history and can't be removed."
+      }
+    }
+  },
   "footer": {
     "rights": "All rights reserved.",
     "builtFor": "Built for schools, Arabic language centers, and reading teachers."
