@@ -381,6 +381,205 @@
       }
     }
   },
+  "reading": {
+    "validation": {
+      "wholeNumber": "أدخل رقمًا صحيحًا.",
+      "positive": "أدخل رقمًا أكبر من صفر."
+    }
+  },
+  "passages": {
+    "title": "النصوص",
+    "subtitle": "أنشئ وأدِر نصوص القراءة التي يقرؤها الطلاب.",
+    "loading": "جارٍ تحميل النصوص…",
+    "addPassage": "إنشاء نص",
+    "fields": {
+      "titleAr": "العنوان (بالعربية)",
+      "titleEn": "العنوان (بالإنجليزية)",
+      "contentAr": "المحتوى (بالعربية)",
+      "contentEn": "المحتوى (بالإنجليزية)",
+      "difficulty": "مستوى الصعوبة",
+      "estimatedMinutes": "الدقائق المقدّرة"
+    },
+    "columns": {
+      "title": "العنوان",
+      "difficulty": "الصعوبة",
+      "minutes": "الدقائق",
+      "createdAt": "تاريخ الإضافة",
+      "actions": "إجراءات"
+    },
+    "actions": {
+      "edit": "تعديل",
+      "delete": "حذف",
+      "rowActions": "فتح الإجراءات"
+    },
+    "toolbar": {
+      "searchLabel": "البحث في النصوص",
+      "searchPlaceholder": "ابحث بالعنوان أو المحتوى",
+      "difficultyLabel": "تصفية حسب الصعوبة",
+      "difficultyAll": "كل المستويات",
+      "difficultyOption": "الصعوبة {level}",
+      "count": "إجمالي النصوص: {count}",
+      "countFiltered": "عرض {count} من {total}"
+    },
+    "table": {
+      "label": "نصوص القراءة",
+      "sortAsc": "ترتيب تصاعدي",
+      "sortDesc": "ترتيب تنازلي",
+      "pagination": "تنقّل النصوص",
+      "pageStatus": "الصفحة {page} من {total}",
+      "previous": "السابق",
+      "next": "التالي"
+    },
+    "card": {
+      "difficulty": "الصعوبة",
+      "minutes": "الدقائق",
+      "added": "تاريخ الإضافة"
+    },
+    "form": {
+      "createTitle": "إنشاء نص",
+      "createDescription": "أضِف نص قراءة. العنوان والمحتوى بالعربية مطلوبان.",
+      "editTitle": "تعديل النص",
+      "editDescription": "حدِّث عنوان النص ومحتواه وتفاصيله.",
+      "cancel": "إلغاء",
+      "saving": "جارٍ الحفظ…",
+      "saveCreate": "إنشاء نص",
+      "saveEdit": "حفظ التغييرات"
+    },
+    "delete": {
+      "title": "حذف النص؟",
+      "description": "سيؤدّي هذا إلى إزالة «{title}» نهائيًّا. لا يمكن التراجع عن ذلك.",
+      "cancel": "إلغاء",
+      "confirm": "حذف",
+      "deleting": "جارٍ الحذف…"
+    },
+    "empty": {
+      "title": "لا توجد نصوص بعد",
+      "description": "أنشئ أول نص قراءة لبدء بناء مكتبتك.",
+      "action": "أنشئ أول نص"
+    },
+    "noResults": {
+      "title": "لا توجد نصوص مطابقة",
+      "description": "لا توجد نصوص تطابق بحثك أو عوامل التصفية. جرّب تعديلها.",
+      "action": "مسح عوامل التصفية"
+    },
+    "error": {
+      "title": "تعذّر تحميل النصوص",
+      "description": "حدث خطأ أثناء تحميل النصوص. يرجى المحاولة مرة أخرى."
+    },
+    "toasts": {
+      "createdTitle": "تم إنشاء النص",
+      "createdDescription": "تمت إضافة النص إلى مكتبتك.",
+      "updatedTitle": "تم حفظ التغييرات",
+      "updatedDescription": "تم تحديث النص.",
+      "deletedTitle": "تمت إزالة النص",
+      "deletedDescription": "تمت إزالة «{title}»."
+    },
+    "errors": {
+      "inUse": {
+        "title": "تعذّر إزالة هذا النص",
+        "description": "هذا النص مُستخدَم في جلسات قراءة أو مفردات ولا يمكن إزالته."
+      }
+    }
+  },
+  "vocabulary": {
+    "title": "المفردات",
+    "subtitle": "أدِر المفردات المرتبطة بنصوص القراءة لديك.",
+    "loading": "جارٍ تحميل المفردات…",
+    "addTerm": "إضافة مفردة",
+    "fields": {
+      "passage": "النص",
+      "passagePlaceholder": "اختر نصًّا",
+      "wordAr": "الكلمة (بالعربية)",
+      "wordEn": "الكلمة (بالإنجليزية)",
+      "meaningAr": "المعنى (بالعربية)",
+      "meaningEn": "المعنى (بالإنجليزية)"
+    },
+    "columns": {
+      "word": "الكلمة",
+      "meaning": "المعنى",
+      "passage": "النص",
+      "createdAt": "تاريخ الإضافة",
+      "actions": "إجراءات",
+      "unknownPassage": "نص غير معروف"
+    },
+    "actions": {
+      "edit": "تعديل",
+      "delete": "حذف",
+      "rowActions": "فتح الإجراءات"
+    },
+    "toolbar": {
+      "searchLabel": "البحث في المفردات",
+      "searchPlaceholder": "ابحث بالكلمة أو المعنى",
+      "passageLabel": "تصفية حسب النص",
+      "passageAll": "كل النصوص",
+      "count": "إجمالي المفردات: {count}",
+      "countFiltered": "عرض {count} من {total}"
+    },
+    "table": {
+      "label": "المفردات",
+      "sortAsc": "ترتيب تصاعدي",
+      "sortDesc": "ترتيب تنازلي",
+      "pagination": "تنقّل المفردات",
+      "pageStatus": "الصفحة {page} من {total}",
+      "previous": "السابق",
+      "next": "التالي"
+    },
+    "card": {
+      "meaning": "المعنى",
+      "passage": "النص",
+      "added": "تاريخ الإضافة"
+    },
+    "form": {
+      "createTitle": "إضافة مفردة",
+      "createDescription": "أضِف مفردة واربطها بنص. الكلمة والمعنى بالعربية مطلوبان.",
+      "editTitle": "تعديل المفردة",
+      "editDescription": "حدِّث كلمة المفردة ومعناها والنص المرتبط بها.",
+      "cancel": "إلغاء",
+      "saving": "جارٍ الحفظ…",
+      "saveCreate": "إضافة مفردة",
+      "saveEdit": "حفظ التغييرات"
+    },
+    "delete": {
+      "title": "حذف المفردة؟",
+      "description": "سيؤدّي هذا إلى إزالة «{word}» نهائيًّا. لا يمكن التراجع عن ذلك.",
+      "cancel": "إلغاء",
+      "confirm": "حذف",
+      "deleting": "جارٍ الحذف…"
+    },
+    "empty": {
+      "title": "لا توجد مفردات بعد",
+      "description": "أضِف أول مفردة لبدء بناء مفردات نصوصك.",
+      "action": "أضِف أول مفردة"
+    },
+    "noPassages": {
+      "title": "أنشئ نصًّا أولًا",
+      "description": "ترتبط المفردات بنص قراءة. أنشئ نصًّا قبل إضافة المفردات.",
+      "action": "الانتقال إلى النصوص"
+    },
+    "noResults": {
+      "title": "لا توجد مفردات مطابقة",
+      "description": "لا توجد مفردات تطابق بحثك أو عوامل التصفية. جرّب تعديلها.",
+      "action": "مسح عوامل التصفية"
+    },
+    "error": {
+      "title": "تعذّر تحميل المفردات",
+      "description": "حدث خطأ أثناء تحميل المفردات. يرجى المحاولة مرة أخرى."
+    },
+    "toasts": {
+      "createdTitle": "تمت إضافة المفردة",
+      "createdDescription": "تمت إضافة المفردة.",
+      "updatedTitle": "تم حفظ التغييرات",
+      "updatedDescription": "تم تحديث المفردة.",
+      "deletedTitle": "تمت إزالة المفردة",
+      "deletedDescription": "تمت إزالة «{word}»."
+    },
+    "errors": {
+      "missingPassage": {
+        "title": "تعذّر حفظ المفردة",
+        "description": "النص المحدَّد لم يَعُد موجودًا. حدِّث الصفحة واختر نصًّا آخر."
+      }
+    }
+  },
   "footer": {
     "rights": "جميع الحقوق محفوظة.",
     "builtFor": "مصمَّمة للمدارس ومراكز اللغة العربية ومعلّمي القراءة."

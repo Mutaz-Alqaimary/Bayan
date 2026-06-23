@@ -381,6 +381,205 @@
       }
     }
   },
+  "reading": {
+    "validation": {
+      "wholeNumber": "Enter a whole number.",
+      "positive": "Enter a number greater than zero."
+    }
+  },
+  "passages": {
+    "title": "Passages",
+    "subtitle": "Create and manage the reading passages students read.",
+    "loading": "Loading passages…",
+    "addPassage": "Create passage",
+    "fields": {
+      "titleAr": "Title (Arabic)",
+      "titleEn": "Title (English)",
+      "contentAr": "Content (Arabic)",
+      "contentEn": "Content (English)",
+      "difficulty": "Difficulty level",
+      "estimatedMinutes": "Estimated minutes"
+    },
+    "columns": {
+      "title": "Title",
+      "difficulty": "Difficulty",
+      "minutes": "Minutes",
+      "createdAt": "Added",
+      "actions": "Actions"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "rowActions": "Open actions"
+    },
+    "toolbar": {
+      "searchLabel": "Search passages",
+      "searchPlaceholder": "Search by title or content",
+      "difficultyLabel": "Filter by difficulty",
+      "difficultyAll": "All difficulties",
+      "difficultyOption": "Difficulty {level}",
+      "count": "{count} passages total",
+      "countFiltered": "Showing {count} of {total}"
+    },
+    "table": {
+      "label": "Reading passages",
+      "sortAsc": "sort ascending",
+      "sortDesc": "sort descending",
+      "pagination": "Passages pagination",
+      "pageStatus": "Page {page} of {total}",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "card": {
+      "difficulty": "Difficulty",
+      "minutes": "Minutes",
+      "added": "Added"
+    },
+    "form": {
+      "createTitle": "Create passage",
+      "createDescription": "Add a reading passage. Arabic title and content are required.",
+      "editTitle": "Edit passage",
+      "editDescription": "Update this passage's title, content, and details.",
+      "cancel": "Cancel",
+      "saving": "Saving…",
+      "saveCreate": "Create passage",
+      "saveEdit": "Save changes"
+    },
+    "delete": {
+      "title": "Delete passage?",
+      "description": "This will permanently remove “{title}”. This can't be undone.",
+      "cancel": "Cancel",
+      "confirm": "Delete",
+      "deleting": "Deleting…"
+    },
+    "empty": {
+      "title": "No passages yet",
+      "description": "Create your first reading passage to start building your library.",
+      "action": "Create your first passage"
+    },
+    "noResults": {
+      "title": "No passages found",
+      "description": "No passages match your search or filters. Try adjusting them.",
+      "action": "Clear filters"
+    },
+    "error": {
+      "title": "Couldn't load passages",
+      "description": "Something went wrong while loading the passages. Please try again."
+    },
+    "toasts": {
+      "createdTitle": "Passage created",
+      "createdDescription": "The passage was added to your library.",
+      "updatedTitle": "Changes saved",
+      "updatedDescription": "The passage was updated.",
+      "deletedTitle": "Passage removed",
+      "deletedDescription": "“{title}” was removed."
+    },
+    "errors": {
+      "inUse": {
+        "title": "Can't remove this passage",
+        "description": "This passage is in use by reading sessions or vocabulary and can't be removed."
+      }
+    }
+  },
+  "vocabulary": {
+    "title": "Vocabulary",
+    "subtitle": "Manage the vocabulary terms attached to your reading passages.",
+    "loading": "Loading vocabulary…",
+    "addTerm": "Add term",
+    "fields": {
+      "passage": "Passage",
+      "passagePlaceholder": "Select a passage",
+      "wordAr": "Word (Arabic)",
+      "wordEn": "Word (English)",
+      "meaningAr": "Meaning (Arabic)",
+      "meaningEn": "Meaning (English)"
+    },
+    "columns": {
+      "word": "Word",
+      "meaning": "Meaning",
+      "passage": "Passage",
+      "createdAt": "Added",
+      "actions": "Actions",
+      "unknownPassage": "Unknown passage"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "rowActions": "Open actions"
+    },
+    "toolbar": {
+      "searchLabel": "Search vocabulary",
+      "searchPlaceholder": "Search by word or meaning",
+      "passageLabel": "Filter by passage",
+      "passageAll": "All passages",
+      "count": "{count} terms total",
+      "countFiltered": "Showing {count} of {total}"
+    },
+    "table": {
+      "label": "Vocabulary terms",
+      "sortAsc": "sort ascending",
+      "sortDesc": "sort descending",
+      "pagination": "Vocabulary pagination",
+      "pageStatus": "Page {page} of {total}",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "card": {
+      "meaning": "Meaning",
+      "passage": "Passage",
+      "added": "Added"
+    },
+    "form": {
+      "createTitle": "Add vocabulary term",
+      "createDescription": "Add a term and attach it to a passage. Arabic word and meaning are required.",
+      "editTitle": "Edit vocabulary term",
+      "editDescription": "Update this term's word, meaning, and passage.",
+      "cancel": "Cancel",
+      "saving": "Saving…",
+      "saveCreate": "Add term",
+      "saveEdit": "Save changes"
+    },
+    "delete": {
+      "title": "Delete term?",
+      "description": "This will permanently remove “{word}”. This can't be undone.",
+      "cancel": "Cancel",
+      "confirm": "Delete",
+      "deleting": "Deleting…"
+    },
+    "empty": {
+      "title": "No vocabulary yet",
+      "description": "Add your first term to start building vocabulary for your passages.",
+      "action": "Add your first term"
+    },
+    "noPassages": {
+      "title": "Create a passage first",
+      "description": "Vocabulary terms attach to a reading passage. Create a passage before adding vocabulary.",
+      "action": "Go to passages"
+    },
+    "noResults": {
+      "title": "No vocabulary found",
+      "description": "No terms match your search or filters. Try adjusting them.",
+      "action": "Clear filters"
+    },
+    "error": {
+      "title": "Couldn't load vocabulary",
+      "description": "Something went wrong while loading the vocabulary. Please try again."
+    },
+    "toasts": {
+      "createdTitle": "Term added",
+      "createdDescription": "The vocabulary term was added.",
+      "updatedTitle": "Changes saved",
+      "updatedDescription": "The vocabulary term was updated.",
+      "deletedTitle": "Term removed",
+      "deletedDescription": "“{word}” was removed."
+    },
+    "errors": {
+      "missingPassage": {
+        "title": "Couldn't save term",
+        "description": "The selected passage no longer exists. Refresh and choose another passage."
+      }
+    }
+  },
   "footer": {
     "rights": "All rights reserved.",
     "builtFor": "Built for schools, Arabic language centers, and reading teachers."

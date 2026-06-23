@@ -65,6 +65,8 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   return (
     <th
       data-slot="table-head"
+      // Default column scope for header/data association (overridable via props).
+      scope="col"
       className={cn(
         "h-10 px-3 text-start align-middle font-medium text-muted-foreground has-[[role=checkbox]]:pe-0",
         className,

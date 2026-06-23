@@ -48,3 +48,57 @@ export function passageTitle(
   }
   return passage.title_ar;
 }
+
+/**
+ * A vocabulary term's word in the active locale, falling back to the Arabic
+ * word (always present) when the English word is missing.
+ */
+export function vocabularyWord(
+  term: Pick<VocabularyTermRecord, "word_ar" | "word_en">,
+  locale: string,
+): string {
+  if (locale === "en" && term.word_en) {
+    return term.word_en;
+  }
+  return term.word_ar;
+}
+
+/**
+ * Form value types for the Phase 8 reading-content CRUD forms. Names are fixed
+ * by `.claude/rules/naming-conventions.md` (which names these explicitly).
+ *
+ * Every field is a string because that is what the inputs hold (a number input
+ * still yields a string, a blank optional field yields `""`). The Zod schemas in
+ * `schemas.ts` validate these; the string→number / blank→`null` conversion to
+ * the typed insert/update payload happens explicitly in the Server Action, so
+ * `react-hook-form` and `zodResolver` stay perfectly typed.
+ */
+export type CreatePassageFormValues = {
+  title_ar: string;
+  title_en: string;
+  content_ar: string;
+  content_en: string;
+  difficulty_level: string;
+  estimated_minutes: string;
+};
+
+/** Same editable fields as create — the id is passed separately to the action. */
+export type UpdatePassageFormValues = CreatePassageFormValues;
+
+export type CreateVocabularyTermFormValues = {
+  passage_id: string;
+  word_ar: string;
+  word_en: string;
+  meaning_ar: string;
+  meaning_en: string;
+};
+
+/** Same editable fields as create — the id is passed separately to the action. */
+export type UpdateVocabularyTermFormValues = CreateVocabularyTermFormValues;
+
+/** A passage reduced to what the vocabulary passage selector/filter needs. */
+export type PassageOption = {
+  id: string;
+  title_ar: string;
+  title_en: string | null;
+};
