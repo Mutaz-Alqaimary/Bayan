@@ -57,7 +57,9 @@
       "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('messages/en.json','utf8'\\)\\); JSON.parse\\(require\\('fs'\\).readFileSync\\('messages/ar.json','utf8'\\)\\); console.log\\('JSON OK'\\);\")",
       "Bash(find app *)",
       "Bash(node -e \"let d='';process.stdin.on\\('data',c=>d+=c\\);process.stdin.on\\('end',\\(\\)=>{const p=JSON.parse\\(d\\);console.log\\(JSON.stringify\\(p.scripts,null,2\\)\\);}\\)\")",
-      "Bash(node -e \"const m=require\\('./messages/ar.json'\\); console.log\\(JSON.stringify\\({passages:m.passages,vocabulary:m.vocabulary,reading:m.reading},null,1\\)\\)\")"
+      "Bash(node -e \"const m=require\\('./messages/ar.json'\\); console.log\\(JSON.stringify\\({passages:m.passages,vocabulary:m.vocabulary,reading:m.reading},null,1\\)\\)\")",
+      "Bash(node -e \"const m=require\\('./messages/en.json'\\); console.log\\(JSON.stringify\\(m.students, null, 1\\)\\);\")",
+      "PowerShell(npm install xlsx)"
     ],
     "deny": [
       "Read(./.env)",

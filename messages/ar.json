@@ -272,6 +272,92 @@
     }
   },
   "students": {
+    "importExport": {
+      "import": "استيراد",
+      "title": "استيراد الطلاب",
+      "description": "ارفع ملف CSV أو Excel لإضافة الطلاب أو تحديثهم دفعةً واحدة. ستراجع كل شيء قبل حفظ أي تغيير.",
+      "cancel": "إلغاء",
+      "export": {
+        "trigger": "تصدير",
+        "rosterLabel": "تصدير القائمة",
+        "xlsx": "Excel ‏(.xlsx)",
+        "csv": "CSV ‏(.csv)",
+        "templateLabel": "قالب الاستيراد",
+        "templateXlsx": "القالب ‏(.xlsx)",
+        "templateCsv": "القالب ‏(.csv)"
+      },
+      "upload": {
+        "title": "اسحب ملفًا إلى هنا، أو اختر ملفًا",
+        "description": "الصيغ المدعومة: CSV و Excel ‏(.xlsx).",
+        "parsing": "جارٍ قراءة الملف…",
+        "choose": "اختيار ملف",
+        "accepted": "ملف CSV أو XLSX، حتى 2000 صف.",
+        "templateHint": "غير متأكد من الصيغة؟ نزّل القالب:",
+        "templateXlsx": "Excel",
+        "templateCsv": "CSV",
+        "errors": {
+          "unreadable": {
+            "title": "تعذّرت قراءة هذا الملف",
+            "description": "تأكد أنه ملف CSV أو Excel صالح ثم حاول مرة أخرى."
+          },
+          "empty": {
+            "title": "لا يحتوي الملف على صفوف",
+            "description": "أضف صف طالب واحد على الأقل ثم حاول مرة أخرى."
+          },
+          "no_columns": {
+            "title": "لا توجد أعمدة معروفة",
+            "description": "صف العناوين لا يطابق القالب. نزّل القالب ثم حاول مرة أخرى."
+          },
+          "too_many_rows": {
+            "title": "عدد الصفوف كبير جدًا",
+            "description": "الاستيراد محدود بـ 2000 طالب في المرة الواحدة. قسّم الملف ثم حاول مرة أخرى."
+          }
+        }
+      },
+      "preview": {
+        "summary": "{create} للإنشاء · {update} للتحديث · {skip} دون تغيير · {reject} مرفوض.",
+        "row": "الصف {number}",
+        "noChanges": "لا تغييرات — محدّث بالفعل.",
+        "changeFrom": "من",
+        "changeTo": "إلى",
+        "errorLabel": "خطأ",
+        "tabs": {
+          "create": "إنشاء",
+          "update": "تحديث",
+          "skip": "تجاهل",
+          "reject": "رفض"
+        },
+        "empty": {
+          "create": "لا طلاب جدد لإنشائهم.",
+          "update": "لا طلاب لتحديثهم.",
+          "skip": "لا صفوف دون تغيير.",
+          "reject": "لا صفوف مرفوضة — كل شيء سليم."
+        },
+        "chooseAnother": "اختيار ملف آخر",
+        "commit": "{count, plural, one {استيراد طالب واحد} two {استيراد طالبين} few {استيراد # طلاب} many {استيراد # طالبًا} other {استيراد # طالب}}",
+        "committing": "جارٍ الاستيراد…"
+      },
+      "reject": {
+        "duplicateNumberInFile": "رقم الطالب هذا مكرر أكثر من مرة في الملف.",
+        "duplicateEmailInFile": "هذا البريد الإلكتروني مكرر أكثر من مرة في الملف.",
+        "emailTakenByOther": "هذا البريد الإلكتروني مستخدم بالفعل لطالب آخر."
+      },
+      "commit": {
+        "rejectedTitle": "توقّف الاستيراد — لم يُحفظ شيء",
+        "rejectedDescription": "أصبحت بعض الصفوف غير صالحة بعد المعاينة. راجعها ثم حاول مرة أخرى."
+      },
+      "result": {
+        "successTitle": "اكتمل الاستيراد",
+        "successDescription": "تم إنشاء {created} وتحديث {updated} من الطلاب.",
+        "tryAgain": "إعادة المحاولة",
+        "close": "إغلاق",
+        "done": "تم"
+      },
+      "toasts": {
+        "successTitle": "تم استيراد الطلاب",
+        "successDescription": "تم إنشاء {created} وتحديث {updated}."
+      }
+    },
     "title": "الطلاب",
     "subtitle": "أدِر سجلّ طلابك — الأسماء والصف وبيانات التواصل.",
     "loading": "جارٍ تحميل الطلاب…",

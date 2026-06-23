@@ -272,6 +272,92 @@
     }
   },
   "students": {
+    "importExport": {
+      "import": "Import",
+      "title": "Import students",
+      "description": "Upload a CSV or Excel file to add or update students in bulk. You'll review everything before anything is saved.",
+      "cancel": "Cancel",
+      "export": {
+        "trigger": "Export",
+        "rosterLabel": "Export roster",
+        "xlsx": "Excel (.xlsx)",
+        "csv": "CSV (.csv)",
+        "templateLabel": "Import template",
+        "templateXlsx": "Template (.xlsx)",
+        "templateCsv": "Template (.csv)"
+      },
+      "upload": {
+        "title": "Drag a file here, or choose one",
+        "description": "Supported formats: CSV and Excel (.xlsx).",
+        "parsing": "Reading your file…",
+        "choose": "Choose file",
+        "accepted": "CSV or XLSX, up to 2,000 rows.",
+        "templateHint": "Not sure about the format? Download the template:",
+        "templateXlsx": "Excel",
+        "templateCsv": "CSV",
+        "errors": {
+          "unreadable": {
+            "title": "Couldn't read this file",
+            "description": "Make sure it's a valid CSV or Excel file, then try again."
+          },
+          "empty": {
+            "title": "This file has no rows",
+            "description": "Add at least one student row and try again."
+          },
+          "no_columns": {
+            "title": "No recognized columns",
+            "description": "The header row doesn't match the template. Download the template and try again."
+          },
+          "too_many_rows": {
+            "title": "Too many rows",
+            "description": "Imports are limited to 2,000 students at a time. Split the file and try again."
+          }
+        }
+      },
+      "preview": {
+        "summary": "{create} to create · {update} to update · {skip} unchanged · {reject} rejected.",
+        "row": "Row {number}",
+        "noChanges": "No changes — already up to date.",
+        "changeFrom": "from",
+        "changeTo": "to",
+        "errorLabel": "Error",
+        "tabs": {
+          "create": "Create",
+          "update": "Update",
+          "skip": "Skip",
+          "reject": "Reject"
+        },
+        "empty": {
+          "create": "No new students to create.",
+          "update": "No students to update.",
+          "skip": "No unchanged rows.",
+          "reject": "No rejected rows — everything checks out."
+        },
+        "chooseAnother": "Choose another file",
+        "commit": "Import {count, plural, one {# student} other {# students}}",
+        "committing": "Importing…"
+      },
+      "reject": {
+        "duplicateNumberInFile": "This student number appears more than once in the file.",
+        "duplicateEmailInFile": "This email appears more than once in the file.",
+        "emailTakenByOther": "This email already belongs to another student."
+      },
+      "commit": {
+        "rejectedTitle": "Import stopped — nothing was saved",
+        "rejectedDescription": "Some rows became invalid since the preview. Review them and try again."
+      },
+      "result": {
+        "successTitle": "Import complete",
+        "successDescription": "{created, plural, =0 {No students created} one {# student created} other {# students created}}, {updated, plural, =0 {none updated} one {# updated} other {# updated}}.",
+        "tryAgain": "Try again",
+        "close": "Close",
+        "done": "Done"
+      },
+      "toasts": {
+        "successTitle": "Students imported",
+        "successDescription": "{created, plural, =0 {No students created} one {# created} other {# created}}, {updated, plural, =0 {none updated} one {# updated} other {# updated}}."
+      }
+    },
     "title": "Students",
     "subtitle": "Manage your students' roster — names, grade, and contact details.",
     "loading": "Loading students…",

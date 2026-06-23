@@ -1,6 +1,6 @@
 "use client";
 
-import { UserPlus } from "lucide-react";
+import { Upload, UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { DeleteStudentDialog } from "@/features/students/components/delete-student-dialog";
 import { StudentFormDialog } from "@/features/students/components/student-form-dialog";
 import { StudentsTable } from "@/features/students/components/students-table";
+import { ExportMenu } from "@/features/students/import-export/components/export-menu";
+import { ImportDialog } from "@/features/students/import-export/components/import-dialog";
 import type { StudentRecord } from "@/features/students/types";
 
 /**
@@ -21,6 +23,7 @@ export function StudentsPage({ students }: { students: StudentRecord[] }) {
   const [editing, setEditing] = useState<StudentRecord | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<StudentRecord | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
 
   function openCreate() {
     setEditing(null);
@@ -46,10 +49,17 @@ export function StudentsPage({ students }: { students: StudentRecord[] }) {
           </h1>
           <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
         </div>
-        <Button onClick={openCreate}>
-          <UserPlus className="size-4" aria-hidden="true" />
-          {t("addStudent")}
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <ExportMenu students={students} />
+          <Button variant="outline" onClick={() => setImportOpen(true)}>
+            <Upload className="size-4" aria-hidden="true" />
+            {t("importExport.import")}
+          </Button>
+          <Button onClick={openCreate}>
+            <UserPlus className="size-4" aria-hidden="true" />
+            {t("addStudent")}
+          </Button>
+        </div>
       </header>
 
       <StudentsTable
@@ -68,6 +78,11 @@ export function StudentsPage({ students }: { students: StudentRecord[] }) {
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
         student={deleteTarget}
+      />
+      <ImportDialog
+        open={importOpen}
+        onOpenChange={setImportOpen}
+        students={students}
       />
     </div>
   );
