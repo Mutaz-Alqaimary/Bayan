@@ -6,13 +6,17 @@ import { revalidatePath } from "next/cache";
 import { requireRole } from "@/features/auth/guards";
 import { toNum } from "@/features/dashboard/data/shared";
 import { computeFluency, countWords } from "@/features/reading/sessions/fluency";
-import { getLinkedStudentId } from "@/features/reading/sessions/queries";
+import {
+  getLinkedStudentId,
+  getPassageVocabulary,
+} from "@/features/reading/sessions/queries";
 import {
   buildCompleteReadingSessionSchema,
   DURATION_MAX_SECONDS,
   type CompleteReadingSessionMessages,
 } from "@/features/reading/sessions/schemas";
 import type { CompleteReadingSessionFormValues } from "@/features/reading/sessions/types";
+import type { VocabularyTermRecord } from "@/features/reading/types";
 import { ROUTES } from "@/lib/routes";
 import { supabaseServerClient } from "@/lib/supabase/server";
 import { getValidationMessages } from "@/lib/validation/server";
@@ -196,4 +200,29 @@ export async function completeReadingSessionAction(
 
   await revalidateAfterSession();
   return { ok: true, duplicate: false };
+}
+
+/** Result of loading a passage's vocabulary for the reader's lookup panel. */
+export type LoadPassageVocabularyResult =
+  | { ok: true; terms: VocabularyTermRecord[] }
+  | { ok: false };
+
+/**
+ * Load the vocabulary terms for one passage, for the Phase 11 reader's lookup
+ * panel. Student-only (the reading workflow is student-scoped); reads through
+ * the RLS-respecting session client. Returns a discriminated result so the
+ * client can render a localized error state without leaking the raw message.
+ */
+export async function loadPassageVocabularyAction(
+  passageId: string,
+): Promise<LoadPassageVocabularyResult> {
+  await requireRole("student");
+
+  try {
+    const terms = await getPassageVocabulary(passageId);
+    return { ok: true, terms };
+  } catch (error) {
+    console.error("Failed to load passage vocabulary:", error);
+    return { ok: false };
+  }
 }

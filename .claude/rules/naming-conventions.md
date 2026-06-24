@@ -109,6 +109,26 @@ completeReadingSessionAction       // server: recompute + insert (session client
 Phase 10: the in-progress session state is page-local and ephemeral, so a global store would be
 over-engineering. Introduce it when reading state genuinely spans routes (e.g. the Phase 11 reader).
 
+## Read With Me — reader + vocabulary (Phase 11)
+
+The "Read With Me" reading experience lives inside the existing Phase 10 workflow (no new
+route, no `useReadingStore`): the reader is the timed reading step, extended with a vocabulary
+lookup panel. Vocabulary is strictly a reading aid (word + meaning) — no quizzes, flashcards, or
+progress tracking. Names:
+
+```
+VocabularyTermRecord            // a row of vocabulary_terms (locked schema, reused from features/reading/types.ts)
+VocabularyPanelState            // discriminated lookup state (loading | error | ready+terms)
+LoadPassageVocabularyResult     // discriminated load-action result ({ ok:true; terms } | { ok:false })
+
+vocabularyWord / vocabularyMeaning // active-locale word/meaning accessors — features/reading/types.ts
+getPassageVocabulary               // server read: one passage's terms (session client) — sessions/queries.ts
+loadPassageVocabularyAction        // server: student-gated vocabulary load for the reader — sessions/actions.ts
+```
+
+`useReadingStore` stays reserved and unbuilt: the Phase 11 reader keeps all its state page-local
+inside `/reading-sessions` (no cross-route reading state), so a global store still isn't warranted.
+
 If a later phase needs something not listed here, derive it by following the same pattern
 (e.g. `<Entity>Record`, `use<Domain>Store`) rather than picking an arbitrary name, and add it to
 this file once decided so it stays the single source of truth.

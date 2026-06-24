@@ -64,6 +64,21 @@ export function vocabularyWord(
 }
 
 /**
+ * A vocabulary term's meaning in the active locale, falling back to the Arabic
+ * meaning (always present) when the English meaning is missing. Mirrors
+ * `vocabularyWord` — used by the Phase 11 reader's vocabulary lookup.
+ */
+export function vocabularyMeaning(
+  term: Pick<VocabularyTermRecord, "meaning_ar" | "meaning_en">,
+  locale: string,
+): string {
+  if (locale === "en" && term.meaning_en) {
+    return term.meaning_en;
+  }
+  return term.meaning_ar;
+}
+
+/**
  * Form value types for the Phase 8 reading-content CRUD forms. Names are fixed
  * by `.claude/rules/naming-conventions.md` (which names these explicitly).
  *

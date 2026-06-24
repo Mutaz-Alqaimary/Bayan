@@ -16,6 +16,7 @@ import type {
   ReadingSessionView,
 } from "@/features/reading/sessions/types";
 import { passageTitle } from "@/features/reading/types";
+import type { VocabularyTermRecord } from "@/features/reading/types";
 import { supabaseServerClient } from "@/lib/supabase/server";
 
 /**
@@ -81,6 +82,35 @@ export async function getReadablePassages(): Promise<ReadablePassage[]> {
     ...passage,
     word_count: countWords(passage.content_ar),
   }));
+}
+
+/** Columns the reader's vocabulary lookup needs (word + meaning, both scripts). */
+const VOCABULARY_COLUMNS =
+  "id, passage_id, word_ar, word_en, meaning_ar, meaning_en, created_at";
+
+/**
+ * The vocabulary terms attached to one passage — the reading aid shown in the
+ * Phase 11 reader's vocabulary panel. Scoped to a single `passage_id` (never the
+ * whole library), read under the request's RLS-respecting session client. Terms
+ * are returned in insertion order; the client re-sorts with an Arabic-aware
+ * collator where ordering matters.
+ */
+export async function getPassageVocabulary(
+  passageId: string,
+): Promise<VocabularyTermRecord[]> {
+  const supabase = await supabaseServerClient();
+  const { data, error } = await supabase
+    .from("vocabulary_terms")
+    .select(VOCABULARY_COLUMNS)
+    .eq("passage_id", passageId)
+    .order("created_at", { ascending: true })
+    .returns<VocabularyTermRecord[]>();
+
+  if (error) {
+    throw new Error(`Failed to load passage vocabulary: ${error.message}`);
+  }
+
+  return data ?? [];
 }
 
 /** A student's reading history (recent sessions + progress summary). */

@@ -693,6 +693,27 @@
       "cancel": "Cancel session",
       "inProgress": "Reading in progress. Select ‘I'm done’ when you finish."
     },
+    "reader": {
+      "vocabulary": {
+        "title": "Vocabulary",
+        "openLabel": "Vocabulary",
+        "hint": "Tap a word to see what it means.",
+        "drawerDescription": "Tap a word to see what it means.",
+        "searchLabel": "Search vocabulary",
+        "searchPlaceholder": "Search a word or meaning",
+        "loading": "Loading vocabulary…",
+        "noMatches": "No words match your search.",
+        "empty": {
+          "title": "No vocabulary for this passage",
+          "description": "This passage doesn't have any vocabulary terms to look up."
+        },
+        "error": {
+          "title": "Couldn't load vocabulary",
+          "description": "Something went wrong loading the words for this passage.",
+          "retry": "Try again"
+        }
+      }
+    },
     "review": {
       "title": "How did it go?",
       "subtitle": "Enter how many words you misread, then save your session.",
