@@ -86,6 +86,29 @@ useStudentImportMessages   // client — import-export/use-student-import-messag
 getImportMessages          // server — import-export/actions.ts (local)
 ```
 
+## Reading fluency / sessions (Phase 10)
+
+The student reading-session workflow & history lives in `features/reading/sessions/`. Names:
+
+```
+ReadingSessionRecord            // a row of reading_sessions (locked schema)
+ReadablePassage                 // a passage + precomputed Arabic word_count (student reader)
+ReadingSessionView              // a completed session resolved for the history list
+ReadingHistory                  // history list + progress summary
+ReadingSessionsData             // discriminated page data ({ linked:false } | linked+data)
+CompleteReadingSessionFormValues // the session-completion form (passage_id, duration_seconds, errors)
+CompleteReadingSessionMessages   // localized schema copy
+
+countWords / computeFluency        // pure WPM/accuracy formulas — fluency.ts
+buildCompleteReadingSessionSchema  // message-injected Zod factory — schemas.ts
+getReadablePassages / getReadingSessionsData / getLinkedStudentId // server reads — queries.ts
+completeReadingSessionAction       // server: recompute + insert (session client only) — actions.ts
+```
+
+`useReadingStore` remains reserved (naming-convention) but is intentionally **not** built in
+Phase 10: the in-progress session state is page-local and ephemeral, so a global store would be
+over-engineering. Introduce it when reading state genuinely spans routes (e.g. the Phase 11 reader).
+
 If a later phase needs something not listed here, derive it by following the same pattern
 (e.g. `<Entity>Record`, `use<Domain>Store`) rather than picking an arbitrary name, and add it to
 this file once decided so it stays the single source of truth.

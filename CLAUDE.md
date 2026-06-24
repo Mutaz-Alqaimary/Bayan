@@ -58,6 +58,11 @@ Before making architectural decisions, load all relevant documentation for the c
 
 ---
 
+# Focus on this 
+-Database Rule:
+Do not assume setup.sql contains all permissions or RLS policies.
+Treat the live Supabase database as the source of truth for authorization behavior.
+
 # Required Project Documents
 
 

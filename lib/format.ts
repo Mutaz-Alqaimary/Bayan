@@ -41,6 +41,14 @@ export function formatDecimal(value: number, locale: string): string {
   }).format(value);
 }
 
+/** A reading duration in seconds as compact `m:ss` (Western numerals, LTR). */
+export function formatDuration(totalSeconds: number, locale: string): string {
+  const safe = Math.max(0, Math.floor(totalSeconds));
+  const minutes = Math.floor(safe / 60);
+  const seconds = safe % 60;
+  return `${formatNumber(minutes, locale)}:${String(seconds).padStart(2, "0")}`;
+}
+
 /** A medium-style date (e.g. activity timestamps). */
 export function formatDate(value: string | Date, locale: string): string {
   const date = typeof value === "string" ? new Date(value) : value;

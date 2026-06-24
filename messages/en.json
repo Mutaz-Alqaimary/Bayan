@@ -666,6 +666,105 @@
       }
     }
   },
+  "readingSessions": {
+    "title": "My reading",
+    "subtitle": "Start a reading session and track how your fluency improves over time.",
+    "loading": "Loading your reading…",
+    "unlinked": {
+      "title": "Your reading profile isn't set up yet",
+      "description": "Ask your teacher to add you to a class so you can start reading sessions."
+    },
+    "noPassages": {
+      "title": "No passages available yet",
+      "description": "Your teacher hasn't added any reading passages. Check back soon."
+    },
+    "start": {
+      "title": "Start a reading session",
+      "description": "Pick a passage, read it aloud at your own pace, then record how you did.",
+      "passageLabel": "Passage",
+      "passagePlaceholder": "Choose a passage to read",
+      "action": "Start reading",
+      "meta": "{words} words · about {minutes} min · level {level}"
+    },
+    "runner": {
+      "wordCount": "{count} words",
+      "elapsed": "Time",
+      "stop": "I'm done",
+      "cancel": "Cancel session",
+      "inProgress": "Reading in progress. Select ‘I'm done’ when you finish."
+    },
+    "review": {
+      "title": "How did it go?",
+      "subtitle": "Enter how many words you misread, then save your session.",
+      "errorsLabel": "Words misread",
+      "errorsHint": "Out of {count} words in this passage.",
+      "decrease": "One fewer",
+      "increase": "One more",
+      "metrics": {
+        "duration": "Time",
+        "wpm": "Words per minute",
+        "accuracy": "Accuracy"
+      },
+      "formula": {
+        "title": "How these are calculated",
+        "wpm": "WPM = {words} words × 60 ÷ {seconds}s = {wpm}",
+        "accuracy": "Accuracy = ({words} − {errors}) ÷ {words} × 100 = {accuracy}%"
+      },
+      "back": "Discard",
+      "confirm": "Save session",
+      "saving": "Saving…"
+    },
+    "history": {
+      "summaryLabel": "Reading progress summary",
+      "empty": {
+        "title": "No reading sessions yet",
+        "description": "Your completed sessions and progress will appear here."
+      },
+      "kpis": {
+        "sessions": "Sessions",
+        "avgWpm": "Average speed",
+        "bestWpm": "Best speed",
+        "avgAccuracy": "Average accuracy"
+      },
+      "trendTitle": "Speed trend",
+      "trendDescription": "Words per minute across your recent sessions.",
+      "listTitle": "Recent sessions",
+      "columns": {
+        "wpm": "Words per minute",
+        "accuracy": "Accuracy",
+        "duration": "Time"
+      },
+      "wpmValue": "{value} wpm"
+    },
+    "toasts": {
+      "savedTitle": "Session saved",
+      "savedDescription": "Your reading session was recorded.",
+      "alreadySaved": "This session was already recorded."
+    },
+    "error": {
+      "title": "Couldn't load your reading",
+      "description": "Something went wrong while loading this page. Please try again."
+    },
+    "validation": {
+      "wholeNumber": "Enter a whole number.",
+      "positive": "Time must be greater than zero.",
+      "durationTooLong": "A session can't be longer than {max} seconds."
+    },
+    "errors": {
+      "notLinked": {
+        "title": "Reading profile not set up",
+        "description": "Ask your teacher to add you to a class before recording a session."
+      },
+      "passageMissing": {
+        "title": "Passage not found",
+        "description": "This passage is no longer available. Pick another and try again."
+      },
+      "errorsExceedWords": {
+        "title": "Too many misread words",
+        "description": "You can't misread more than the {words} words in this passage."
+      }
+    }
+  },
   "footer": {
     "rights": "All rights reserved.",
     "builtFor": "Built for schools, Arabic language centers, and reading teachers."

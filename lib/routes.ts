@@ -55,6 +55,7 @@ export const IMPLEMENTED_ROUTES: ReadonlySet<AppRoute> = new Set([
   ROUTES.students,
   ROUTES.passages,
   ROUTES.vocabulary,
+  ROUTES.readingSessions,
 ]);
 
 /** Whether a route's page exists yet (vs. a planned, not-yet-built phase). */

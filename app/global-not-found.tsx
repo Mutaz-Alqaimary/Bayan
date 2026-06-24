@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 
 import { getLocaleDirection } from "@/i18n/routing";
 import { DEFAULT_LOCALE } from "@/lib/constants";
+import { ThemeInitScript } from "@/components/theme-init-script";
 import { fontSans } from "@/lib/fonts";
-import { themeInitScript } from "@/lib/theme";
 import messages from "@/messages/ar.json";
 
 import "./globals.css";
@@ -29,10 +29,8 @@ export default function GlobalNotFound() {
       suppressHydrationWarning
       className={fontSans.variable}
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-      </head>
       <body>
+        <ThemeInitScript />
         <main className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-background px-6 text-center text-foreground">
           <p className="text-5xl font-bold tracking-tight text-primary">
             {t.code}

@@ -4,9 +4,9 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { AppProviders } from "@/components/providers/app-providers";
+import { ThemeInitScript } from "@/components/theme-init-script";
 import { getLocaleDirection, routing, type AppLocale } from "@/i18n/routing";
 import { fontSans } from "@/lib/fonts";
-import { themeInitScript } from "@/lib/theme";
 
 import "../globals.css";
 
@@ -54,10 +54,8 @@ export default async function LocaleLayout({
       suppressHydrationWarning
       className={fontSans.variable}
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-      </head>
       <body>
+        <ThemeInitScript />
         <NextIntlClientProvider>
           <AppProviders>{children}</AppProviders>
         </NextIntlClientProvider>
