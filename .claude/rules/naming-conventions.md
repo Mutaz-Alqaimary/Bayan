@@ -129,6 +129,34 @@ loadPassageVocabularyAction        // server: student-gated vocabulary load for 
 `useReadingStore` stays reserved and unbuilt: the Phase 11 reader keeps all its state page-local
 inside `/reading-sessions` (no cross-route reading state), so a global store still isn't warranted.
 
+## Settings (Phase 12)
+
+Personal settings backed by `user_settings` live in `features/settings/`. The four preferences map
+1:1 to the locked columns (`theme`, `locale`, `reduced_motion`, `email_notifications`) — no invented
+columns. Names:
+
+```
+UserSettingsRecord        // a row of user_settings (locked schema) — features/settings/types.ts
+SettingsData              // the four prefs resolved for the form, defaults applied — types.ts
+UpdateSettingsFormValues  // the settings-form submission shape (alias of SettingsData) — types.ts
+UpdateSettingsMessages    // localized schema copy (the single `invalid` message) — schemas.ts
+UpdateSettingsResult      // discriminated update-action result — actions.ts
+
+buildUpdateSettingsSchema // message-injected Zod factory — schemas.ts
+getUserSettings           // server read: own settings or defaults (session client) — queries.ts
+updateSettingsAction      // server: re-validate + upsert own row (session client only) — actions.ts
+useSettingsSchemaMessages // client mirror of the server schema copy — components/
+
+MotionProvider / useReducedMotion // explicit reduced-motion preference provider — components/providers/motion-provider.tsx
+reducedMotionInitScript           // no-flash inline script for reduced motion — lib/motion.ts
+```
+
+`useSettingsStore` stays **reserved and intentionally unbuilt** (like `useReadingStore`): theme and
+reduced motion already live in React context providers (`ThemeProvider`, `MotionProvider`), settings
+form state is page-local, and Zustand is not a project dependency — so a global store would be
+over-engineering. Introduce it only if settings state genuinely needs to be reactive across many
+routes beyond what the providers cover.
+
 If a later phase needs something not listed here, derive it by following the same pattern
 (e.g. `<Entity>Record`, `use<Domain>Store`) rather than picking an arbitrary name, and add it to
 this file once decided so it stays the single source of truth.

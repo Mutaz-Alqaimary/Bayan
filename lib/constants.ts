@@ -35,4 +35,5 @@ export const LOCALE_LABELS: Record<AppLocale, string> = {
  */
 export const STORAGE_KEYS = {
   theme: "bayan-theme",
+  reducedMotion: "bayan-reduced-motion",
 } as const;

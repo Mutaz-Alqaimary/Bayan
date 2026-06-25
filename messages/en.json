@@ -786,6 +786,51 @@
       }
     }
   },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your appearance, language, and notification preferences.",
+    "loading": "Loading your settings…",
+    "save": "Save changes",
+    "saving": "Saving…",
+    "appearance": {
+      "title": "Appearance",
+      "description": "Choose how Bayan looks. ‘System’ follows your device setting.",
+      "themes": {
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      }
+    },
+    "language": {
+      "title": "Language",
+      "description": "Set the language and reading direction for the interface."
+    },
+    "accessibility": {
+      "title": "Accessibility",
+      "reducedMotion": {
+        "title": "Reduced motion",
+        "description": "Minimize animations and transitions across the app."
+      }
+    },
+    "notifications": {
+      "title": "Notifications",
+      "email": {
+        "title": "Email notifications",
+        "description": "Receive product and progress updates by email when available."
+      }
+    },
+    "toasts": {
+      "savedTitle": "Settings saved",
+      "savedDescription": "Your preferences have been updated."
+    },
+    "validation": {
+      "invalid": "Please choose a valid option."
+    },
+    "error": {
+      "title": "Couldn't load your settings",
+      "description": "Something went wrong while loading this page. Please try again."
+    }
+  },
   "footer": {
     "rights": "All rights reserved.",
     "builtFor": "Built for schools, Arabic language centers, and reading teachers."

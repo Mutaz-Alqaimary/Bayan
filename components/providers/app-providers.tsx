@@ -3,6 +3,7 @@
 import { DirectionProvider } from "@radix-ui/react-direction";
 import { useLocale } from "next-intl";
 
+import { MotionProvider } from "@/components/providers/motion-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -24,10 +25,12 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <DirectionProvider dir={direction}>
       <ThemeProvider>
-        <TooltipProvider>
-          {children}
-          <Toaster />
-        </TooltipProvider>
+        <MotionProvider>
+          <TooltipProvider>
+            {children}
+            <Toaster />
+          </TooltipProvider>
+        </MotionProvider>
       </ThemeProvider>
     </DirectionProvider>
   );

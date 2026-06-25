@@ -1,3 +1,4 @@
+import { reducedMotionInitScript } from "@/lib/motion";
 import { themeInitScript } from "@/lib/theme";
 
 /**
@@ -30,7 +31,9 @@ export function ThemeInitScript() {
     <div
       hidden
       suppressHydrationWarning
-      dangerouslySetInnerHTML={{ __html: `<script>${themeInitScript}</script>` }}
+      dangerouslySetInnerHTML={{
+        __html: `<script>${themeInitScript}${reducedMotionInitScript}</script>`,
+      }}
     />
   );
 }
