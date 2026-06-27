@@ -3,6 +3,7 @@
 import type { Column, ColumnDef, FilterFn } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,11 +17,19 @@ import {
   makeNameCollator,
   normalizeForSearch,
 } from "@/features/students/data/collation";
+import type { StudentAccountStatus } from "@/features/students/identity/types";
 import {
   studentDisplayName,
   type StudentRecord,
 } from "@/features/students/types";
 import { formatDate, formatNumber } from "@/lib/format";
+
+export type StudentStatusLabels = {
+  header: string;
+  roster_only: string;
+  invited: string;
+  active: string;
+};
 
 export type StudentColumnLabels = {
   name: string;
@@ -31,17 +40,57 @@ export type StudentColumnLabels = {
   actions: string;
   edit: string;
   delete: string;
+  activationLink: string;
   rowActions: string;
   sortAsc: string;
   sortDesc: string;
+  status: StudentStatusLabels;
 };
 
 type ColumnContext = {
   locale: string;
   labels: StudentColumnLabels;
+  statuses: Record<string, StudentAccountStatus>;
   onEdit: (student: StudentRecord) => void;
   onDelete: (student: StudentRecord) => void;
+  onActivate: (student: StudentRecord) => void;
 };
+
+/** The badge variant for each derived account status. */
+const STATUS_VARIANT: Record<
+  StudentAccountStatus,
+  "default" | "secondary" | "outline"
+> = {
+  active: "default",
+  invited: "secondary",
+  roster_only: "outline",
+};
+
+/**
+ * Per-status class overrides. `roster_only` (the most common, unclaimed state)
+ * gets a filled muted treatment so it stays legible in dark mode — a bare
+ * outline badge nearly vanishes against the card there.
+ */
+const STATUS_CLASS: Record<StudentAccountStatus, string> = {
+  active: "",
+  invited: "",
+  roster_only: "border-transparent bg-muted text-muted-foreground",
+};
+
+/** A small badge for a roster row's derived account status. */
+export function StudentStatusBadge({
+  status,
+  labels,
+}: {
+  status: StudentAccountStatus;
+  labels: StudentStatusLabels;
+}) {
+  return (
+    <Badge variant={STATUS_VARIANT[status]} className={STATUS_CLASS[status]}>
+      {labels[status]}
+    </Badge>
+  );
+}
 
 /**
  * Forgiving, Arabic-aware global search across name (ar + en), student number,
@@ -90,8 +139,10 @@ function sortHeader(label: string, labels: StudentColumnLabels) {
 export function buildStudentColumns({
   locale,
   labels,
+  statuses,
   onEdit,
   onDelete,
+  onActivate,
 }: ColumnContext): ColumnDef<StudentRecord>[] {
   const collator = makeNameCollator(locale);
 
@@ -174,6 +225,18 @@ export function buildStudentColumns({
       ),
     },
     {
+      id: "status",
+      enableGlobalFilter: false,
+      enableSorting: false,
+      header: () => labels.status.header,
+      cell: ({ row }) => (
+        <StudentStatusBadge
+          status={statuses[row.original.id] ?? "roster_only"}
+          labels={labels.status}
+        />
+      ),
+    },
+    {
       id: "actions",
       enableGlobalFilter: false,
       enableSorting: false,
@@ -197,6 +260,9 @@ export function buildStudentColumns({
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onSelect={() => onEdit(student)}>
                   {labels.edit}
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => onActivate(student)}>
+                  {labels.activationLink}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem

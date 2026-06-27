@@ -51,8 +51,11 @@ import {
 } from "@/components/ui/table";
 import {
   buildStudentColumns,
+  StudentStatusBadge,
   studentGlobalFilter,
+  type StudentStatusLabels,
 } from "@/features/students/components/student-columns";
+import type { StudentAccountStatus } from "@/features/students/identity/types";
 import {
   studentDisplayName,
   type StudentRecord,
@@ -64,16 +67,20 @@ const ALL_GRADES = "all";
 
 type StudentsTableProps = {
   students: StudentRecord[];
+  statuses: Record<string, StudentAccountStatus>;
   onAdd: () => void;
   onEdit: (student: StudentRecord) => void;
   onDelete: (student: StudentRecord) => void;
+  onActivate: (student: StudentRecord) => void;
 };
 
 export function StudentsTable({
   students,
+  statuses,
   onAdd,
   onEdit,
   onDelete,
+  onActivate,
 }: StudentsTableProps) {
   const t = useTranslations("students");
   const locale = useLocale();
@@ -93,16 +100,31 @@ export function StudentsTable({
       actions: t("columns.actions"),
       edit: t("actions.edit"),
       delete: t("actions.delete"),
+      activationLink: t("actions.activationLink"),
       rowActions: t("actions.rowActions"),
       sortAsc: t("table.sortAsc"),
       sortDesc: t("table.sortDesc"),
+      status: {
+        header: t("columns.status"),
+        roster_only: t("status.roster_only"),
+        invited: t("status.invited"),
+        active: t("status.active"),
+      },
     }),
     [t],
   );
 
   const columns = useMemo(
-    () => buildStudentColumns({ locale, labels, onEdit, onDelete }),
-    [locale, labels, onEdit, onDelete],
+    () =>
+      buildStudentColumns({
+        locale,
+        labels,
+        statuses,
+        onEdit,
+        onDelete,
+        onActivate,
+      }),
+    [locale, labels, statuses, onEdit, onDelete, onActivate],
   );
 
   const gradeOptions = useMemo(
@@ -167,6 +189,13 @@ export function StudentsTable({
     rowActions: t("actions.rowActions"),
     edit: t("actions.edit"),
     delete: t("actions.delete"),
+    activationLink: t("actions.activationLink"),
+    status: {
+      header: t("columns.status"),
+      roster_only: t("status.roster_only"),
+      invited: t("status.invited"),
+      active: t("status.active"),
+    } satisfies StudentStatusLabels,
   };
 
   return (
@@ -287,10 +316,12 @@ export function StudentsTable({
               <li key={row.id}>
                 <StudentCard
                   student={row.original}
+                  status={statuses[row.original.id] ?? "roster_only"}
                   locale={locale}
                   labels={cardLabels}
                   onEdit={onEdit}
                   onDelete={onDelete}
+                  onActivate={onActivate}
                 />
               </li>
             ))}
@@ -349,12 +380,15 @@ export function StudentsTable({
 /** Compact roster card for the mobile (phone) breakpoint. */
 function StudentCard({
   student,
+  status,
   locale,
   labels,
   onEdit,
   onDelete,
+  onActivate,
 }: {
   student: StudentRecord;
+  status: StudentAccountStatus;
   locale: string;
   labels: {
     grade: string;
@@ -363,10 +397,13 @@ function StudentCard({
     added: string;
     edit: string;
     delete: string;
+    activationLink: string;
     rowActions: string;
+    status: StudentStatusLabels;
   };
   onEdit: (student: StudentRecord) => void;
   onDelete: (student: StudentRecord) => void;
+  onActivate: (student: StudentRecord) => void;
 }) {
   const name = studentDisplayName(student, locale);
   return (
@@ -383,6 +420,10 @@ function StudentCard({
           <Badge variant="secondary">
             {labels.grade} {formatNumber(student.grade, locale)}
           </Badge>
+          <span className="inline-flex items-center">
+            <span className="sr-only">{labels.status.header}: </span>
+            <StudentStatusBadge status={status} labels={labels.status} />
+          </span>
           <span dir="ltr" className="text-xs text-muted-foreground tabular-nums">
             <span className="sr-only">{labels.studentNumber}: </span>
             {student.student_number}
@@ -408,6 +449,9 @@ function StudentCard({
         <DropdownMenuContent align="end">
           <DropdownMenuItem onSelect={() => onEdit(student)}>
             {labels.edit}
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => onActivate(student)}>
+            {labels.activationLink}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem

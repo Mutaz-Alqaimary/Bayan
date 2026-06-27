@@ -21,6 +21,9 @@ import { z } from "zod";
 /** Minimum password length enforced on registration and password reset. */
 export const PASSWORD_MIN_LENGTH = 8;
 
+/** Max length for the Arabic name fields collected at registration (Phase 12.5). */
+export const REGISTER_NAME_MAX = 100;
+
 /**
  * Pre-formatted, localized messages the schemas need. Pass already-resolved
  * strings (call the message helpers before building) so the factories stay pure
@@ -32,6 +35,12 @@ export type AuthSchemaMessages = {
   /** Already interpolated with `PASSWORD_MIN_LENGTH`. */
   passwordTooShort: string;
   passwordMismatch: string;
+  /** Already interpolated with `REGISTER_NAME_MAX` (Phase 12.5 registration). */
+  nameTooLong: string;
+  /** `grade` must be a whole number (digits only). */
+  gradeWholeNumber: string;
+  /** `grade` must be greater than zero. */
+  gradePositive: string;
 };
 
 /** A trimmed, required, well-formed email field. */
@@ -52,14 +61,37 @@ export function buildLoginSchema(m: AuthSchemaMessages) {
   });
 }
 
+/** A trimmed, required, length-capped name field (Phase 12.5 registration). */
+function nameField(m: AuthSchemaMessages) {
+  return z
+    .string({ error: m.required })
+    .trim()
+    .min(1, { error: m.required })
+    .max(REGISTER_NAME_MAX, { error: m.nameTooLong });
+}
+
+/** `grade` as a positive whole number string (matches the students schema). */
+function gradeField(m: AuthSchemaMessages) {
+  return z
+    .string({ error: m.required })
+    .trim()
+    .min(1, { error: m.required })
+    .refine((value) => /^\d+$/.test(value), { error: m.gradeWholeNumber })
+    .refine((value) => Number(value) >= 1, { error: m.gradePositive });
+}
+
 export function buildRegisterSchema(m: AuthSchemaMessages) {
   return z
     .object({
       fullName: z
         .string({ error: m.required })
         .trim()
-        .min(1, { error: m.required }),
+        .min(1, { error: m.required })
+        .max(REGISTER_NAME_MAX, { error: m.nameTooLong }),
+      firstNameAr: nameField(m),
+      lastNameAr: nameField(m),
       email: emailField(m),
+      grade: gradeField(m),
       password: z
         .string({ error: m.required })
         .min(PASSWORD_MIN_LENGTH, { error: m.passwordTooShort }),

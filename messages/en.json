@@ -120,11 +120,19 @@
   },
   "auth": {
     "validation": {
-      "passwordMismatch": "Passwords don't match."
+      "passwordMismatch": "Passwords don't match.",
+      "gradeWholeNumber": "Enter a whole number.",
+      "gradePositive": "Grade must be greater than zero."
     },
     "fields": {
       "fullName": "Full name",
       "fullNamePlaceholder": "e.g. Sara Ahmed",
+      "firstNameAr": "First name (Arabic)",
+      "firstNameArPlaceholder": "e.g. سارة",
+      "lastNameAr": "Last name (Arabic)",
+      "lastNameArPlaceholder": "e.g. أحمد",
+      "grade": "Grade",
+      "gradePlaceholder": "e.g. 5",
       "email": "Email",
       "emailPlaceholder": "you@example.com",
       "password": "Password",
@@ -384,12 +392,71 @@
       "grade": "Grade",
       "email": "Email",
       "createdAt": "Added",
+      "status": "Account",
       "actions": "Actions"
+    },
+    "status": {
+      "roster_only": "Roster only",
+      "invited": "Invited",
+      "active": "Active"
     },
     "actions": {
       "edit": "Edit",
       "delete": "Delete",
+      "activationLink": "Activation link",
       "rowActions": "Open actions"
+    },
+    "identity": {
+      "errors": {
+        "alreadyLinked": {
+          "title": "Already linked",
+          "description": "Your account is already connected to a student record."
+        },
+        "invalidCode": {
+          "title": "Code not recognized",
+          "description": "That student code is invalid or already linked to another account."
+        },
+        "emailInUse": {
+          "title": "Email already in use",
+          "description": "An account already exists for this student's email address."
+        }
+      },
+      "claim": {
+        "title": "Link a school record",
+        "description": "Already enrolled at a school using Bayan? Enter the student code your teacher gave you to connect your account.",
+        "codeLabel": "Student code",
+        "codePlaceholder": "e.g. BYN-3F9KQ2ZP",
+        "submit": "Link my record",
+        "submitting": "Linking…",
+        "successTitle": "Record linked",
+        "successDescription": "Your account is now connected. You can start reading."
+      },
+      "activation": {
+        "title": "Activation link",
+        "description": "Provision an account for {name} and share a link to set their password.",
+        "intro": "Generate a one-time link this student can open to set a password and activate their account. No email is sent — copy the link and share it directly.",
+        "linkLabel": "Activation link",
+        "generate": "Generate link",
+        "generating": "Generating…",
+        "regenerate": "Generate a new link",
+        "copy": "Copy link",
+        "copied": "Link copied",
+        "copyFailed": "Couldn't copy the link",
+        "hint": "The link lets the student set their password. Treat it like a password."
+      },
+      "reconcile": {
+        "action": "Reconcile accounts",
+        "title": "Reconcile student accounts",
+        "description": "Link existing student logins to matching roster records by email.",
+        "intro": "Preview first: this finds student accounts that aren't linked to a roster record and matches them by email. Apply to create the links.",
+        "preview": "Preview",
+        "apply": "Apply links",
+        "linked": "To link",
+        "conflicts": "Conflicts",
+        "unmatched": "No match",
+        "nothingToLink": "Nothing to link — matched accounts are already connected, or only conflicts/unmatched remain.",
+        "appliedTitle": "Accounts reconciled"
+      }
     },
     "toolbar": {
       "searchLabel": "Search students",

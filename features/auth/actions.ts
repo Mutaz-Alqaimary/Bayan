@@ -11,8 +11,11 @@ import {
   buildRegisterSchema,
   buildResetPasswordSchema,
   PASSWORD_MIN_LENGTH,
+  REGISTER_NAME_MAX,
   type AuthSchemaMessages,
 } from "@/features/auth/schemas";
+import { getStudentByEmail } from "@/features/students/identity/queries";
+import { generateUniqueStudentNumber } from "@/features/students/identity/student-number";
 import type {
   ForgotPasswordFormValues,
   LoginFormValues,
@@ -53,6 +56,9 @@ async function getAuthSchemaMessages(): Promise<AuthSchemaMessages> {
     invalidEmail: validation.invalidEmail(),
     passwordTooShort: validation.tooShort(PASSWORD_MIN_LENGTH),
     passwordMismatch: t("passwordMismatch"),
+    nameTooLong: validation.tooLong(REGISTER_NAME_MAX),
+    gradeWholeNumber: t("gradeWholeNumber"),
+    gradePositive: t("gradePositive"),
   };
 }
 
@@ -80,6 +86,40 @@ async function genericError(): Promise<AuthErrorCopy> {
 async function dashboardPath(): Promise<string> {
   const locale = await getLocale();
   return getPathname({ href: ROUTES.dashboard, locale });
+}
+
+/**
+ * Compensating rollback of a half-built registration: delete the auth user
+ * (cascades any `profiles`/`user_settings` rows already created) and clear the
+ * just-established cookie session so no stranded session points at a deleted
+ * user. Best-effort — a delete failure is logged; the login boundary still
+ * refuses a profile-less session.
+ */
+async function rollbackSignUp(
+  admin: ReturnType<typeof supabaseAdminClient>,
+  supabase: Awaited<ReturnType<typeof supabaseServerClient>>,
+  userId: string,
+): Promise<void> {
+  await cleanupAuthUser(admin, userId);
+  await supabase.auth.signOut();
+}
+
+/**
+ * Compensating delete of an orphaned auth user. Deleting the auth user cascades
+ * the profile and user_settings rows. Best-effort — a failure is logged.
+ */
+async function cleanupAuthUser(
+  admin: ReturnType<typeof supabaseAdminClient>,
+  userId: string,
+): Promise<void> {
+  const { error } = await admin.auth.admin.deleteUser(userId);
+  if (error) {
+    console.error(
+      "Registration cleanup failed: orphaned auth user",
+      userId,
+      error.message,
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -119,9 +159,28 @@ export async function signInAction(
 }
 
 // ---------------------------------------------------------------------------
-// Register (atomic: create user → create profile → sign in)
+// Register (public self-service: signUp → service-role identity rows)
 // ---------------------------------------------------------------------------
 
+/**
+ * Public student registration.
+ *
+ * The auth user is created with the **user-initiated `signUp()`** flow (through
+ * the cookie-bound server client), *not* `admin.createUser()`. With the project's
+ * "Confirm email" disabled, `signUp()` auto-confirms and **establishes the
+ * session in one step** — so there is no separate `signInWithPassword`, and the
+ * `email_confirm` footgun is gone. It also enforces the platform's signup
+ * protections (rate limiting, password policy), which the admin API bypasses.
+ *
+ * The **service-role client** then performs only the privileged inserts the
+ * authenticated user can't do for itself — `profiles` (no INSERT policy; role is
+ * server-fixed), `user_settings` (created explicitly so every account is complete
+ * — no reliance on a trigger or a future Settings save), and the linked
+ * `students` roster row. Any failure rolls the whole registration back.
+ *
+ * `admin.createUser()` is reserved for **admin provisioning / invitations**
+ * (`features/students/identity/actions.ts`), which is the correct use of that API.
+ */
 export async function signUpAction(
   values: RegisterFormValues,
 ): Promise<AuthActionResult> {
@@ -131,72 +190,112 @@ export async function signUpAction(
     return { ok: false, error: await genericError() };
   }
 
-  const { fullName, email, password } = parsed.data;
+  const { fullName, firstNameAr, lastNameAr, email, grade, password } =
+    parsed.data;
   const locale = await getLocale();
   const admin = supabaseAdminClient();
+  const supabase = await supabaseServerClient();
 
-  // 1. Create the auth user (email confirmation is off → confirm immediately).
-  const { data: created, error: createError } =
-    await admin.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-      user_metadata: { full_name: fullName },
-    });
+  // 0. Reconcile by email *before* creating anything. A roster row already
+  //    linked to a profile means this email is taken; an unlinked roster row
+  //    means a school record exists — we never auto-claim it by email, and the
+  //    UNIQUE email constraint forbids a duplicate, so the new account is created
+  //    unlinked and the student links it from the onboarding/claim state with
+  //    their student_number.
+  const rosterRow = await getStudentByEmail(admin, email);
+  if (rosterRow && rosterRow.profile_id) {
+    return { ok: false, error: await authError("emailTaken") };
+  }
 
-  if (createError || !created.user) {
-    // `code` is the reliable signal; the message check is a defensive fallback.
-    // A bare `status === 422` is deliberately NOT treated as duplicate — it is a
-    // generic "unprocessable" Supabase also returns for other create failures.
+  // 1. Create the auth user + session via the public signUp flow.
+  const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: { full_name: fullName } },
+  });
+
+  if (signUpError || !signUpData.user) {
     const isDuplicate =
-      createError?.code === "email_exists" ||
-      /already.*registered|already.*exists/i.test(createError?.message ?? "");
+      signUpError?.code === "user_already_exists" ||
+      /already.*registered|already.*exists/i.test(signUpError?.message ?? "");
     return {
       ok: false,
       error: await authError(isDuplicate ? "emailTaken" : "signUpFailed"),
     };
   }
 
-  // 2. Create the profile row. Role is hard-coded — never taken from input.
+  // Supabase obfuscates an existing-email signup as a user with no identities
+  // (and no session) instead of erroring — treat that as "email taken".
+  if ((signUpData.user.identities?.length ?? 0) === 0) {
+    return { ok: false, error: await authError("emailTaken") };
+  }
+
+  const authUserId = signUpData.user.id;
+
+  // With "Confirm email" off, signUp returns a session. If it didn't, the project
+  // is requiring confirmation (a config mismatch for Bayan, which has no SMTP) —
+  // fail clearly and roll back rather than strand a half-built, unusable account.
+  if (!signUpData.session) {
+    await cleanupAuthUser(admin, authUserId);
+    return { ok: false, error: await authError("signUpFailed") };
+  }
+
+  // 2. Create the profile row (service-role — no INSERT policy; role is fixed).
   const { error: profileError } = await admin.from("profiles").insert({
-    id: created.user.id,
+    id: authUserId,
     full_name: fullName,
     role: "student",
     locale,
   });
-
   if (profileError) {
-    // 2a. Compensating action: undo the orphaned auth user so registration is
-    // atomic and the email is freed for a clean retry. Best-effort — if the
-    // delete itself fails it is logged; the login boundary still refuses a
-    // profile-less session.
-    const { error: cleanupError } = await admin.auth.admin.deleteUser(
-      created.user.id,
-    );
-    if (cleanupError) {
-      console.error(
-        "Registration cleanup failed: orphaned auth user",
-        created.user.id,
-        cleanupError.message,
-      );
-    }
+    await rollbackSignUp(admin, supabase, authUserId);
     return { ok: false, error: await authError("signUpFailed") };
   }
 
-  // 3. Establish the cookie session only after user + profile both exist.
-  const supabase = await supabaseServerClient();
-  const { error: signInError } = await supabase.auth.signInWithPassword({
-    email,
-    password,
+  // 3. Create the user_settings row explicitly so every account is complete from
+  //    the start (no trigger, no deferred Settings save). Done via the *session*
+  //    client: the just-signed-in user inserts its own row under the existing
+  //    `settings_insert_own` RLS (`auth.uid() = user_id`) — no service-role grant
+  //    on user_settings is required. Other columns use their schema defaults;
+  //    locale mirrors the registration locale.
+  const { error: settingsError } = await supabase.from("user_settings").insert({
+    user_id: authUserId,
+    locale,
   });
-  // The account and profile now both exist. If this immediate sign-in fails,
-  // send the user to login to sign in manually — dead-ending on a "couldn't
-  // create your account" error would be misleading, since a retry would now hit
-  // `emailTaken`.
-  if (signInError) {
-    redirect(getPathname({ href: ROUTES.login, locale }));
+  if (settingsError) {
+    await rollbackSignUp(admin, supabase, authUserId);
+    return { ok: false, error: await authError("signUpFailed") };
   }
 
+  // 4. Create the linked students row — unless a roster row already holds this
+  //    email (the collision case), where we leave the account unlinked for the
+  //    secure student_number claim.
+  if (!rosterRow) {
+    try {
+      const studentNumber = await generateUniqueStudentNumber(admin);
+      const { error: studentError } = await admin.from("students").insert({
+        student_number: studentNumber,
+        first_name_ar: firstNameAr,
+        last_name_ar: lastNameAr,
+        email,
+        grade: Number(grade),
+        profile_id: authUserId,
+      });
+      if (studentError) {
+        // A racing duplicate email (23505) → fall through unlinked (claimable);
+        // any other failure → roll the whole registration back.
+        if (studentError.code !== "23505") {
+          await rollbackSignUp(admin, supabase, authUserId);
+          return { ok: false, error: await authError("signUpFailed") };
+        }
+      }
+    } catch {
+      await rollbackSignUp(admin, supabase, authUserId);
+      return { ok: false, error: await authError("signUpFailed") };
+    }
+  }
+
+  // 5. Session already established by signUp → straight to the dashboard.
   redirect(await dashboardPath());
 }
 

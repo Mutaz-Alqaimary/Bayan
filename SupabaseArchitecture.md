@@ -125,31 +125,40 @@ create their own `profiles` row under RLS. Per the "elevated access" note above,
 
 Self-registration **always** creates a `student`. The role is hard-coded server-side; it is never
 read from client input, so a user cannot self-assign `teacher` or `admin`. Teacher/admin accounts
-are provisioned or promoted by an administrator in a later phase. Email confirmation is **off**: a
-successful registration creates the user, creates the profile, signs them in, and redirects.
+are provisioned or promoted by an administrator.
 
-### Atomic registration — failure strategy (saga + compensating delete)
+### Public registration uses `signUp()`, not `admin.createUser()` (Phase 12.5)
 
-`signUpAction` makes registration atomic so the system is never left with an auth user that has no
-profile (which `getSessionUser()` treats as unauthenticated, permanently stranding the email):
+Public self-registration is **user-initiated**, so the auth user is created with the normal
+`supabase.auth.signUp()` flow through the **cookie-bound server client** — *not* the admin API. With
+"Confirm email" disabled, `signUp()` **auto-confirms and establishes the session in one step** (no
+separate `signInWithPassword`, no `email_confirm` flag), and it enforces the platform's signup
+protections (rate limiting, password policy) that the admin API bypasses. `admin.createUser()` is
+reserved for **admin provisioning / invitations** (`features/students/identity/actions.ts`).
 
-1. **Create the auth user** with `auth.admin.createUser({ email_confirm: true })` (admin client).
-   - On error → map to `emailTaken` (duplicate email) or a generic error. Nothing was created, so
-     no cleanup is needed.
-2. **Insert the `profiles` row** (`id`, `full_name`, `role: "student"`, `locale`) with the admin
-   client.
-   - On error → **compensating action: delete the just-created auth user**
-     (`auth.admin.deleteUser`), then return a generic "registration failed" error. The email is
-     freed for a clean retry. The session is *not yet* established, so there is no half-signed-in
-     state.
-3. **Establish the session** with the cookie-bound `supabaseServerClient().auth.signInWithPassword`
-   — only after **both** the user and profile exist.
-4. **Redirect** to the dashboard.
+### Atomic registration — failure strategy (saga + compensating rollback)
 
-Residual risk: if the profile insert fails *and* the compensating delete also fails, an orphaned
-auth user remains. This is logged server-side and defended at the login boundary — `signInAction`
-calls `getSessionUser()` after sign-in and, if no profile exists, signs the user out and returns an
-error instead of granting a broken session.
+`signUpAction` keeps registration atomic so the system is never left with a partially-initialized
+account (every account ends with `auth.users` + `profiles` + `user_settings` + `students`):
+
+1. **Reconcile by email** (`getStudentByEmail`, service-role). A roster row already linked to a
+   profile → `emailTaken`. An *unlinked* roster row → the account is created unlinked for the secure
+   `student_number` claim (never auto-claimed by email).
+2. **`signUp()`** (server client) → creates the auth user, auto-confirms, and establishes the
+   session. Duplicate email (error or an obfuscated no-identities user) → `emailTaken`. A missing
+   session (would mean confirmation is required — a config mismatch) → roll back.
+3. **Insert `profiles`** (service-role — no INSERT policy; role fixed server-side).
+4. **Insert `user_settings`** via the **session client** — the just-signed-in user inserts its own
+   row under `settings_insert_own` RLS (no service-role grant on `user_settings` needed).
+5. **Insert the linked `students`** row + generated `student_number` (service-role), unless the
+   email-collision case left it unlinked.
+6. **Redirect** to the dashboard (the session already exists).
+
+On any insert failure → **compensating rollback**: delete the just-created auth user
+(`auth.admin.deleteUser`, which cascades `profiles`/`user_settings`) and clear the session, freeing
+the email for a clean retry. Residual risk: if the delete also fails, an orphaned auth user remains —
+logged server-side and defended at the login boundary (`signInAction` signs out a profile-less
+session rather than granting a broken one).
 
 ## Type-safe data layer
 

@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 
 import {
   PASSWORD_MIN_LENGTH,
+  REGISTER_NAME_MAX,
   type AuthSchemaMessages,
 } from "@/features/auth/schemas";
 import { useValidationMessages } from "@/lib/validation/client";
@@ -22,5 +23,8 @@ export function useAuthSchemaMessages(): AuthSchemaMessages {
     invalidEmail: validation.invalidEmail(),
     passwordTooShort: validation.tooShort(PASSWORD_MIN_LENGTH),
     passwordMismatch: t("passwordMismatch"),
+    nameTooLong: validation.tooLong(REGISTER_NAME_MAX),
+    gradeWholeNumber: t("gradeWholeNumber"),
+    gradePositive: t("gradePositive"),
   };
 }

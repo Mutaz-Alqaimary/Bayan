@@ -43,9 +43,18 @@ export type LoginFormValues = {
   password: string;
 };
 
+/**
+ * Phase 12.5: registration is one-step and creates the complete student
+ * identity, so it collects the academic fields the `students` row requires
+ * (`first_name_ar`, `last_name_ar`, `grade` are `NOT NULL`). `fullName` is the
+ * `profiles` display name; the Arabic names + grade seed the `students` row.
+ */
 export type RegisterFormValues = {
   fullName: string;
+  firstNameAr: string;
+  lastNameAr: string;
   email: string;
+  grade: string;
   password: string;
   confirmPassword: string;
 };

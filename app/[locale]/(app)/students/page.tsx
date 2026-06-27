@@ -3,8 +3,10 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { requireRole } from "@/features/auth/guards";
 import { StudentsPage } from "@/features/students/components/students-page";
+import { getStudentAccountStatusMap } from "@/features/students/identity/queries";
 import { getStudents } from "@/features/students/queries";
 import type { AppLocale } from "@/i18n/routing";
+import { supabaseAdminClient } from "@/lib/supabase/admin";
 
 export async function generateMetadata({
   params,
@@ -29,8 +31,22 @@ export default async function StudentsRoute({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  await requireRole("admin", "teacher");
+  const user = await requireRole("admin", "teacher");
   const students = await getStudents();
 
-  return <StudentsPage students={students} />;
+  // Derive each roster row's account status (roster-only / invited / active) via
+  // the service-role client. Resolution is by profile_id, never by email.
+  const statusMap = await getStudentAccountStatusMap(
+    supabaseAdminClient(),
+    students,
+  );
+  const statuses = Object.fromEntries(statusMap);
+
+  return (
+    <StudentsPage
+      students={students}
+      statuses={statuses}
+      canReconcile={user.role === "admin"}
+    />
+  );
 }

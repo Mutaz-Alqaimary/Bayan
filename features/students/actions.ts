@@ -16,6 +16,7 @@ import type {
   UpdateStudentFormValues,
 } from "@/features/students/types";
 import { ROUTES } from "@/lib/routes";
+import { supabaseAdminClient } from "@/lib/supabase/admin";
 import { supabaseServerClient } from "@/lib/supabase/server";
 import { getValidationMessages } from "@/lib/validation/server";
 
@@ -183,6 +184,68 @@ export async function createStudentAction(
 // Update
 // ---------------------------------------------------------------------------
 
+/** A linked student's email is a managed identity attribute: changing it must
+ *  update BOTH `auth.users.email` and `students.email` as one operation (no true
+ *  cross-schema transaction is possible — auth lives behind the Admin API — so we
+ *  apply it sequentially with compensation). The permanent identity link
+ *  (`profile_id`) is never touched, and no new identity is created. */
+async function changeLinkedStudentEmail(
+  authUserId: string,
+  previousEmail: string,
+  payload: StudentWritePayload,
+  id: string,
+): Promise<StudentActionResult> {
+  const admin = supabaseAdminClient();
+
+  // 1. Apply the new email to the auth identity. No `email_confirm` — the email
+  //    stays honestly unverified (identity is profile_id). A duplicate surfaces
+  //    as a field error before anything else changes.
+  const { error: authError } = await admin.auth.admin.updateUserById(
+    authUserId,
+    { email: payload.email },
+  );
+  if (authError) {
+    const isDuplicate =
+      authError.code === "email_exists" ||
+      /already.*registered|already.*exists/i.test(authError.message ?? "");
+    if (isDuplicate) {
+      const t = await getTranslations("students.errors");
+      return {
+        ok: false,
+        error: { title: t("duplicate.title"), description: t("duplicate.description") },
+        fieldErrors: [{ field: "email", message: t("duplicateEmail") }],
+      };
+    }
+    return { ok: false, error: await genericError() };
+  }
+
+  // 2. Apply the roster row (incl. the new email). On failure, compensate by
+  //    restoring the previous auth email so the two never diverge.
+  const { error: rowError } = await admin
+    .from("students")
+    .update(payload)
+    .eq("id", id);
+  if (rowError) {
+    const { error: restoreError } = await admin.auth.admin.updateUserById(
+      authUserId,
+      { email: previousEmail },
+    );
+    if (restoreError) {
+      // Divergence: auth email changed but the roster update and the restore both
+      // failed. Log so it's observable; the admin can re-apply from the UI.
+      console.error(
+        "Email-change compensation failed: auth.users.email and students.email diverged",
+        authUserId,
+        restoreError.message,
+      );
+    }
+    return mapWriteError(rowError);
+  }
+
+  await revalidateStudents();
+  return { ok: true };
+}
+
 export async function updateStudentAction(
   id: string,
   values: UpdateStudentFormValues,
@@ -199,12 +262,30 @@ export async function updateStudentAction(
     return { ok: false, error: await genericError() };
   }
 
+  const payload = toWritePayload(parsed.data);
   const supabase = await supabaseServerClient();
-  const { error } = await supabase
-    .from("students")
-    .update(toWritePayload(parsed.data))
-    .eq("id", id);
 
+  // Read the current identity link + email to decide whether the email change
+  // must propagate to auth.users (linked students) or is a roster-only edit.
+  const { data: current, error: currentError } = await supabase
+    .from("students")
+    .select("email, profile_id")
+    .eq("id", id)
+    .maybeSingle<{ email: string; profile_id: string | null }>();
+  if (currentError) {
+    return { ok: false, error: await genericError() };
+  }
+  if (!current) {
+    return { ok: false, error: await genericError() };
+  }
+
+  const emailChanged = current.email !== payload.email;
+  if (current.profile_id && emailChanged) {
+    return changeLinkedStudentEmail(current.profile_id, current.email, payload, id);
+  }
+
+  // Roster-only row, or no email change → a plain roster update.
+  const { error } = await supabase.from("students").update(payload).eq("id", id);
   if (error) {
     return mapWriteError(error);
   }

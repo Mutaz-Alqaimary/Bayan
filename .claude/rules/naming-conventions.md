@@ -157,6 +157,36 @@ form state is page-local, and Zustand is not a project dependency — so a globa
 over-engineering. Introduce it only if settings state genuinely needs to be reactive across many
 routes beyond what the providers cover.
 
+## Student identity & roster integration (Phase 12.5)
+
+Student identity unification (auth ↔ profile ↔ roster) lives in `features/students/identity/`.
+The permanent link is `auth.users.id ↔ profiles.id ↔ students.profile_id`; resolve by `profile_id`,
+never by email (see `architecture.md` → "Student identity invariant"). Names:
+
+```
+StudentAccountStatus        // derived account state: roster_only | invited | active — identity/types.ts
+ClaimStudentFormValues      // the secure-claim form (student_number only) — identity/types.ts
+ClaimStudentResult          // discriminated claim-action result — identity/types.ts
+ActivationLinkResult        // discriminated activation-link result ({ ok; url } | { ok:false }) — identity/types.ts
+ReconcileStudentLinksResult // dry-run/apply backfill summary (linked/conflicts/unmatched) — identity/types.ts
+ClaimStudentMessages        // localized claim-schema copy — identity/schemas.ts
+
+generateStudentNumber / generateUniqueStudentNumber // high-entropy claim-secret generator — identity/student-number.ts
+getStudentByEmail / getClaimableStudentByNumber / getStudentAccountStatusMap / listAllAuthUsers // server reads — identity/queries.ts
+claimStudentRecordAction              // student: link own roster row by student_number (admin client) — identity/actions.ts
+generateStudentActivationLinkAction   // admin/teacher: provision + copyable no-SMTP link — identity/actions.ts
+reconcileStudentLinksAction           // admin: one-time link-by-email backfill (dry-run + apply) — identity/actions.ts
+buildClaimStudentSchema               // message-injected Zod factory — identity/schemas.ts
+useClaimSchemaMessages                // client mirror of the claim schema copy — identity/components/
+
+changeLinkedStudentEmail   // local helper: dual auth.users + students email update w/ compensation — features/students/actions.ts
+```
+
+Registration is one-step (`RegisterFormValues` extended with `firstNameAr`, `lastNameAr`, `grade`)
+and creates the full identity via the existing `signUpAction`. `useAuthStore`/`useStudentStore`
+remain reserved-and-unbuilt: identity state is server-resolved per request (no cross-route client
+identity store is warranted), consistent with the `useReadingStore`/`useSettingsStore` precedent.
+
 If a later phase needs something not listed here, derive it by following the same pattern
 (e.g. `<Entity>Record`, `use<Domain>Store`) rather than picking an arbitrary name, and add it to
 this file once decided so it stays the single source of truth.

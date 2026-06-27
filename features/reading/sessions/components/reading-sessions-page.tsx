@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
 import { completeReadingSessionAction } from "@/features/reading/sessions/actions";
+import { ClaimForm } from "@/features/students/identity/components/claim-form";
 import { ReadingHistoryPanel } from "@/features/reading/sessions/components/reading-history";
 import { ReadingRunner } from "@/features/reading/sessions/components/reading-runner";
 import { SessionReview } from "@/features/reading/sessions/components/session-review";
@@ -70,6 +71,7 @@ export function ReadingSessionsPage({ data }: { data: ReadingSessionsData }) {
           title={t("unlinked.title")}
           description={t("unlinked.description")}
         />
+        <ClaimForm />
       </div>
     );
   }

@@ -58,6 +58,29 @@ Before making architectural decisions, load all relevant documentation for the c
 
 ---
 
+# Current Implementation State (read this first)
+
+**Phases 1 → 12.5 are complete and accepted.** The next planned phase is **13 (Reading Analytics)**.
+Do not start it or any new feature unless explicitly asked.
+
+For how the project actually works **today** (authentication, authorization, the identity model,
+registration/claim/activation flows, routing, server actions, deferred work), read the single source
+of truth before re-deriving anything from old chats or per-phase specs:
+
+```text
+docs/project/current-architecture.md      # how the whole system works today (start here)
+docs/database/manual-supabase-configuration.md  # every manual Supabase setting not in SQL
+```
+
+Identity model (Phase 12.5): the permanent link is **`auth.users.id ↔ profiles.id ↔
+students.profile_id`** — resolve a student by `profile_id`, **never by email**. Registration is one
+public `signUp()` step that builds the full identity; roster integration is the secure
+`student_number` **claim** or an admin **activation link**; email is admin-managed. "Confirm email" is
+OFF and there is **no SMTP**. Full detail and the invariant live in `current-architecture.md` and
+`.claude/rules/architecture.md`.
+
+---
+
 # Focus on this 
 -Database Rule:
 Do not assume setup.sql contains all permissions or RLS policies.
@@ -68,6 +91,8 @@ Treat the live Supabase database as the source of truth for authorization behavi
 
 | Purpose             | Location                                                            |
 | ------------------- | ------------------------------------------------------------------- |
+| **Current Architecture (today)** | docs/project/current-architecture.md                  |
+| **Manual Supabase Config**       | docs/database/manual-supabase-configuration.md        |
 | Product Brief       | docs/[PRD.md](http://PRD.md)                                        |
 | Phase Index         | docs/phases/[00-index.md](http://00-index.md)                       |
 | Database Schema     | .claude/rules/[database-schema.md](http://database-schema.md)       |

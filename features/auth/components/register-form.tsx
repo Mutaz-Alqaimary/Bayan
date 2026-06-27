@@ -32,7 +32,10 @@ export function RegisterForm() {
     resolver: zodResolver(buildRegisterSchema(messages)),
     defaultValues: {
       fullName: "",
+      firstNameAr: "",
+      lastNameAr: "",
       email: "",
+      grade: "",
       password: "",
       confirmPassword: "",
     },
@@ -71,6 +74,27 @@ export function RegisterForm() {
         registration={register("fullName")}
       />
 
+      <div className="grid gap-4 sm:grid-cols-2">
+        <TextField
+          id="firstNameAr"
+          label={t("fields.firstNameAr")}
+          dir="rtl"
+          placeholder={t("fields.firstNameArPlaceholder")}
+          error={errors.firstNameAr?.message}
+          disabled={pending}
+          registration={register("firstNameAr")}
+        />
+        <TextField
+          id="lastNameAr"
+          label={t("fields.lastNameAr")}
+          dir="rtl"
+          placeholder={t("fields.lastNameArPlaceholder")}
+          error={errors.lastNameAr?.message}
+          disabled={pending}
+          registration={register("lastNameAr")}
+        />
+      </div>
+
       <TextField
         id="email"
         label={t("fields.email")}
@@ -82,6 +106,17 @@ export function RegisterForm() {
         error={errors.email?.message}
         disabled={pending}
         registration={register("email")}
+      />
+
+      <TextField
+        id="grade"
+        label={t("fields.grade")}
+        inputMode="numeric"
+        dir="ltr"
+        placeholder={t("fields.gradePlaceholder")}
+        error={errors.grade?.message}
+        disabled={pending}
+        registration={register("grade")}
       />
 
       <PasswordField
