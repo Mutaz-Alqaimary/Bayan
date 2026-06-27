@@ -5,6 +5,7 @@ import { requireRole } from "@/features/auth/guards";
 import { StudentsPage } from "@/features/students/components/students-page";
 import { getStudentAccountStatusMap } from "@/features/students/identity/queries";
 import { getStudents } from "@/features/students/queries";
+import { getTeacherProfileIds } from "@/features/teachers/queries";
 import type { AppLocale } from "@/i18n/routing";
 import { supabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -32,7 +33,10 @@ export default async function StudentsRoute({
   setRequestLocale(locale);
 
   const user = await requireRole("admin", "teacher");
-  const students = await getStudents();
+  const [students, teacherProfileIds] = await Promise.all([
+    getStudents(),
+    getTeacherProfileIds(),
+  ]);
 
   // Derive each roster row's account status (roster-only / invited / active) via
   // the service-role client. Resolution is by profile_id, never by email.
@@ -46,6 +50,7 @@ export default async function StudentsRoute({
     <StudentsPage
       students={students}
       statuses={statuses}
+      teacherProfileIds={teacherProfileIds}
       canReconcile={user.role === "admin"}
     />
   );

@@ -23,7 +23,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/components/ui/use-toast";
 import { updateSettingsAction } from "@/features/settings/actions";
+import { ProfileCard } from "@/features/settings/components/profile-card";
 import { useSettingsSchemaMessages } from "@/features/settings/components/use-settings-schema-messages";
+import type { ProfileData } from "@/features/settings/profile-types";
 import { buildUpdateSettingsSchema } from "@/features/settings/schemas";
 import type {
   SettingsData,
@@ -71,7 +73,13 @@ function useMounted(): boolean {
  * the server's default-seeded radio/switch would mismatch the client's stored
  * value on hydration.
  */
-export function SettingsPage({ settings }: { settings: SettingsData }) {
+export function SettingsPage({
+  settings,
+  profile,
+}: {
+  settings: SettingsData;
+  profile: ProfileData;
+}) {
   const t = useTranslations("settings");
   const messages = useSettingsSchemaMessages();
   const { theme, setTheme } = useTheme();
@@ -135,6 +143,9 @@ export function SettingsPage({ settings }: { settings: SettingsData }) {
         </h1>
         <p className="text-muted-foreground">{t("subtitle")}</p>
       </header>
+
+      {/* Profile — full name + avatar (separate form/data source from preferences) */}
+      <ProfileCard profile={profile} />
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
         {/* Appearance — theme */}

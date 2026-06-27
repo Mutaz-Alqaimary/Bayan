@@ -127,16 +127,14 @@ type ActivationStudentRow = {
   profile_id: string | null;
 };
 
-/** Absolute set-password URL the activation link returns the student to. */
-async function buildActivationRedirect(): Promise<string> {
-  const locale = await getLocale();
+/** Resolve the request origin (configured site URL → Origin header → forwarded host). */
+async function resolveOrigin(): Promise<string> {
   const headerList = await headers();
-  const origin =
+  return (
     process.env.NEXT_PUBLIC_SITE_URL ??
     headerList.get("origin") ??
-    `${headerList.get("x-forwarded-proto") ?? "https"}://${headerList.get("host") ?? ""}`;
-  const resetPath = getPathname({ href: ROUTES.resetPassword, locale });
-  return `${origin}${ROUTES.authCallback}?next=${encodeURIComponent(resetPath)}`;
+    `${headerList.get("x-forwarded-proto") ?? "https"}://${headerList.get("host") ?? ""}`
+  );
 }
 
 /**
@@ -218,21 +216,37 @@ export async function generateStudentActivationLinkAction(
     email = got.user.email;
   }
 
+  const origin = await resolveOrigin();
+  const locale = await getLocale();
+  const resetPath = getPathname({ href: ROUTES.resetPassword, locale });
+  const redirectTo = `${origin}${ROUTES.authCallback}?next=${encodeURIComponent(resetPath)}`;
+
   const { data: linkData, error: linkError } =
     await admin.auth.admin.generateLink({
       type: "recovery",
       email,
-      options: { redirectTo: await buildActivationRedirect() },
+      options: { redirectTo },
     });
 
-  const actionLink = linkData?.properties?.action_link;
-  if (linkError || !actionLink) {
+  // Use the returned `hashed_token` to build OUR OWN callback URL rather than the
+  // raw `action_link`. Admin-generated links carry no PKCE code verifier, so the
+  // default `/auth/v1/verify` → `?code` exchange can't establish a session (it
+  // returns tokens in the URL hash, which a server route can't read). Our
+  // callback instead verifies this `token_hash` server-side with `verifyOtp`
+  // (recovery), then redirects to `next`. See app/api/auth/callback/route.ts.
+  const hashedToken = linkData?.properties?.hashed_token;
+  if (linkError || !hashedToken) {
     return { ok: false, error: await genericError() };
   }
 
-  const locale = await getLocale();
+  const activationUrl =
+    `${origin}${ROUTES.authCallback}` +
+    `?token_hash=${encodeURIComponent(hashedToken)}` +
+    `&type=recovery` +
+    `&next=${encodeURIComponent(resetPath)}`;
+
   revalidatePath(`/${locale}${ROUTES.students}`);
-  return { ok: true, url: actionLink };
+  return { ok: true, url: activationUrl };
 }
 
 // ---------------------------------------------------------------------------

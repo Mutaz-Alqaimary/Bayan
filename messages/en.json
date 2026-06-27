@@ -55,6 +55,7 @@
     "items": {
       "dashboard": "Dashboard",
       "students": "Students",
+      "teachers": "Teachers",
       "passages": "Passages",
       "vocabulary": "Vocabulary",
       "myReading": "My reading",
@@ -400,6 +401,10 @@
       "invited": "Invited",
       "active": "Active"
     },
+    "teacherPresence": {
+      "badge": "Teacher account",
+      "hide": "Hide teacher accounts"
+    },
     "actions": {
       "edit": "Edit",
       "delete": "Delete",
@@ -532,6 +537,94 @@
         "title": "Can't remove this student",
         "description": "This student has reading history and can't be removed."
       }
+    }
+  },
+  "teachers": {
+    "title": "Teachers",
+    "subtitle": "Promote users to teacher and manage teacher accounts.",
+    "loading": "Loading teachers…",
+    "promoteAction": "Promote to teacher",
+    "columns": {
+      "name": "Name",
+      "email": "Email",
+      "createdAt": "Joined",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "invited": "Invited",
+      "active": "Active"
+    },
+    "actions": {
+      "demote": "Demote to student",
+      "rowActions": "Row actions"
+    },
+    "toolbar": {
+      "searchLabel": "Search teachers",
+      "searchPlaceholder": "Search by name or email",
+      "statusLabel": "Filter by status",
+      "statusAll": "All statuses",
+      "count": "{count} teachers",
+      "countFiltered": "{count} of {total} teachers"
+    },
+    "table": {
+      "label": "Teachers",
+      "sortAsc": "Sort ascending",
+      "sortDesc": "Sort descending",
+      "pagination": "Pagination",
+      "pageStatus": "Page {page} of {total}",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "card": {
+      "added": "Joined"
+    },
+    "empty": {
+      "title": "No teachers yet",
+      "description": "Promote an existing user to teacher to get started.",
+      "action": "Promote to teacher"
+    },
+    "noResults": {
+      "title": "No teachers found",
+      "description": "No teachers match your search or filter.",
+      "action": "Clear filters"
+    },
+    "promote": {
+      "title": "Promote to teacher",
+      "description": "Choose a user to promote. Only existing accounts can become teachers.",
+      "searchLabel": "Search users",
+      "searchPlaceholder": "Search by name or email",
+      "listLabel": "Users eligible for promotion",
+      "noCandidates": "There are no users available to promote right now.",
+      "noResults": "No users match your search.",
+      "cancel": "Cancel",
+      "confirm": "Promote",
+      "toastTitle": "User promoted to teacher"
+    },
+    "demote": {
+      "title": "Demote to student",
+      "description": "Demote {name} back to student? Their account, roster record, and reading history are preserved — only the role changes.",
+      "cancel": "Cancel",
+      "confirm": "Demote",
+      "demoting": "Demoting…",
+      "toastTitle": "Teacher demoted to student"
+    },
+    "validation": {
+      "invalid": "That request isn't valid."
+    },
+    "errors": {
+      "notAllowed": {
+        "title": "Role change not allowed",
+        "description": "This role change can't be performed. Only Student and Teacher roles can be changed."
+      },
+      "self": {
+        "title": "Can't change your own role",
+        "description": "You can't change your own role."
+      }
+    },
+    "error": {
+      "title": "Couldn't load teachers",
+      "description": "Something went wrong while loading this page. Please try again."
     }
   },
   "reading": {
@@ -859,6 +952,73 @@
     "loading": "Loading your settings…",
     "save": "Save changes",
     "saving": "Saving…",
+    "profile": {
+      "title": "Profile",
+      "description": "Update your name and photo. Your email and role are managed for you.",
+      "save": "Save name",
+      "saving": "Saving…",
+      "fullName": { "label": "Full name" },
+      "email": {
+        "label": "Email",
+        "hint": "Managed by your administrator."
+      },
+      "role": {
+        "label": "Role",
+        "hint": "Set by your administrator."
+      },
+      "roles": {
+        "admin": "Administrator",
+        "teacher": "Teacher",
+        "student": "Student"
+      },
+      "toasts": { "savedTitle": "Profile updated" },
+      "avatar": {
+        "label": "Photo",
+        "upload": "Upload photo",
+        "replace": "Replace photo",
+        "remove": "Remove",
+        "save": "Save photo",
+        "cancel": "Cancel",
+        "hint": "JPG, PNG, or WebP. Up to 1 MB.",
+        "imageAlt": "{name}'s photo",
+        "toasts": {
+          "updated": "Photo updated",
+          "removed": "Photo removed"
+        },
+        "errors": {
+          "invalidImage": {
+            "title": "Unsupported image",
+            "description": "Choose a JPG, PNG, or WebP image."
+          },
+          "imageTooLarge": {
+            "title": "Image too large",
+            "description": "Choose an image up to 1 MB."
+          },
+          "decodeFailed": {
+            "title": "Couldn't process image",
+            "description": "That image couldn't be read. Try another file."
+          }
+        }
+      },
+      "errors": {
+        "invalidImage": {
+          "title": "Unsupported image",
+          "description": "Choose a JPG, PNG, or WebP image."
+        },
+        "imageTooLarge": {
+          "title": "Image too large",
+          "description": "Choose an image up to 1 MB."
+        },
+        "uploadFailed": {
+          "title": "Upload failed",
+          "description": "Your photo couldn't be uploaded. Please try again."
+        },
+        "saveFailed": {
+          "title": "Couldn't save photo",
+          "description": "Your photo couldn't be saved. Please try again."
+        }
+      }
+    },
     "appearance": {
       "title": "Appearance",
       "description": "Choose how Bayan looks. ‘System’ follows your device setting.",

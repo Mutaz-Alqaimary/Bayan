@@ -26,8 +26,10 @@ export const ROUTES = {
   // pages don't exist yet — nav/quick-action items mark them as not-yet-built
   // and render a disabled "coming soon" state instead of linking to a 404.
   // (students: Phase 7, passages/vocabulary: Phase 8, sessions: Phase 10,
-  // analytics: Phase 13, reports: Phase 18, settings: Phase 12.)
+  // analytics: Phase 13, reports: Phase 18, settings: Phase 12,
+  // teachers: Phase 12.6.)
   students: "/students",
+  teachers: "/teachers",
   passages: "/passages",
   vocabulary: "/vocabulary",
   readingSessions: "/reading-sessions",
@@ -53,6 +55,7 @@ export const IMPLEMENTED_ROUTES: ReadonlySet<AppRoute> = new Set([
   ROUTES.resetPassword,
   ROUTES.dashboard,
   ROUTES.students,
+  ROUTES.teachers,
   ROUTES.passages,
   ROUTES.vocabulary,
   ROUTES.readingSessions,

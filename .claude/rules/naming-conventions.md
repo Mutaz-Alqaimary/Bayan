@@ -187,6 +187,40 @@ and creates the full identity via the existing `signUpAction`. `useAuthStore`/`u
 remain reserved-and-unbuilt: identity state is server-resolved per request (no cross-route client
 identity store is warranted), consistent with the `useReadingStore`/`useSettingsStore` precedent.
 
+## Profile Editing & Role / Teacher Management (Phase 12.6)
+
+Profile Editing lives inside Settings (`features/settings/`, no new page); a teacher is exactly
+`profiles.role = 'teacher'` (no `teachers` table). Role changes mutate **only** `profiles.role`.
+
+```
+// Profile Editing (Part 1) — features/settings/
+ProfileData / UpdateProfileFormValues / UpdateProfileResult / AvatarActionResult // profile-types.ts
+UpdateProfileMessages / buildUpdateProfileSchema / PROFILE_NAME_MAX               // profile-schemas.ts
+updateProfileAction / updateAvatarAction / removeAvatarAction                     // profile-actions.ts (session client; avatar is transactional w/ compensation)
+useProfileSchemaMessages                                                          // components/use-profile-schema-messages.ts
+ProfileCard / AvatarUploader                                                      // components/
+
+// Avatar storage helper — lib/avatar.ts
+AVATAR_BUCKET / AVATAR_MAX_BYTES / AVATAR_MAX_DIMENSION / AVATAR_ACCEPTED_TYPES
+avatarStorageKey / avatarObjectPath / avatarPublicUrl / validateWebpUpload / isAcceptedAvatarType
+// profiles.avatar_url stores the OBJECT PATH (avatars/{user_id}/avatar.webp), never a URL.
+
+// Role / Teacher Management (Part 2)
+canManageTeachers / canChangeRole / MANAGEABLE_ROLES / ManageableRole  // features/auth/roles.ts
+TeacherView / PromotableUserView / TeacherAccountStatus / ChangeRoleResult // features/teachers/types.ts
+ChangeRoleMessages / buildChangeRoleSchema                              // features/teachers/schemas.ts
+getTeachers / getPromotableUsers / getTeacherProfileIds                 // features/teachers/queries.ts (server-only, admin)
+promoteToTeacherAction / demoteToStudentAction                          // features/teachers/actions.ts (changeUserRole internal; service-role)
+TeachersPage / TeachersTable / buildTeacherColumns / TeacherStatusBadge / teacherGlobalFilter
+PromoteTeacherDialog / DemoteTeacherDialog                             // features/teachers/components/
+isTeacherPresence / TeacherPresenceBadge                              // features/students/components/student-columns.tsx (dual-presence flag)
+ROUTES.teachers                                                        // lib/routes.ts
+```
+
+`canManageUsers` (broad admin umbrella) is kept and **not** merged with `canManageTeachers`.
+`useAuthStore`/`useStudentStore` stay reserved-and-unbuilt (role/profile state is server-resolved per
+request), consistent with the established precedent.
+
 If a later phase needs something not listed here, derive it by following the same pattern
 (e.g. `<Entity>Record`, `use<Domain>Store`) rather than picking an arbitrary name, and add it to
 this file once decided so it stays the single source of truth.

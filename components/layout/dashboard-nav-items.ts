@@ -3,6 +3,7 @@ import {
   BookOpen,
   BookOpenText,
   FileText,
+  GraduationCap,
   LayoutDashboard,
   Languages,
   Settings,
@@ -26,6 +27,7 @@ import { ROUTES, type AppRoute } from "@/lib/routes";
 export type NavKey =
   | "dashboard"
   | "students"
+  | "teachers"
   | "passages"
   | "vocabulary"
   | "myReading"
@@ -52,6 +54,12 @@ export const NAV_ITEMS: readonly NavItem[] = [
     href: ROUTES.students,
     icon: Users,
     roles: ["admin", "teacher"],
+  },
+  {
+    key: "teachers",
+    href: ROUTES.teachers,
+    icon: GraduationCap,
+    roles: ["admin"],
   },
   {
     key: "passages",

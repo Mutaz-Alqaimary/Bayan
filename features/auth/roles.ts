@@ -50,3 +50,51 @@ export function canAccessAnalytics(role: UserRole): boolean {
 export function canAccessReports(role: UserRole): boolean {
   return role === "admin" || role === "teacher";
 }
+
+/**
+ * Manage teacher accounts & role changes (admin only) — Phase 12.6.
+ *
+ * Deliberately distinct from `canManageUsers` (also admin) so the Teacher
+ * Management surface reads self-documenting and can diverge from any future,
+ * broader user-management area without churn.
+ */
+export function canManageTeachers(role: UserRole): boolean {
+  return role === "admin";
+}
+
+/**
+ * The roles a role change may move **between**. `admin` is intentionally
+ * excluded: admin accounts are infrastructure-only — never created, assigned, or
+ * removed through the application (Phase 12.6).
+ */
+export const MANAGEABLE_ROLES = ["student", "teacher"] as const;
+
+/** A role that can be the source or destination of an in-app role change. */
+export type ManageableRole = (typeof MANAGEABLE_ROLES)[number];
+
+function isManageableRole(role: UserRole): role is ManageableRole {
+  return (MANAGEABLE_ROLES as readonly string[]).includes(role);
+}
+
+/**
+ * The single source of truth for whether a role change is allowed, used by both
+ * the UI (to enable/disable) and the server action (to authorize). Encodes the
+ * Phase 12.6 invariants:
+ * - only an **admin** may change roles;
+ * - never to or from **admin** (infrastructure-only);
+ * - never the actor's **own** role (no self-promotion/-demotion/-lockout);
+ * - it must be an actual change (`student` ⇄ `teacher`).
+ */
+export function canChangeRole(params: {
+  actorRole: UserRole;
+  targetCurrentRole: UserRole;
+  targetNewRole: UserRole;
+  isSelf: boolean;
+}): boolean {
+  const { actorRole, targetCurrentRole, targetNewRole, isSelf } = params;
+  if (actorRole !== "admin") return false;
+  if (isSelf) return false;
+  if (!isManageableRole(targetCurrentRole)) return false;
+  if (!isManageableRole(targetNewRole)) return false;
+  return targetCurrentRole !== targetNewRole;
+}

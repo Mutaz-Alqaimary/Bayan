@@ -60,8 +60,18 @@ Before making architectural decisions, load all relevant documentation for the c
 
 # Current Implementation State (read this first)
 
-**Phases 1 → 12.5 are complete and accepted.** The next planned phase is **13 (Reading Analytics)**.
-Do not start it or any new feature unless explicitly asked.
+**Phases 1 → 12.6 are complete** (12.6 implemented — awaiting the owner's manual testing). The next
+planned phase is **13 (Reading Analytics)**. Do not start it or any new feature unless explicitly
+asked.
+
+**Phase 12.6** added (a) **Profile Editing** — a user self-edits **only** `full_name` + avatar inside
+Settings; `profiles_update_own` was redesigned to a column-scoped policy (`full_name`/`avatar_url`
+only) so `role`/identity are unwritable by clients; `avatar_url` stores the storage **object path**
+(not a URL); avatar upload is transactional with compensation. (b) **Role / Teacher Management** —
+admin-only `/teachers` promotes/demotes between `student`⇄`teacher` by flipping **only**
+`profiles.role` (service-role, `canChangeRole`-guarded); **no `teachers` table**; admin is
+infrastructure-only (no create/assign/escalate-to-admin in-app); a promoted teacher keeps their
+roster row + reading history (dual presence, badged in Student Management).
 
 For how the project actually works **today** (authentication, authorization, the identity model,
 registration/claim/activation flows, routing, server actions, deferred work), read the single source
@@ -78,6 +88,11 @@ public `signUp()` step that builds the full identity; roster integration is the 
 `student_number` **claim** or an admin **activation link**; email is admin-managed. "Confirm email" is
 OFF and there is **no SMTP**. Full detail and the invariant live in `current-architecture.md` and
 `.claude/rules/architecture.md`.
+
+**Auth callback (`app/api/auth/callback/route.ts`) supports two flows** (see `current-architecture.md`
+§8a): **PKCE `?code`** → `exchangeCodeForSession` for user-initiated **forgot-password**, and
+**`?token_hash=&type=recovery`** → `verifyOtp` for **admin activation links** (which have no PKCE
+verifier because they're generated server-side). Both must keep working; don't collapse them to one.
 
 ---
 

@@ -33,5 +33,13 @@ export default async function SettingsRoute({
   const user = await requireUser();
   const settings = await getUserSettings(user.id);
 
-  return <SettingsPage settings={settings} />;
+  const profile = {
+    fullName: user.profile.full_name ?? "",
+    avatarPath: user.profile.avatar_url,
+    avatarVersion: user.profile.updated_at,
+    email: user.email,
+    role: user.role,
+  };
+
+  return <SettingsPage settings={settings} profile={profile} />;
 }

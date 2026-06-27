@@ -13,23 +13,20 @@ import {
 import {
   ChevronLeft,
   ChevronRight,
+  GraduationCap,
   MoreHorizontal,
   Search,
   UserPlus,
-  Users,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -51,122 +48,73 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  buildStudentColumns,
-  isTeacherPresence,
-  StudentStatusBadge,
-  studentGlobalFilter,
-  TeacherPresenceBadge,
-  type StudentStatusLabels,
-} from "@/features/students/components/student-columns";
-import type { StudentAccountStatus } from "@/features/students/identity/types";
-import {
-  studentDisplayName,
-  type StudentRecord,
-} from "@/features/students/types";
+  buildTeacherColumns,
+  TeacherStatusBadge,
+  teacherGlobalFilter,
+  type TeacherStatusLabels,
+} from "@/features/teachers/components/teacher-columns";
+import type { TeacherView } from "@/features/teachers/types";
 import { formatDate, formatNumber } from "@/lib/format";
 
 const PAGE_SIZE = 10;
-const ALL_GRADES = "all";
+const ALL_STATUSES = "all";
 
-type StudentsTableProps = {
-  students: StudentRecord[];
-  statuses: Record<string, StudentAccountStatus>;
-  teacherProfileIds: string[];
-  onAdd: () => void;
-  onEdit: (student: StudentRecord) => void;
-  onDelete: (student: StudentRecord) => void;
-  onActivate: (student: StudentRecord) => void;
+type TeachersTableProps = {
+  teachers: TeacherView[];
+  onPromote: () => void;
+  onDemote: (teacher: TeacherView) => void;
 };
 
-export function StudentsTable({
-  students,
-  statuses,
-  teacherProfileIds,
-  onAdd,
-  onEdit,
-  onDelete,
-  onActivate,
-}: StudentsTableProps) {
-  const t = useTranslations("students");
+export function TeachersTable({
+  teachers,
+  onPromote,
+  onDemote,
+}: TeachersTableProps) {
+  const t = useTranslations("teachers");
   const locale = useLocale();
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [gradeFilter, setGradeFilter] = useState<string>(ALL_GRADES);
-  const [hideTeachers, setHideTeachers] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<string>(ALL_STATUSES);
 
-  const teacherIds = useMemo(
-    () => new Set(teacherProfileIds),
-    [teacherProfileIds],
-  );
-
-  // Dual presence (Phase 12.6): a promoted teacher may still own a roster row.
-  // Shown by default (badged); an optional filter hides them.
-  const hasTeacherRows = useMemo(
-    () => students.some((student) => isTeacherPresence(student, teacherIds)),
-    [students, teacherIds],
-  );
-  const visibleStudents = useMemo(
-    () =>
-      hideTeachers
-        ? students.filter((student) => !isTeacherPresence(student, teacherIds))
-        : students,
-    [students, teacherIds, hideTeachers],
+  const statusLabels = useMemo<TeacherStatusLabels>(
+    () => ({
+      header: t("columns.status"),
+      invited: t("status.invited"),
+      active: t("status.active"),
+    }),
+    [t],
   );
 
   const labels = useMemo(
     () => ({
       name: t("columns.name"),
-      studentNumber: t("columns.studentNumber"),
-      grade: t("columns.grade"),
       email: t("columns.email"),
       createdAt: t("columns.createdAt"),
       actions: t("columns.actions"),
-      edit: t("actions.edit"),
-      delete: t("actions.delete"),
-      activationLink: t("actions.activationLink"),
+      demote: t("actions.demote"),
       rowActions: t("actions.rowActions"),
       sortAsc: t("table.sortAsc"),
       sortDesc: t("table.sortDesc"),
-      teacherBadge: t("teacherPresence.badge"),
-      status: {
-        header: t("columns.status"),
-        roster_only: t("status.roster_only"),
-        invited: t("status.invited"),
-        active: t("status.active"),
-      },
+      status: statusLabels,
     }),
-    [t],
+    [t, statusLabels],
   );
 
   const columns = useMemo(
-    () =>
-      buildStudentColumns({
-        locale,
-        labels,
-        statuses,
-        teacherProfileIds: teacherIds,
-        onEdit,
-        onDelete,
-        onActivate,
-      }),
-    [locale, labels, statuses, teacherIds, onEdit, onDelete, onActivate],
-  );
-
-  const gradeOptions = useMemo(
-    () => [...new Set(students.map((s) => s.grade))].sort((a, b) => a - b),
-    [students],
+    () => buildTeacherColumns({ locale, labels, onDemote }),
+    [locale, labels, onDemote],
   );
 
   const table = useReactTable({
-    data: visibleStudents,
+    data: teachers,
     columns,
     state: { sorting, columnFilters, globalFilter },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: studentGlobalFilter,
+    globalFilterFn: teacherGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -174,28 +122,28 @@ export function StudentsTable({
     initialState: { pagination: { pageSize: PAGE_SIZE } },
   });
 
-  function handleGradeChange(value: string) {
-    setGradeFilter(value);
+  function handleStatusChange(value: string) {
+    setStatusFilter(value);
     table
-      .getColumn("grade")
-      ?.setFilterValue(value === ALL_GRADES ? undefined : Number(value));
+      .getColumn("status")
+      ?.setFilterValue(value === ALL_STATUSES ? undefined : value);
   }
 
   function clearFilters() {
     setGlobalFilter("");
-    setGradeFilter(ALL_GRADES);
-    table.getColumn("grade")?.setFilterValue(undefined);
+    setStatusFilter(ALL_STATUSES);
+    table.getColumn("status")?.setFilterValue(undefined);
   }
 
-  // No roster at all → onboarding empty state (distinct from "no results").
-  if (students.length === 0) {
+  // No teachers at all → onboarding empty state (distinct from "no results").
+  if (teachers.length === 0) {
     return (
       <EmptyState
-        icon={<Users />}
+        icon={<GraduationCap />}
         title={t("empty.title")}
         description={t("empty.description")}
         action={
-          <Button onClick={onAdd}>
+          <Button onClick={onPromote}>
             <UserPlus className="size-4" aria-hidden="true" />
             {t("empty.action")}
           </Button>
@@ -207,31 +155,13 @@ export function StudentsTable({
   const rows = table.getRowModel().rows;
   const pageCount = table.getPageCount();
   const filteredCount = table.getFilteredRowModel().rows.length;
-  const totalCount = visibleStudents.length;
-  const cardLabels = {
-    grade: t("card.grade"),
-    studentNumber: t("card.studentNumber"),
-    email: t("card.email"),
-    added: t("card.added"),
-    rowActions: t("actions.rowActions"),
-    edit: t("actions.edit"),
-    delete: t("actions.delete"),
-    activationLink: t("actions.activationLink"),
-    teacherBadge: t("teacherPresence.badge"),
-    status: {
-      header: t("columns.status"),
-      roster_only: t("status.roster_only"),
-      invited: t("status.invited"),
-      active: t("status.active"),
-    } satisfies StudentStatusLabels,
-  };
+  const totalCount = teachers.length;
 
   return (
     <div className="space-y-4">
-      {/* Toolbar: search + grade filter */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:max-w-xs">
-          <Label htmlFor="students-search" className="sr-only">
+          <Label htmlFor="teachers-search" className="sr-only">
             {t("toolbar.searchLabel")}
           </Label>
           <Search
@@ -239,7 +169,7 @@ export function StudentsTable({
             aria-hidden="true"
           />
           <Input
-            id="students-search"
+            id="teachers-search"
             type="search"
             value={globalFilter}
             onChange={(event) => setGlobalFilter(event.target.value)}
@@ -248,33 +178,20 @@ export function StudentsTable({
           />
         </div>
 
-        <Select value={gradeFilter} onValueChange={handleGradeChange}>
+        <Select value={statusFilter} onValueChange={handleStatusChange}>
           <SelectTrigger
             className="w-full sm:w-44"
-            aria-label={t("toolbar.gradeLabel")}
+            aria-label={t("toolbar.statusLabel")}
           >
-            <SelectValue placeholder={t("toolbar.gradeAll")} />
+            <SelectValue placeholder={t("toolbar.statusAll")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={ALL_GRADES}>{t("toolbar.gradeAll")}</SelectItem>
-            {gradeOptions.map((grade) => (
-              <SelectItem key={grade} value={String(grade)}>
-                {t("toolbar.gradeOption", { grade: formatNumber(grade, locale) })}
-              </SelectItem>
-            ))}
+            <SelectItem value={ALL_STATUSES}>{t("toolbar.statusAll")}</SelectItem>
+            <SelectItem value="active">{t("status.active")}</SelectItem>
+            <SelectItem value="invited">{t("status.invited")}</SelectItem>
           </SelectContent>
         </Select>
       </div>
-
-      {hasTeacherRows ? (
-        <label className="flex w-fit items-center gap-2 text-sm text-muted-foreground">
-          <Checkbox
-            checked={hideTeachers}
-            onCheckedChange={(value) => setHideTeachers(value === true)}
-          />
-          {t("teacherPresence.hide")}
-        </label>
-      ) : null}
 
       <p className="text-sm text-muted-foreground" aria-live="polite">
         {filteredCount === totalCount
@@ -352,15 +269,17 @@ export function StudentsTable({
           <ul className="space-y-3 md:hidden">
             {rows.map((row) => (
               <li key={row.id}>
-                <StudentCard
-                  student={row.original}
-                  status={statuses[row.original.id] ?? "roster_only"}
-                  isTeacher={isTeacherPresence(row.original, teacherIds)}
+                <TeacherCard
+                  teacher={row.original}
                   locale={locale}
-                  labels={cardLabels}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                  onActivate={onActivate}
+                  labels={{
+                    email: t("columns.email"),
+                    added: t("card.added"),
+                    rowActions: t("actions.rowActions"),
+                    demote: t("actions.demote"),
+                    status: statusLabels,
+                  }}
+                  onDemote={onDemote}
                 />
               </li>
             ))}
@@ -416,66 +335,40 @@ export function StudentsTable({
   );
 }
 
-/** Compact roster card for the mobile (phone) breakpoint. */
-function StudentCard({
-  student,
-  status,
-  isTeacher,
+/** Compact teacher card for the mobile (phone) breakpoint. */
+function TeacherCard({
+  teacher,
   locale,
   labels,
-  onEdit,
-  onDelete,
-  onActivate,
+  onDemote,
 }: {
-  student: StudentRecord;
-  status: StudentAccountStatus;
-  isTeacher: boolean;
+  teacher: TeacherView;
   locale: string;
   labels: {
-    grade: string;
-    studentNumber: string;
     email: string;
     added: string;
-    edit: string;
-    delete: string;
-    activationLink: string;
     rowActions: string;
-    teacherBadge: string;
-    status: StudentStatusLabels;
+    demote: string;
+    status: TeacherStatusLabels;
   };
-  onEdit: (student: StudentRecord) => void;
-  onDelete: (student: StudentRecord) => void;
-  onActivate: (student: StudentRecord) => void;
+  onDemote: (teacher: TeacherView) => void;
 }) {
-  const name = studentDisplayName(student, locale);
   return (
     <Card className="flex items-start justify-between gap-3 p-4">
-      {/* Each datum carries an sr-only label since the card has no column
-          headers to associate with (the desktop table's <th> don't apply here). */}
       <div className="min-w-0 space-y-1">
-        <p className="flex items-center gap-2 font-medium text-foreground">
-          {name}
-          {isTeacher ? <TeacherPresenceBadge label={labels.teacherBadge} /> : null}
-        </p>
+        <p className="font-medium text-foreground">{teacher.fullName || "—"}</p>
         <p dir="ltr" className="truncate text-sm text-muted-foreground">
           <span className="sr-only">{labels.email}: </span>
-          {student.email}
+          {teacher.email ?? "—"}
         </p>
         <div className="flex flex-wrap items-center gap-2 pt-1">
-          <Badge variant="secondary">
-            {labels.grade} {formatNumber(student.grade, locale)}
-          </Badge>
           <span className="inline-flex items-center">
             <span className="sr-only">{labels.status.header}: </span>
-            <StudentStatusBadge status={status} labels={labels.status} />
-          </span>
-          <span dir="ltr" className="text-xs text-muted-foreground tabular-nums">
-            <span className="sr-only">{labels.studentNumber}: </span>
-            {student.student_number}
+            <TeacherStatusBadge status={teacher.status} labels={labels.status} />
           </span>
           <span className="text-xs text-muted-foreground">
             <span className="sr-only">{labels.added}: </span>
-            {formatDate(student.created_at, locale)}
+            {formatDate(teacher.createdAt, locale)}
           </span>
         </div>
       </div>
@@ -492,18 +385,11 @@ function StudentCard({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem onSelect={() => onEdit(student)}>
-            {labels.edit}
-          </DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => onActivate(student)}>
-            {labels.activationLink}
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
           <DropdownMenuItem
             className="text-destructive-text focus:text-destructive-text"
-            onSelect={() => onDelete(student)}
+            onSelect={() => onDemote(teacher)}
           >
-            {labels.delete}
+            {labels.demote}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

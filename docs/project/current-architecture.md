@@ -5,7 +5,9 @@
 > per-phase specs where they disagree about registration, identity, or authorization. The per-phase
 > files under `docs/phases/` remain the historical specs for each phase; this file is the live map.
 >
-> **Last synchronized:** after Phase 12.5 completion. **Next planned phase:** 13 (Reading Analytics).
+> **Last synchronized:** after **Phase 12.6** implementation (Profile Editing + Role/Teacher
+> Management) — awaiting the owner's manual testing. **Next phase:** 13 (Reading Analytics). See
+> `docs/phases/12.6-role-management.md` and the "Future Considerations" section below.
 >
 > **Companion docs:**
 > - `docs/database/manual-supabase-configuration.md` — every manual Supabase setting not in SQL.
@@ -85,8 +87,10 @@ in the UI (hide/disable) and at the data layer (never trust the client) — usin
 so the two never drift.
 
 - **Capability helpers** — `features/auth/roles.ts`: `isAdmin`/`isTeacher`/`isStudent`, `isUserRole`,
-  `canManageUsers` (admin), `canManageStudents`/`canManageContent`/`canAccessAnalytics`/
-  `canAccessReports` (admin + teacher).
+  `canManageUsers` (admin), `canManageTeachers` (admin — Phase 12.6),
+  `canManageStudents`/`canManageContent`/`canAccessAnalytics`/`canAccessReports` (admin + teacher),
+  and `canChangeRole(...)` + `MANAGEABLE_ROLES` (the `student`⇄`teacher`-only, admin-only,
+  not-self transition policy — Phase 12.6).
 - **Route guards** — `features/auth/guards.ts` (server-only): `requireUser()`,
   `requireRole(role, ...rest)`, and `redirectIfAuthenticated()`. Unauthenticated → login;
   authenticated-but-unauthorized → home.
@@ -97,7 +101,7 @@ RLS is enabled on every table. Today's policies:
 
 | Table | SELECT | Writes | Implication |
 |---|---|---|---|
-| `profiles` | own row (`auth.uid() = id`) | **no INSERT policy** | Cross-user reads + the registration profile insert use `supabaseAdminClient` (role-gated). |
+| `profiles` | own row (`auth.uid() = id`) | **no INSERT policy**; **UPDATE own row, `full_name`/`avatar_url` columns only** (Phase 12.6 — column privileges + scoped policy) | Cross-user reads, the registration insert, and **all `role` writes** use `supabaseAdminClient` (role-gated). Self-edit of name/avatar uses the session client; `role` is unwritable by clients. |
 | `user_settings` | own row (`auth.uid() = user_id`) | own row (`settings_insert_own`, etc.) | Each user reads/writes only their own settings. |
 | `students` | any authenticated (`true`) | privileged writes via service-role | Admin/teacher read all; **student reads must scope to their own `student_id` in-query**. |
 | `reading_passages` | any authenticated (`true`) | — | Readable by all roles. |
@@ -192,15 +196,40 @@ On any insert failure → compensating rollback: delete the auth user (cascades
 ## 8. Admin/teacher provisioning — activation links (no SMTP)
 
 `generateStudentActivationLinkAction` + `ActivationLinkDialog`
-(`features/students/identity/`). Admin/teacher only. Generates a Supabase `generateLink` **recovery**
-action link — **no email is sent**; the admin copies it and shares it. The student opens it, lands on
-the Phase 5 reset-password flow via `ROUTES.authCallback`, and sets a password.
+(`features/students/identity/`). Admin/teacher only. Uses Supabase `generateLink({ type:"recovery" })`
+**without sending an email**, then builds a **copyable link to our own callback** using the link's
+`properties.hashed_token`:
+`…/api/auth/callback?token_hash=<hashed_token>&type=recovery&next=/<locale>/reset-password`. The admin
+shares it; the student opens it, the callback verifies the token server-side and establishes the
+session, and they land on the Phase 5 reset-password page to set a password (which makes the account
+`active`).
 
 - If the student isn't linked yet, it **provisions first**: `admin.createUser` (no password, no
   `email_confirm`) → insert `profiles` → set `students.profile_id` — each step compensated on
   failure (delete the auth user, which cascades the profile).
 - If already linked, it re-issues a fresh set-password link for the existing identity's email.
 - An existing auth user for that email surfaces as `emailInUse`.
+
+> **Why the link points at our callback with `token_hash`, not the raw `action_link`.** Admin-generated
+> links are created server-side via the Admin API, so there is **no PKCE code verifier** in the
+> student's browser. The default `/auth/v1/verify` → `?code` exchange therefore can't establish a
+> session (it returns tokens in the URL hash a server route can't read), and the link would dead-end
+> at Login. Passing the `hashed_token` to our callback lets it verify server-side with
+> `verifyOtp({ type:"recovery", token_hash })` — no verifier required. See §8a.
+
+### 8a. Auth callback — two flows (`app/api/auth/callback/route.ts`)
+
+The callback supports **both** authentication paths and, on success, sets the auth cookies and
+redirects to the validated internal `next` path (otherwise it redirects to the localized login):
+
+| Path | Trigger | Mechanism | Used by |
+|---|---|---|---|
+| **PKCE** | `?code=` | `exchangeCodeForSession(code)` (verifier in the requesting browser) | Phase 5 **forgot-password** (`resetPasswordForEmail`, user-initiated) |
+| **Token hash** | `?token_hash=&type=recovery` | `verifyOtp({ type, token_hash })` (no verifier needed) | Phase 12.6 **admin activation links** |
+
+Both flows exist because user-initiated resets *have* a PKCE verifier (so the code exchange is correct
+and most secure for them), while admin-generated links *cannot* have one — so they need the
+server-side OTP verification path. Neither path is removed; `?code` takes precedence if present.
 
 ---
 
@@ -249,7 +278,11 @@ profile) — those complete via normal onboarding/claim.
 
 ### profiles
 `id, full_name, role, avatar_url, locale, created_at, updated_at`. `id = auth.users.id`. Created at
-registration (service-role) or admin provisioning. Carries the role.
+registration (service-role) or admin provisioning. Carries the role. **Phase 12.6:** a user may
+self-edit **only** `full_name` and `avatar_url` (Profile Editing, in Settings) via the session client
+under the redesigned `profiles_update_own` policy + column privileges; `avatar_url` stores the
+storage **object path** (`avatars/{user_id}/avatar.webp`), not a URL. `role` is writable **only** by
+the admin-gated role-change action via the service-role client — never by the user.
 
 ### students (roster)
 `id, student_number, first_name_ar, last_name_ar, first_name_en, last_name_en, email, grade,
@@ -261,7 +294,19 @@ search/sort; account-status column + email management + activation/reconcile dia
 `id, user_id, theme, locale, reduced_motion, email_notifications, created_at, updated_at`. One row per
 auth user, created explicitly at registration. Settings UI in `features/settings/` (Phase 12);
 preferences map 1:1 to the columns. Theme + reduced motion are served via React context providers
-(`ThemeProvider`, `MotionProvider`), not a store.
+(`ThemeProvider`, `MotionProvider`), not a store. **Phase 12.6** adds a Profile card to the same
+Settings page (name + avatar), backed by `profiles` — a separate form/data source from these
+preferences.
+
+### teachers (no table — a `profiles.role` projection)
+There is **no `teachers` table**. A teacher is exactly `profiles.role = 'teacher'`. Teacher
+Management (`features/teachers/`, admin-only `/teachers`, Phase 12.6) lists/searches/filters teacher
+profiles and promotes/demotes between `student` and `teacher` by flipping **only** `profiles.role`.
+`getTeachers`/`getPromotableUsers` are service-role projections of `profiles` (+ email/sign-in). Admin
+is infrastructure-only (no create/assign/escalate-to-admin path). Promotion targets authenticated
+users (profiles), never roster-only students. A promoted teacher keeps any `students` row + reading
+history (intentional dual presence, flagged with a badge + optional hide-filter in Student
+Management).
 
 ### reading_passages & vocabulary_terms
 Reading content (Phase 8) + the Read With Me vocabulary aid (Phase 11). Vocabulary is strictly a
@@ -283,9 +328,9 @@ Locale-prefixed (`/ar/...`, `/en/...`) via next-intl. Central paths in `lib/rout
 `authCallback` is deliberately under `/api` (locale-agnostic backend endpoint).
 
 **Implemented pages today** (`IMPLEMENTED_ROUTES`): `home`, `login`, `register`, `forgotPassword`,
-`resetPassword`, `dashboard`, `students`, `passages`, `vocabulary`, `readingSessions`, `settings`.
-**Defined but not yet built** (nav shows a disabled "coming soon" state, never a 404): `analytics`
-(Phase 13), `reports` (Phase 18).
+`resetPassword`, `dashboard`, `students`, `teachers` (admin-only, Phase 12.6), `passages`,
+`vocabulary`, `readingSessions`, `settings`. **Defined but not yet built** (nav shows a disabled
+"coming soon" state, never a 404): `analytics` (Phase 13), `reports` (Phase 18).
 
 ---
 
@@ -306,6 +351,9 @@ Locale-prefixed (`/ar/...`, `/en/...`) via next-intl. Central paths in `lib/rout
 | `completeReadingSessionAction` | `features/reading/sessions/actions.ts` | student | Recompute fluency + insert a session (Phase 10). |
 | `loadPassageVocabularyAction` | `features/reading/sessions/actions.ts` | student | Load one passage's vocabulary for the reader (Phase 11). |
 | `updateSettingsAction` | `features/settings/actions.ts` | authed (own row) | Re-validate + upsert own settings (Phase 12). |
+| `updateProfileAction` | `features/settings/profile-actions.ts` | authed (own row) | Update own `full_name` (session client, RLS-enforced) — Phase 12.6. |
+| `updateAvatarAction` / `removeAvatarAction` | `features/settings/profile-actions.ts` | authed (own row) | Transactional avatar upload (upload → persist path → compensate-delete on DB failure) / remove — Phase 12.6. |
+| `promoteToTeacherAction` / `demoteToStudentAction` | `features/teachers/actions.ts` | admin | Flip `profiles.role` between `student`/`teacher` (service-role, `canChangeRole`-guarded, race-safe) — Phase 12.6. |
 
 Every action re-validates input with the **same Zod schema the client used** (Server Functions are
 reachable via direct POST), maps failures to safe localized copy, and revalidates affected routes.
@@ -345,7 +393,13 @@ reachable via direct POST), maps failures to safe localized copy, and revalidate
 - **Account-status derivation lists all auth users on each Student Management load** — fine at
   school/demo scale; revisit with caching/pagination if the user base grows → **Phase 14
   (Performance)**.
-- **Cross-device hydration of theme/reduced-motion** (deferred in Phase 12) — unaffected by 12.5.
+- **Cross-device hydration of theme/reduced-motion** (deferred in Phase 12) — unaffected by 12.5/12.6.
+- **Teacher list + promote picker list all auth users / all student profiles on each load** (Phase
+  12.6) — fine at school/demo scale; revisit with caching/pagination → **Phase 14 (Performance)**.
+- **Avatar replace + DB-write failure** (Phase 12.6): the transactional action deletes the uploaded
+  object on a DB failure; for a *replace* (rare) this can remove the prior avatar while `avatar_url`
+  still points at the path. Self-heals on the next successful upload (stable path). Acceptable;
+  revisit only if it surfaces in practice.
 - **Generated Supabase database types** — record types are currently hand-authored from the locked
   schema as the typed contract; generate from the CLI when added (see `SupabaseArchitecture.md`).
 
@@ -365,3 +419,76 @@ reachable via direct POST), maps failures to safe localized copy, and revalidate
 | 20 | Final Refactor | `docs/phases/20-final-refactor.md` |
 
 Work one phase at a time, only when explicitly requested (`/start-phase <n>` → `/finish-phase`).
+
+---
+
+## 18. Future Considerations
+
+> Captures architectural intent so future Claude Code sessions understand not just *what* exists but
+> *why*, and what must never be broken. The Phase 12.6 decisions below are **implemented**
+> (`docs/phases/12.6-role-management.md`); the *future teacher workflow* further down is not.
+
+### Profile Editing (Phase 12.6, Part 1 — implemented)
+
+- **Users self-edit only `full_name` + `avatar_url`**, inside Settings (no new page). Email and role
+  are read-only (email is admin-managed; role is privileged). Enforced at the DB layer by the
+  redesigned `profiles_update_own` policy **+ column privileges** — `role`/identity columns are
+  unwritable by clients, so the admin invariant holds even against direct client calls.
+- **`avatar_url` stores the object path, not a URL** — the app generates the public URL at runtime
+  (`avatarPublicUrl`), keeping the DB independent of bucket/CDN/domain and able to switch to signed
+  URLs later with no data change.
+- **Avatar upload is transactional** (server action): validate → upload → persist path → **delete the
+  uploaded object if the DB write fails** (compensation). Stable path (`avatar.webp`) → replace is an
+  overwrite → no orphaned files. WebP passthrough; only JPEG/PNG are converted; 1 MB cap.
+- *Why redesign, not drop, `profiles_update_own`:* the user now has a legitimate self-edit, so a
+  column-scoped policy is the correct durable shape — safer than the original broad policy.
+
+### Role management (Phase 12.6, Part 2 — implemented)
+
+- **A teacher is exactly `profiles.role = 'teacher'` — the single source of truth.** No `teachers`
+  table. The admin can promote a `student` user to `teacher` and demote back, entirely in-app, by
+  flipping `profiles.role` only.
+- **Role management mutates only `profiles.role`** (+ `updated_at`). It never touches the Phase 12.5
+  identity link (`profile_id`), the `students` roster row, `auth.users`, `user_settings`, or
+  `reading_sessions`. Every change is reversible and lossless.
+- **Only authenticated users (a `profiles` row) can be promoted.** Roster-only students
+  (`profile_id IS NULL`) have no role to change.
+- **Allowed transitions: `student ⇄ teacher`, admin only.** Admin is **infrastructure-only** — no
+  in-app path creates, assigns, or escalates to admin; the actor can't change their own role. Enforced
+  in both UI and the server action.
+- **Dual presence is intentional.** A promoted teacher may still own a `students` row (so demotion
+  preserves their reading history) — addressed with a UI badge/filter, never by moving/deleting data.
+- **Separate module.** Teacher Management (`features/teachers/`, admin-only `/teachers`) is independent
+  from Student Management (the academic roster). No generic "Users" module.
+- **Authorization:** new explicit `canManageTeachers()` (admin) + a pure `canChangeRole()` transition
+  predicate — not an overload of `canManageUsers()`.
+- **Data path:** cross-`profiles` reads + the role UPDATE use the role-gated **service-role** client
+  (the same pattern the admin dashboard already uses), because `profiles` RLS is select-own. Requires
+  verifying `service_role` has UPDATE on `public.profiles` (the one gating precondition).
+
+### Future teacher workflow (NOT built — planned for later phases)
+
+Assigned students / classrooms / reading groups, reading-session review, student evaluations, grading,
+comments, teacher statistics, teacher dashboards, teacher reports.
+
+### Future extension points (how the above attach without redesign)
+
+- A teacher is already a first-class **`profiles.id`** identity, so future relationships key off it:
+  `teacher_student_assignments(teacher_profile_id → profiles.id, student_id → students.id, …)`,
+  `evaluations(teacher_profile_id, student_id, …)`, `teacher_profiles(profile_id PK, department, …)` —
+  all **separate extension tables**, each in its own phase. None changes today's identity model.
+- Resolution stays **by id** (`profiles.id` / `students.id` / `profile_id`), never email.
+- Teacher-scoped reads layer onto the existing `requireRole`/capability-helper pattern; no new identity
+  plumbing.
+
+### Invariants that must NEVER be broken in future phases
+
+- **Never** add a parallel "is a teacher" flag/table that can disagree with `profiles.role`.
+- **Never** make role management write identity columns (`profile_id`) or `students` / `auth.users` /
+  `user_settings` / `reading_sessions`.
+- **Never** expose an in-app path to create, assign, or escalate to **admin**.
+- **Never** delete or move a student's `students` row / reading history on a role change.
+- **Never** resolve teachers or students by email instead of by id.
+- **Never** promote a roster-only record (no `profiles`).
+- The **Phase 12.5 identity invariant** (`auth.users.id ↔ profiles.id ↔ students.profile_id`, resolve
+  by `profile_id`) remains frozen.

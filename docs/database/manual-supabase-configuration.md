@@ -20,7 +20,7 @@
 |---|---|---|
 | **Email → Confirm email** | **OFF** | **Required.** Public registration uses `supabase.auth.signUp()`; with confirmation disabled the project auto-confirms the signup and returns a session immediately, so the user signs in in one step. With it ON, `signUp()` would not return a session and `signUpAction` would roll back (Bayan has no SMTP to deliver a confirmation). |
 | **SMTP** | **Not configured** | Bayan is intentionally SMTP-free. No flow depends on an email being delivered. |
-| **Redirect URLs (allow-list)** | Must include the app origin's `/api/auth/callback` | Password-reset and admin activation links redirect through `ROUTES.authCallback` (`/api/auth/callback?next=…`). The resulting URL must be in Supabase's redirect allow-list, or the link is rejected. Add each deployment origin (local dev + production). |
+| **Redirect URLs (allow-list)** | Must include the app origin's `/api/auth/callback` | Password-reset (PKCE `?code`) and admin activation links (token-hash `?token_hash=&type=recovery`) both route through `ROUTES.authCallback` (`/api/auth/callback`). The `generateLink` `redirectTo` we pass (the callback URL) must be in Supabase's redirect allow-list, or link generation is rejected. Add each deployment origin (local dev + production). The callback then verifies via `exchangeCodeForSession` (PKCE) or `verifyOtp({ token_hash })` (activation) — see `current-architecture.md` §8a. |
 
 > **Consequence — emails are honestly unverified.** Because confirmation is off and no email is ever
 > sent, possession of an email never proves anything. That is **by design**: roster claiming requires
@@ -72,7 +72,7 @@ Review)** scope.
 
 | Table | SELECT policy | Write policy | App reliance |
 |---|---|---|---|
-| `profiles` | own row (`auth.uid() = id`) | **no INSERT policy** | Registration profile insert + cross-user reads use the service-role client (role-gated in app code). |
+| `profiles` | own row (`auth.uid() = id`) | **no INSERT policy**; **UPDATE = own row, columns `full_name`/`avatar_url` only** (Phase 12.6 — see §3a) | Registration profile insert + all cross-user reads/`role` writes use the service-role client (role-gated). Self-service profile editing (name/avatar) uses the session client under the scoped policy. |
 | `user_settings` | own row (`auth.uid() = user_id`) | own row insert/update (`settings_insert_own` + own-row update) | Registration inserts the row via the **session client** under `settings_insert_own`; Settings reads/writes own row only. |
 | `students` | any authenticated (`true`) | privileged writes via service-role | Admin/teacher read all; **student reads scope to own `student_id` in-query** — never rely on RLS for student isolation. |
 | `reading_passages` | any authenticated (`true`) | — | Readable by all roles. |
@@ -82,6 +82,33 @@ Review)** scope.
 > **Do not weaken these assumptions in code.** Because `students` / `reading_passages` /
 > `reading_sessions` SELECT is permissive, **app code must do the scoping**. Student-facing reads
 > resolve the student via `profile_id` (`getLinkedStudentId`) and filter by `student_id`.
+
+### 3a. Profiles self-edit hardening (Phase 12.6 — APPLIED)
+
+Profile Editing (Phase 12.6, Part 1) lets a user edit **only** their own `full_name` and
+`avatar_url`. The previously over-broad `profiles_update_own` policy (`USING (auth.uid()=id)`, no
+`WITH CHECK`, no column scope) allowed self-escalation of `role`. It was **redesigned** (not removed)
+with two layers — **applied to the live project**:
+
+```sql
+-- Layer 1 — COLUMN privileges: role/id/etc. become unwritable by clients.
+revoke update on public.profiles from anon, authenticated;
+grant  update (full_name, avatar_url) on public.profiles to authenticated;
+
+-- Layer 2 — RLS row scope: authenticated, own row only.
+drop policy if exists "profiles_update_own" on public.profiles;
+create policy "profiles_update_own" on public.profiles
+  for update to authenticated
+  using ( auth.uid() = id ) with check ( auth.uid() = id );
+```
+
+Result: an authenticated user can update **only** `full_name`/`avatar_url` on **their own** row.
+`role` and every identity field are unwritable by clients; `role` changes run **only** through the
+admin-gated server action via the **service-role** client (which is unaffected by the column
+revoke). `service_role` **UPDATE on `public.profiles`** was verified present (required by the role
+change + the Phase 12.5 email change). The `profiles_updated_at` BEFORE-UPDATE trigger bumps
+`updated_at` automatically, so the user needs no privilege on it (it also serves as the avatar
+cache-bust token).
 
 ---
 
@@ -118,7 +145,62 @@ These existed before Phase 12.5 and the identity model depends on them:
 
 ## 6. Storage
 
-Bucket: **`avatars`**. (Profile avatars; `profiles.avatar_url`.)
+Bucket: **`avatars`** — profile avatars. `profiles.avatar_url` stores the **object path**
+(`avatars/{user_id}/avatar.webp`), never a URL; the app builds the public URL at runtime.
+
+**Bucket settings (Phase 12.6 — APPLIED):** **Public** read · `file_size_limit` **1 MB** ·
+`allowed_mime_types` **`image/webp,image/png,image/jpeg`**.
+
+**`storage.objects` policies (Phase 12.6 — APPLIED, all four REQUIRED):** owner-scoped writes (each
+user only under their own `{user_id}/` folder) **plus a SELECT policy** — see §6a for why the SELECT
+policy is required even though the app calls no read API.
+
+```sql
+create policy "avatars_owner_insert" on storage.objects for insert to authenticated
+  with check ( bucket_id='avatars' and (storage.foldername(name))[1] = auth.uid()::text );
+create policy "avatars_owner_update" on storage.objects for update to authenticated
+  using      ( bucket_id='avatars' and (storage.foldername(name))[1] = auth.uid()::text )
+  with check ( bucket_id='avatars' and (storage.foldername(name))[1] = auth.uid()::text );
+create policy "avatars_owner_delete" on storage.objects for delete to authenticated
+  using      ( bucket_id='avatars' and (storage.foldername(name))[1] = auth.uid()::text );
+-- REQUIRED: the upsert upload path internally reads storage.objects (see §6a).
+create policy "avatars_public_read" on storage.objects for select to public
+  using ( bucket_id='avatars' );
+```
+
+The upload is **transactional** in the server action: upload → persist path → **on DB failure,
+delete the uploaded object** (compensation). The stable path (`avatar.webp`) means replace is an
+overwrite, so there are no orphaned files.
+
+### 6a. `avatars_public_read` is REQUIRED (verified in production)
+
+**Verified behavior (corrects an earlier wrong assumption).** The `avatars_public_read` SELECT
+policy on `storage.objects` is **intentionally required and must remain.** Real-world testing
+confirmed: **removing it breaks avatar upload/replace, and re-adding it immediately restores them.**
+
+Although the application calls **no** Storage **read** API directly — only
+`supabase.storage.from('avatars').upload(..., { upsert: true })` and `.remove([...])` in
+[`features/settings/profile-actions.ts`](../../features/settings/profile-actions.ts), plus a manually
+built public object URL in [`lib/avatar.ts`](../../lib/avatar.ts) — **Supabase Storage internally
+requires SELECT access on `storage.objects` for the upsert workflow.** An `upsert: true` upload reads
+the existing object (existence check, to decide insert-vs-update on the stable `avatar.webp` path); if
+RLS denies that internal SELECT, the upload/replace fails. The write policies alone are therefore
+**not sufficient** for our upload path.
+
+> **Do NOT remove `avatars_public_read`.** It is load-bearing for upload/replace, not just for object
+> display. All **four** policies (`avatars_owner_insert` / `_update` / `_delete` / `avatars_public_read`)
+> are required.
+
+> ⚠️ **Invariant: the `avatars` bucket MUST remain Public.** Avatar display uses public object URLs
+> (`/object/public/...`, served by the bucket's Public flag). If the bucket is ever changed to
+> Private, the avatar system must — **before deployment** — migrate to **signed URLs**
+> (`createSignedUrl`) and re-verify the `storage.objects` read policies, or every avatar URL will
+> return HTTP 400.
+
+> **Lesson recorded:** the earlier "no read API in code ⇒ no SELECT policy needed" reasoning was a
+> static-analysis assumption that did **not** hold — the Storage service performs internal reads the
+> app never issues. Storage RLS requirements must be confirmed by **runtime testing**, not by source
+> grep alone.
 
 ---
 
@@ -141,9 +223,13 @@ Bucket: **`avatars`**. (Profile avatars; `profiles.avatar_url`.)
 3. Add each app origin's `/api/auth/callback` URL to the **redirect allow-list**.
 4. Verify `service_role` has `SELECT, INSERT, UPDATE` on `public.students` (§2 query). Grant only if
    missing.
-5. Confirm RLS is enabled on all tables with the policies in §3 (including `settings_insert_own` and
-   the own-row `profiles`/`user_settings` SELECT policies).
+5. Confirm RLS is enabled on all tables with the policies in §3 (including `settings_insert_own`, the
+   own-row `profiles`/`user_settings` SELECT policies, and the §3a `profiles` self-edit hardening).
 6. Confirm the FK `ON DELETE` semantics in §5.
-7. Create the `avatars` storage bucket.
+7. Create the `avatars` storage bucket — **Public**, 1 MB limit, image MIME allow-list (§6). Apply
+   **all four** `storage.objects` policies (`avatars_owner_insert` / `_update` / `_delete` **and**
+   `avatars_public_read`). The SELECT policy is **required** — the upsert upload path internally reads
+   `storage.objects`, so without it upload/replace fails (§6a). Keep the bucket **Public** (see the
+   §6a invariant for the Private-migration requirement).
 8. Set the four environment variables (§7); keep the service-role key server-only.
 9. Do **not** add an `on auth.users` trigger (§4).

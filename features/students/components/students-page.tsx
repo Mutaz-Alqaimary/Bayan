@@ -23,10 +23,12 @@ import type { StudentRecord } from "@/features/students/types";
 export function StudentsPage({
   students,
   statuses,
+  teacherProfileIds,
   canReconcile,
 }: {
   students: StudentRecord[];
   statuses: Record<string, StudentAccountStatus>;
+  teacherProfileIds: string[];
   canReconcile: boolean;
 }) {
   const t = useTranslations("students");
@@ -90,6 +92,7 @@ export function StudentsPage({
       <StudentsTable
         students={students}
         statuses={statuses}
+        teacherProfileIds={teacherProfileIds}
         onAdd={openCreate}
         onEdit={openEdit}
         onDelete={openDelete}

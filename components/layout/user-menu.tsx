@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { signOutAction } from "@/features/auth/actions";
 import type { SessionUser } from "@/features/auth/types";
+import { avatarPublicUrl } from "@/lib/avatar";
 
 /** Two-letter initials from a name (first letters of the first two words). */
 function initials(value: string): string {
@@ -35,6 +36,9 @@ export function UserMenu({ user }: { user: SessionUser }) {
   const [isPending, startTransition] = useTransition();
 
   const display = user.profile.full_name?.trim() || user.email || "";
+  const avatarUrl = user.profile.avatar_url
+    ? avatarPublicUrl(user.profile.avatar_url, user.profile.updated_at)
+    : null;
 
   return (
     <DropdownMenu>
@@ -44,8 +48,13 @@ export function UserMenu({ user }: { user: SessionUser }) {
           className="h-10 gap-2 px-1.5 sm:px-2"
           aria-label={t("account")}
         >
-          <span className="flex size-8 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
-            {initials(display)}
+          <span className="flex size-8 items-center justify-center overflow-hidden rounded-full bg-primary/10 text-xs font-semibold text-primary">
+            {avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element -- runtime public URL from a stored path
+              <img src={avatarUrl} alt="" className="size-full object-cover" />
+            ) : (
+              initials(display)
+            )}
           </span>
           <span className="hidden max-w-32 truncate text-sm font-medium sm:inline">
             {display}

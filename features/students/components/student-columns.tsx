@@ -44,6 +44,7 @@ export type StudentColumnLabels = {
   rowActions: string;
   sortAsc: string;
   sortDesc: string;
+  teacherBadge: string;
   status: StudentStatusLabels;
 };
 
@@ -51,10 +52,33 @@ type ColumnContext = {
   locale: string;
   labels: StudentColumnLabels;
   statuses: Record<string, StudentAccountStatus>;
+  teacherProfileIds: Set<string>;
   onEdit: (student: StudentRecord) => void;
   onDelete: (student: StudentRecord) => void;
   onActivate: (student: StudentRecord) => void;
 };
+
+/**
+ * Whether a roster row's linked profile is currently a teacher — the
+ * intentional Phase 12.6 "dual presence" (a promoted teacher who still owns a
+ * roster row). Flagged with a badge so admins aren't confused; the data is never
+ * moved or duplicated.
+ */
+export function isTeacherPresence(
+  student: Pick<StudentRecord, "profile_id">,
+  teacherProfileIds: Set<string>,
+): boolean {
+  return student.profile_id != null && teacherProfileIds.has(student.profile_id);
+}
+
+/** A small "Teacher account" badge for a dual-presence roster row. */
+export function TeacherPresenceBadge({ label }: { label: string }) {
+  return (
+    <Badge variant="outline" className="border-primary/40 text-primary">
+      {label}
+    </Badge>
+  );
+}
 
 /** The badge variant for each derived account status. */
 const STATUS_VARIANT: Record<
@@ -140,6 +164,7 @@ export function buildStudentColumns({
   locale,
   labels,
   statuses,
+  teacherProfileIds,
   onEdit,
   onDelete,
   onActivate,
@@ -169,7 +194,12 @@ export function buildStudentColumns({
               : null;
         return (
           <div className="flex flex-col">
-            <span className="font-medium text-foreground">{primary}</span>
+            <span className="flex items-center gap-2">
+              <span className="font-medium text-foreground">{primary}</span>
+              {isTeacherPresence(student, teacherProfileIds) ? (
+                <TeacherPresenceBadge label={labels.teacherBadge} />
+              ) : null}
+            </span>
             {secondary ? (
               <span
                 dir={locale === "en" ? "rtl" : "ltr"}
