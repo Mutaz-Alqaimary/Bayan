@@ -58,6 +58,12 @@
   --chart-4: oklch(0.6 0.16 300);
   --chart-5: oklch(0.62 0.17 16);
 
+  /* Chart chrome tokens (Phase 13). Reserved as a system so future analytics
+     modules / multi-series charts theme consistently; not all are used today. */
+  --chart-grid: oklch(0.922 0.005 258);
+  --chart-axis: oklch(0.84 0.006 258);
+  --chart-text: oklch(0.55 0.016 262);
+
   --sidebar: oklch(0.985 0.002 247);
   --sidebar-foreground: oklch(0.21 0.02 262);
   --sidebar-primary: oklch(0.52 0.13 173);
@@ -113,6 +119,11 @@
   --chart-4: oklch(0.7 0.16 300);
   --chart-5: oklch(0.7 0.17 16);
 
+  /* Chart chrome tokens (Phase 13) — dark-mode values. */
+  --chart-grid: oklch(1 0 0 / 10%);
+  --chart-axis: oklch(1 0 0 / 20%);
+  --chart-text: oklch(0.72 0.015 257);
+
   --sidebar: oklch(0.214 0.015 264);
   --sidebar-foreground: oklch(0.96 0.003 247);
   --sidebar-primary: oklch(0.7 0.12 173);
@@ -156,6 +167,9 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-chart-grid: var(--chart-grid);
+  --color-chart-axis: var(--chart-axis);
+  --color-chart-text: var(--chart-text);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);

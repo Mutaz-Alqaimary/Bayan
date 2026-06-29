@@ -3,8 +3,8 @@
 Built one phase at a time. Use `/start-phase <number>` to begin a phase and `/finish-phase` to
 close it out. Never skip ahead — each phase assumes the previous ones are done and approved.
 
-> **Current state:** Phases **1 → 12.6 are complete** (12.6 implemented — awaiting the owner's manual
-> testing). Phase 13 (Reading Analytics) is next. For how the project actually works *today* (not the
+> **Current state:** Phases **1 → 13 are complete** (13 implemented — awaiting the owner's manual
+> visual testing). Phase 14 (Performance) is next. For how the project actually works *today* (not the
 > per-phase specs), read the single source of truth:
 > [`docs/project/current-architecture.md`](../project/current-architecture.md). Manual Supabase config
 > that isn't in SQL lives in
@@ -26,7 +26,7 @@ close it out. Never skip ahead — each phase assumes the previous ones are done
 | 12 | Settings | `12-settings.md` | ✅ Done |
 | 12.5 | Student Identity & Roster Integration | `12.5-student-identity-and-roster-integration.md` | ✅ Done |
 | 12.6 | Role Management + Profile Editing | `12.6-role-management.md` | ✅ Done (awaiting manual testing) |
-| 13 | Reading Analytics | `13-reading-analytics.md` | Planned |
+| 13 | Reading Analytics | `13-reading-analytics.md` | ✅ Done (awaiting manual testing) |
 | 14 | Performance | `14-performance.md` | Planned |
 | 15 | Accessibility Audit | `15-accessibility-audit.md` | Planned |
 | 16 | Testing | `16-testing.md` | Planned |

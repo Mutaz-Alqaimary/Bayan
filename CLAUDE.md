@@ -60,9 +60,17 @@ Before making architectural decisions, load all relevant documentation for the c
 
 # Current Implementation State (read this first)
 
-**Phases 1 → 12.6 are complete** (12.6 implemented — awaiting the owner's manual testing). The next
-planned phase is **13 (Reading Analytics)**. Do not start it or any new feature unless explicitly
-asked.
+**Phases 1 → 13 are complete** (13 implemented — awaiting the owner's manual visual testing). The next
+planned phase is **14 (Performance)**. Do not start it or any new feature unless explicitly asked.
+
+**Phase 13** added **Reading Analytics** — a read-only `/analytics` surface (admin + teacher only,
+`canAccessAnalytics`) that turns `reading_sessions` history into cohort- and student-level trends.
+It is a **read layer over existing data** in `features/analytics/`: bounded, range-filtered reads via
+the session client that aggregate in TypeScript by **reusing** the dashboard layer (never forked) and
+return stable view models (never raw rows). Time range + drilled-in student are URL search params;
+charts are a **dependency-free SVG kit**. **No schema, Supabase, or dependency changes.** Full detail
+lives in `docs/project/current-architecture.md` (§12 "reading analytics") and
+`docs/phases/13-reading-analytics.md`.
 
 **Phase 12.6** added (a) **Profile Editing** — a user self-edits **only** `full_name` + avatar inside
 Settings; `profiles_update_own` was redesigned to a column-scoped policy (`full_name`/`avatar_url`

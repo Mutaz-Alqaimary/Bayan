@@ -5,9 +5,9 @@
 > per-phase specs where they disagree about registration, identity, or authorization. The per-phase
 > files under `docs/phases/` remain the historical specs for each phase; this file is the live map.
 >
-> **Last synchronized:** after **Phase 12.6** implementation (Profile Editing + Role/Teacher
-> Management) — awaiting the owner's manual testing. **Next phase:** 13 (Reading Analytics). See
-> `docs/phases/12.6-role-management.md` and the "Future Considerations" section below.
+> **Last synchronized:** after **Phase 13** implementation (Reading Analytics) — awaiting the owner's
+> manual visual testing. **Next phase:** 14 (Performance). See
+> `docs/phases/13-reading-analytics.md` and the "Future Considerations" section below.
 >
 > **Companion docs:**
 > - `docs/database/manual-supabase-configuration.md` — every manual Supabase setting not in SQL.
@@ -24,11 +24,11 @@ teachers. Three roles — **admin**, **teacher**, **student** — stored on `pro
 question is "is the student's Arabic reading improving over time?", measured through timed reading
 sessions (WPM, accuracy, duration).
 
-**Completed phases (1 → 12.5):** Foundation, Supabase integration, design system, localization/RTL,
+**Completed phases (1 → 13):** Foundation, Supabase integration, design system, localization/RTL,
 authentication, dashboards, student management, reading-content management, CSV/XLSX import-export,
-reading fluency (sessions), Read With Me (reader + vocabulary), settings, and student identity &
-roster integration. Phases 13–20 (analytics, performance, a11y audit, testing, security review,
-reporting, deployment, final refactor) are **not yet built**.
+reading fluency (sessions), Read With Me (reader + vocabulary), settings, student identity & roster
+integration, role/profile management, and **reading analytics**. Phases 14–20 (performance, a11y
+audit, testing, security review, reporting, deployment, final refactor) are **not yet built**.
 
 ---
 
@@ -320,6 +320,17 @@ created_at`. The student reading workflow + history lives in `features/reading/s
 `getLinkedStudentId(profile_id)` — never RLS alone. A student with no linked roster row returns
 `{ linked: false }`, rendered as the onboarding/claim state.
 
+### reading analytics (read-only, admin + teacher — Phase 13)
+No table of its own — a **read layer over `reading_sessions`** in `features/analytics/`, gated by
+`canAccessAnalytics` (`requireRole('admin','teacher')`). `getCohortReadingAnalytics(range)` and
+`getStudentReadingAnalytics(studentId, range)` (server-only) run **bounded, range-filtered reads via
+the session client** (permissive SELECT — **no service-role, no new privilege, no schema change**),
+aggregate in TypeScript via pure helpers that **reuse the dashboard layer** (`average`, `startOfWeek`,
+…; never forked), and return stable, serializable view models (never raw rows). Time range + drilled-in
+student are **URL search params** (`parseAnalyticsSearchParams`), so the read is deterministic and
+refresh/shareable. Charts are dependency-free SVG (`features/analytics/components/charts/`). Future
+domains (vocabulary, AI insights, assignments) attach as sibling modules with reserved type contracts.
+
 ---
 
 ## 13. Routing (current)
@@ -329,8 +340,8 @@ Locale-prefixed (`/ar/...`, `/en/...`) via next-intl. Central paths in `lib/rout
 
 **Implemented pages today** (`IMPLEMENTED_ROUTES`): `home`, `login`, `register`, `forgotPassword`,
 `resetPassword`, `dashboard`, `students`, `teachers` (admin-only, Phase 12.6), `passages`,
-`vocabulary`, `readingSessions`, `settings`. **Defined but not yet built** (nav shows a disabled
-"coming soon" state, never a 404): `analytics` (Phase 13), `reports` (Phase 18).
+`vocabulary`, `readingSessions`, `analytics` (admin/teacher, Phase 13), `settings`. **Defined but not
+yet built** (nav shows a disabled "coming soon" state, never a 404): `reports` (Phase 18).
 
 ---
 
@@ -409,7 +420,6 @@ reachable via direct POST), maps failures to safe localized copy, and revalidate
 
 | # | Phase | Spec |
 |---|---|---|
-| 13 | Reading Analytics | `docs/phases/13-reading-analytics.md` |
 | 14 | Performance | `docs/phases/14-performance.md` |
 | 15 | Accessibility Audit | `docs/phases/15-accessibility-audit.md` |
 | 16 | Testing | `docs/phases/16-testing.md` |

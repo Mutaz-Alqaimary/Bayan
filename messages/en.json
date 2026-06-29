@@ -1067,5 +1067,112 @@
     "title": "Page not found",
     "description": "Sorry, the page you're looking for doesn't exist or has been moved.",
     "back": "Back to home"
+  },
+  "analytics": {
+    "title": "Reading Analytics",
+    "subtitle": "Track how Arabic reading is improving over time.",
+    "loading": "Loading analytics…",
+    "error": {
+      "title": "Couldn't load analytics",
+      "description": "Something went wrong loading the analytics. Please try again."
+    },
+    "ranges": {
+      "label": "Time range",
+      "7d": "7 days",
+      "30d": "30 days",
+      "3m": "3 months",
+      "all": "All time"
+    },
+    "kpis": {
+      "label": "Key metrics",
+      "avgWpm": "Avg. reading speed",
+      "avgAccuracy": "Avg. accuracy",
+      "activeReaders": "Active readers",
+      "sessions": "Sessions",
+      "bestWpm": "Best speed",
+      "passagesRead": "Passages read",
+      "vocabularyExposed": "Vocabulary seen"
+    },
+    "units": {
+      "wpmSuffix": "wpm"
+    },
+    "trend": {
+      "vsComparison": "vs. previous period",
+      "noComparison": "No prior data"
+    },
+    "charts": {
+      "wpmTitle": "Reading speed",
+      "wpmDescription": "Average words per minute over time.",
+      "accuracyTitle": "Accuracy",
+      "accuracyDescription": "Average reading accuracy over time.",
+      "durationTitle": "Reading time",
+      "durationDescription": "Average session duration over time.",
+      "activityTitle": "Activity",
+      "activityDescription": "Completed sessions per period."
+    },
+    "table": {
+      "period": "Period",
+      "wpm": "Words per minute",
+      "accuracy": "Accuracy",
+      "duration": "Duration",
+      "sessions": "Sessions"
+    },
+    "summary": {
+      "current": "Current",
+      "previous": "Previous",
+      "change": "Change",
+      "highest": "Highest",
+      "lowest": "Lowest"
+    },
+    "needsAttention": {
+      "title": "Needs attention",
+      "description": "Readers with the lowest accuracy and speed.",
+      "emptyTitle": "No readers flagged",
+      "emptyDescription": "No students need attention in this range."
+    },
+    "students": {
+      "title": "Students",
+      "description": "Open a student to see their reading trends.",
+      "searchLabel": "Search students",
+      "searchPlaceholder": "Search by name…",
+      "searchEmpty": "No matching students.",
+      "emptyTitle": "No students yet",
+      "emptyDescription": "No students have reading data in this range."
+    },
+    "card": {
+      "grade": "Grade",
+      "speed": "Speed",
+      "accuracy": "Accuracy",
+      "sessions": "sessions",
+      "atRisk": "At risk"
+    },
+    "empty": {
+      "allTitle": "No reading sessions yet",
+      "allDescription": "Analytics will appear once students complete reading sessions.",
+      "rangeTitle": "No sessions in this period",
+      "rangeDescription": "Try a wider time range to see reading trends."
+    },
+    "studentEmpty": {
+      "allTitle": "No reading sessions yet",
+      "allDescription": "This student hasn't completed any reading sessions yet."
+    },
+    "backToOverview": "Back to overview",
+    "recent": {
+      "title": "Recent sessions",
+      "empty": "No recent sessions."
+    },
+    "insights": {
+      "title": "Insights",
+      "empty": "Not enough data for insights yet.",
+      "kinds": {
+        "wpm_improving": "Reading speed rose by {delta} wpm over recent sessions.",
+        "wpm_declining": "Reading speed fell by {delta} wpm over recent sessions.",
+        "accuracy_improving": "Accuracy improved by {delta} points over recent sessions.",
+        "accuracy_declining": "Accuracy dropped by {delta} points over recent sessions.",
+        "accuracy_low": "Average accuracy is low at {accuracy}% — extra practice may help.",
+        "steady_progress": "Steady progress across {sessions} sessions.",
+        "needs_more_data": "Only {sessions} sessions so far — more reading will sharpen these insights."
+      }
+    }
   }
 }

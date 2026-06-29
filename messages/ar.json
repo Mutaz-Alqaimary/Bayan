@@ -1067,5 +1067,112 @@
     "title": "الصفحة غير موجودة",
     "description": "عذرًا، الصفحة التي تبحث عنها غير متوفّرة أو تم نقلها.",
     "back": "العودة إلى الرئيسية"
+  },
+  "analytics": {
+    "title": "تحليلات القراءة",
+    "subtitle": "تابع تطوّر مهارة القراءة بالعربية عبر الزمن.",
+    "loading": "جارٍ تحميل التحليلات…",
+    "error": {
+      "title": "تعذّر تحميل التحليلات",
+      "description": "حدث خطأ أثناء تحميل التحليلات. حاول مرة أخرى."
+    },
+    "ranges": {
+      "label": "النطاق الزمني",
+      "7d": "7 أيام",
+      "30d": "30 يومًا",
+      "3m": "3 أشهر",
+      "all": "كل الوقت"
+    },
+    "kpis": {
+      "label": "المؤشرات",
+      "avgWpm": "متوسط السرعة",
+      "avgAccuracy": "متوسط الدقة",
+      "activeReaders": "القرّاء النشطون",
+      "sessions": "الجلسات",
+      "bestWpm": "أفضل سرعة",
+      "passagesRead": "النصوص المقروءة",
+      "vocabularyExposed": "المفردات المعروضة"
+    },
+    "units": {
+      "wpmSuffix": "ك/د"
+    },
+    "trend": {
+      "vsComparison": "مقارنة بالفترة السابقة",
+      "noComparison": "لا توجد بيانات سابقة"
+    },
+    "charts": {
+      "wpmTitle": "سرعة القراءة",
+      "wpmDescription": "متوسط الكلمات في الدقيقة عبر الزمن.",
+      "accuracyTitle": "الدقة",
+      "accuracyDescription": "متوسط دقة القراءة عبر الزمن.",
+      "durationTitle": "مدة القراءة",
+      "durationDescription": "متوسط مدة الجلسة عبر الزمن.",
+      "activityTitle": "النشاط",
+      "activityDescription": "الجلسات المكتملة لكل فترة."
+    },
+    "table": {
+      "period": "الفترة",
+      "wpm": "كلمة/د",
+      "accuracy": "الدقة",
+      "duration": "المدة",
+      "sessions": "الجلسات"
+    },
+    "summary": {
+      "current": "الحالي",
+      "previous": "السابق",
+      "change": "التغيّر",
+      "highest": "الأعلى",
+      "lowest": "الأدنى"
+    },
+    "needsAttention": {
+      "title": "بحاجة إلى انتباه",
+      "description": "القرّاء الأقل دقة وسرعة.",
+      "emptyTitle": "لا أحد بحاجة إلى انتباه",
+      "emptyDescription": "لا يوجد طلاب بحاجة إلى انتباه في هذه الفترة."
+    },
+    "students": {
+      "title": "الطلاب",
+      "description": "افتح طالبًا لعرض اتجاهات قراءته.",
+      "searchLabel": "ابحث عن طالب",
+      "searchPlaceholder": "ابحث بالاسم…",
+      "searchEmpty": "لا يوجد طلاب مطابقون.",
+      "emptyTitle": "لا يوجد طلاب بعد",
+      "emptyDescription": "لا يوجد طلاب لديهم بيانات قراءة في هذه الفترة."
+    },
+    "card": {
+      "grade": "الصف",
+      "speed": "السرعة",
+      "accuracy": "الدقة",
+      "sessions": "جلسات",
+      "atRisk": "متعثّر"
+    },
+    "empty": {
+      "allTitle": "لا توجد جلسات قراءة بعد",
+      "allDescription": "ستظهر التحليلات بمجرد إكمال الطلاب جلسات القراءة.",
+      "rangeTitle": "لا توجد جلسات في هذه الفترة",
+      "rangeDescription": "جرّب نطاقًا زمنيًا أوسع لعرض اتجاهات القراءة."
+    },
+    "studentEmpty": {
+      "allTitle": "لا توجد جلسات قراءة بعد",
+      "allDescription": "لم يُكمل هذا الطالب أي جلسات قراءة بعد."
+    },
+    "backToOverview": "العودة إلى النظرة العامة",
+    "recent": {
+      "title": "أحدث الجلسات",
+      "empty": "لا توجد جلسات حديثة."
+    },
+    "insights": {
+      "title": "ملاحظات",
+      "empty": "لا توجد بيانات كافية للملاحظات بعد.",
+      "kinds": {
+        "wpm_improving": "ارتفعت سرعة القراءة بمقدار {delta} كلمة/د خلال الجلسات الأخيرة.",
+        "wpm_declining": "انخفضت سرعة القراءة بمقدار {delta} كلمة/د خلال الجلسات الأخيرة.",
+        "accuracy_improving": "تحسّنت الدقة بمقدار {delta} نقاط خلال الجلسات الأخيرة.",
+        "accuracy_declining": "تراجعت الدقة بمقدار {delta} نقاط خلال الجلسات الأخيرة.",
+        "accuracy_low": "متوسط الدقة منخفض عند {accuracy}٪ — قد يساعد المزيد من التدريب.",
+        "steady_progress": "تقدّم ثابت عبر {sessions} جلسات.",
+        "needs_more_data": "{sessions} جلسات حتى الآن — مزيد من القراءة سيوضّح هذه الملاحظات."
+      }
+    }
   }
 }

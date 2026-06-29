@@ -221,6 +221,64 @@ ROUTES.teachers                                                        // lib/ro
 `useAuthStore`/`useStudentStore` stay reserved-and-unbuilt (role/profile state is server-resolved per
 request), consistent with the established precedent.
 
+## Reading Analytics (Phase 13)
+
+Reading Analytics lives in `features/analytics/`, organized so future analytics domains (vocabulary,
+etc.) slot in without refactoring. Admin + teacher only (`canAccessAnalytics`). Charts are
+dependency-free SVG; analytics calculations are pure and server-side; the UI consumes stable view
+models, never raw DB rows. See `docs/phases/13-reading-analytics.md` (single source of truth).
+
+```
+// time-range.ts — pure, deterministic windowing
+TimeRange / TIME_RANGES / DEFAULT_TIME_RANGE / isTimeRange      // features/analytics/time-range.ts
+AnalyticsWindow / resolveAnalyticsWindow                         //   selected window { start: Date|null; end: Date }
+resolveComparisonWindow                                          //   preceding equal-length window (null for "all")
+BucketGranularity / resolveBucketGranularity                     //   "day" | "week" | "month" per range
+
+// types.ts — shared, generic, chart-facing building blocks
+TrendDirection / TrendIndicator                                 // KPI direction (value + change vs comparison period)
+ChartSummary                                                    // no-hover chart summary (current/prev/change/high/low)
+AnalyticsTrendPoint / AnalyticsTrendSeries                      // a chart-ready series (points + summary)
+AnalyticsAvailability                                           // "ready" | "empty_all" | "empty_range"
+AnalyticsInsight / AnalyticsInsightSeverity                     // base structured, localizable insight descriptor
+
+// search-params.ts — the single URL-param contract (range + student)
+parseAnalyticsSearchParams / AnalyticsSearchParams              // features/analytics/search-params.ts
+ANALYTICS_RANGE_PARAM / ANALYTICS_STUDENT_PARAM                 //   centralized param keys (no hardcoded strings)
+
+// aggregate.ts — pure shared trend math (reuses features/dashboard/data/shared.ts; never forks it)
+computeTrendIndicator / summarizeTrend / toTrendSeries          // features/analytics/aggregate.ts
+bucketAverages / bucketCounts / TREND_NEUTRAL_THRESHOLD         //   ANALYTICS_SESSION_LIMIT (bounded reads)
+
+// reading/ — reading-domain composites (built in Phase 13)
+ReadingInsight / ReadingInsightKind / StudentAnalyticsCard      // features/analytics/reading/types.ts
+CohortReadingAnalytics / StudentReadingAnalytics                //   discriminated by AnalyticsAvailability
+getCohortReadingAnalytics / getStudentReadingAnalytics          // features/analytics/reading/queries.ts (server-only)
+deriveReadingInsights                                           // features/analytics/reading/insights.ts (pure)
+
+// components/charts/ — presentation-only SVG kit
+LineTrend / BarSeries / ChartFrame / ChartSummaryRow           // features/analytics/components/charts/
+scale.ts (valueBounds/xAt/yAt + CHART_* dims)                  //   pure geometry, multi-series-ready
+// components/ — feature UI (Server Components; client only where interactive)
+AnalyticsPage / TimeRangeTabs / CohortOverview / StudentAnalytics
+AnalyticsKpi / TrendChartCard / InsightsList                   //   presentational, parent-resolved i18n
+StudentCards / StudentMetricCard                               //   cohort drill-down cards (needs-attention + grid)
+StudentPicker                                                  //   "use client" — secondary type-to-filter lookup
+ROUTES.analytics                                                // lib/routes.ts (add to IMPLEMENTED_ROUTES)
+
+// RESERVED — type contracts declared now (strongly typed, no any/unknown), in features/analytics/types.ts:
+VocabularyAnalyticsSection / AiInsightsSection / AssignmentsAnalyticsSection
+//   → optional extension sections on StudentReadingAnalytics (no runtime, no stubs)
+
+// RESERVED — not built in Phase 13 (no stubs / no folders created):
+deriveVocabularyInsights   // features/analytics/vocabulary/insights.ts (future)
+deriveTeacherInsights      // features/analytics/insights.ts (future cross-module cohort aggregator)
+```
+
+`useAnalyticsStore` is **not** introduced — analytics state is server-resolved per request (time
+range + selected student are URL search params), consistent with the reserved-and-unbuilt store
+precedent. No `vocabulary/` folder or stub files are created until that module is actually built.
+
 If a later phase needs something not listed here, derive it by following the same pattern
 (e.g. `<Entity>Record`, `use<Domain>Store`) rather than picking an arbitrary name, and add it to
 this file once decided so it stays the single source of truth.

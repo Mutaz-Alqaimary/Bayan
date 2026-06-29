@@ -59,6 +59,7 @@ export const IMPLEMENTED_ROUTES: ReadonlySet<AppRoute> = new Set([
   ROUTES.passages,
   ROUTES.vocabulary,
   ROUTES.readingSessions,
+  ROUTES.analytics,
   ROUTES.settings,
 ]);
 
