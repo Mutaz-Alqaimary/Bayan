@@ -11,7 +11,10 @@
  *     detects UTF-8 instead of ANSI and renders Arabic without mojibake.
  */
 
-import * as XLSX from "xlsx";
+// Type-only import is erased at build time (zero bundle cost); the SheetJS
+// runtime is loaded on demand inside the functions below — see
+// docs/phases/14-performance.md.
+import type { WorkSheet } from "xlsx";
 
 import {
   STUDENT_IMPORT_HEADERS,
@@ -47,7 +50,8 @@ function cellValue(student: StudentRecord, field: StudentImportField): string | 
 }
 
 /** Build a worksheet (header row + one row per student) from the roster. */
-function buildSheet(students: StudentRecord[]): XLSX.WorkSheet {
+async function buildSheet(students: StudentRecord[]): Promise<WorkSheet> {
+  const XLSX = await import("xlsx");
   const rows: (string | number)[][] = [
     [...STUDENT_IMPORT_HEADERS],
     ...students.map((student) =>
@@ -83,12 +87,13 @@ export function exportFilename(stem: string): string {
  * by roster export and the template download so both honor the same XLSX/CSV
  * encoding (notably the UTF-8 BOM for Arabic-safe CSV).
  */
-export function downloadSheet(
-  sheet: XLSX.WorkSheet,
+export async function downloadSheet(
+  sheet: WorkSheet,
   format: StudentExportFormat,
   filename: string,
   sheetName = "Students",
-): void {
+): Promise<void> {
+  const XLSX = await import("xlsx");
   if (format === "xlsx") {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, sheet, sheetName);
@@ -102,10 +107,10 @@ export function downloadSheet(
 }
 
 /** Download the roster as a worksheet in the requested format. */
-export function exportStudents(
+export async function exportStudents(
   students: StudentRecord[],
   format: StudentExportFormat,
   stem = "students",
-): void {
-  downloadSheet(buildSheet(students), format, exportFilename(stem));
+): Promise<void> {
+  await downloadSheet(await buildSheet(students), format, exportFilename(stem));
 }

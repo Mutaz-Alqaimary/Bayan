@@ -1,9 +1,12 @@
 import "server-only";
 
+import { cache } from "react";
+
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 
 import type { StudentAccountStatus } from "@/features/students/identity/types";
 import type { StudentRecord } from "@/features/students/types";
+import { supabaseAdminClient } from "@/lib/supabase/admin";
 
 /**
  * Server-only reads for student identity (Phase 12.5).
@@ -94,6 +97,26 @@ export async function listAllAuthUsers(
   }
   return all;
 }
+
+/**
+ * Request-scoped cached listing of all auth users (Phase 14 — Performance).
+ *
+ * React `cache()` memoizes the result for the duration of a single render pass,
+ * so co-rendered callers share one GoTrue scan instead of each running their own.
+ * This collapses the two full `auth.users` scans the `/teachers` route did per
+ * load (`getTeachers` + `getPromotableUsers`) into one.
+ *
+ * It creates its own service-role client internally so the cache key is stable
+ * (zero args) — keying on an injected client would never dedupe, since each
+ * caller builds a fresh `supabaseAdminClient()`. It is **per-request only**:
+ * never shared across requests or users, so it is architecturally safe for this
+ * admin-gated, non-user-specific data — and deliberately **not** `use cache` /
+ * `cacheLife`, which are unsafe for user-scoped reads. Callers still gate role
+ * (`requireRole`) before invoking it; this helper only lists.
+ */
+export const getAllAuthUsers = cache(
+  async (): Promise<User[]> => listAllAuthUsers(supabaseAdminClient()),
+);
 
 /**
  * Derive each roster row's {@link StudentAccountStatus}, keyed by `students.id`.

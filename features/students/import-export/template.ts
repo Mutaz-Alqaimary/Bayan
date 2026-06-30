@@ -8,8 +8,6 @@
  * and an ISO birth date.
  */
 
-import * as XLSX from "xlsx";
-
 import { STUDENT_IMPORT_HEADERS } from "@/features/students/import-export/columns";
 import {
   downloadSheet,
@@ -30,11 +28,15 @@ const EXAMPLE_ROW: StudentImportRow = {
 };
 
 /** Download the import template in the requested format. */
-export function downloadStudentTemplate(format: StudentExportFormat): void {
+export async function downloadStudentTemplate(
+  format: StudentExportFormat,
+): Promise<void> {
+  // Loaded on demand (SheetJS is large) — see docs/phases/14-performance.md.
+  const XLSX = await import("xlsx");
   const rows: string[][] = [
     [...STUDENT_IMPORT_HEADERS],
     STUDENT_IMPORT_HEADERS.map((field) => EXAMPLE_ROW[field]),
   ];
   const sheet = XLSX.utils.aoa_to_sheet(rows);
-  downloadSheet(sheet, format, "students-import-template");
+  await downloadSheet(sheet, format, "students-import-template");
 }

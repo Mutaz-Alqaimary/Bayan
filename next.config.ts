@@ -1,7 +1,13 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import withBundleAnalyzer from "@next/bundle-analyzer";
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
+
+// Development-only tooling. Inert unless `ANALYZE=true` is set, so `dev`, `build`,
+// `start`, and production are completely unaffected. Run `ANALYZE=true next build`
+// to regenerate the bundle treemaps (see docs/phases/14-performance.md).
+const withAnalyzer = withBundleAnalyzer({ enabled: process.env.ANALYZE === "true" });
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
@@ -13,4 +19,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withNextIntl(nextConfig);
+export default withAnalyzer(withNextIntl(nextConfig));

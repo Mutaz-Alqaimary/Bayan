@@ -1,7 +1,7 @@
 import "server-only";
 
 import { requireRole } from "@/features/auth/guards";
-import { listAllAuthUsers } from "@/features/students/identity/queries";
+import { getAllAuthUsers } from "@/features/students/identity/queries";
 import type {
   PromotableUserView,
   TeacherView,
@@ -29,14 +29,15 @@ export async function getTeachers(): Promise<TeacherView[]> {
     .select("id, full_name, created_at")
     .eq("role", "teacher")
     .order("created_at", { ascending: false })
-    .returns<ProfileRow[]>();
+    .overrideTypes<ProfileRow[], { merge: false }>();
   if (error) {
     throw new Error(`Failed to load teachers: ${error.message}`);
   }
   if (!profiles || profiles.length === 0) return [];
 
-  // Resolve email + last-sign-in from the single auth user listing (no N+1).
-  const authUsers = await listAllAuthUsers(admin);
+  // Resolve email + last-sign-in from the request-cached auth user listing
+  // (shared with getPromotableUsers on the same /teachers render — one scan).
+  const authUsers = await getAllAuthUsers();
   const emailById = new Map<string, string | null>();
   const signInById = new Map<string, string | null>();
   for (const user of authUsers) {
@@ -67,14 +68,14 @@ export async function getPromotableUsers(): Promise<PromotableUserView[]> {
     .select("id, full_name, created_at")
     .eq("role", "student")
     .order("created_at", { ascending: false })
-    .returns<ProfileRow[]>();
+    .overrideTypes<ProfileRow[], { merge: false }>();
   if (error) {
     throw new Error(`Failed to load promotable users: ${error.message}`);
   }
   if (!profiles || profiles.length === 0) return [];
 
   const emailById = new Map<string, string | null>();
-  for (const user of await listAllAuthUsers(admin)) {
+  for (const user of await getAllAuthUsers()) {
     emailById.set(user.id, user.email ?? null);
   }
 
@@ -100,7 +101,7 @@ export async function getTeacherProfileIds(): Promise<string[]> {
     .from("profiles")
     .select("id")
     .eq("role", "teacher")
-    .returns<{ id: string }[]>();
+    .overrideTypes<{ id: string }[], { merge: false }>();
   if (error) {
     throw new Error(`Failed to load teacher ids: ${error.message}`);
   }

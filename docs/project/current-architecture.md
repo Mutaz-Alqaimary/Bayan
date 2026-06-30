@@ -5,11 +5,13 @@
 > per-phase specs where they disagree about registration, identity, or authorization. The per-phase
 > files under `docs/phases/` remain the historical specs for each phase; this file is the live map.
 >
-> **Last synchronized:** after **Phase 13** implementation (Reading Analytics) — awaiting the owner's
-> manual visual testing. **Next phase:** 14 (Performance). See
-> `docs/phases/13-reading-analytics.md` and the "Future Considerations" section below.
+> **Last synchronized:** after **Phase 14** implementation (Performance) — Phase 13 (Reading
+> Analytics) still awaiting the owner's manual visual testing. **Next phase:** 15 (Accessibility
+> Audit). See `docs/phases/14-performance.md`, `docs/Performance.md`, and the "Future Considerations"
+> section below.
 >
 > **Companion docs:**
+> - `docs/Performance.md` — Phase 14 performance record (measurements + before/after).
 > - `docs/database/manual-supabase-configuration.md` — every manual Supabase setting not in SQL.
 > - `docs/database/phase-12.5-identity-alignment.md` — the (verified, no-op) DB privilege check.
 > - `SupabaseArchitecture.md` — deep dive on clients, session refresh, and the registration saga.
@@ -401,12 +403,18 @@ reachable via direct POST), maps failures to safe localized copy, and revalidate
 
 - **Tighten the permissive `using(true)` RLS policies** on `students` / `reading_passages` /
   `reading_sessions` / `vocabulary_terms` → **Phase 17 (Security Review)**.
-- **Account-status derivation lists all auth users on each Student Management load** — fine at
-  school/demo scale; revisit with caching/pagination if the user base grows → **Phase 14
-  (Performance)**.
+- **Account-status derivation lists all auth users on each Student Management load** — **reviewed in
+  Phase 14; intentionally re-deferred.** The `/students` render performs a single, necessary
+  `auth.users` scan (in `getStudentAccountStatusMap`) — no in-request redundancy to remove, and the
+  scan can't be eliminated without storing sign-in state in `public` (a forbidden schema change). It
+  is already bounded (`perPage: 200`, ≤ 50 pages). Larger-scale caching/pagination → **Phase 20
+  (scaling strategy)**. See `docs/Performance.md` → "Server read efficiency".
 - **Cross-device hydration of theme/reduced-motion** (deferred in Phase 12) — unaffected by 12.5/12.6.
-- **Teacher list + promote picker list all auth users / all student profiles on each load** (Phase
-  12.6) — fine at school/demo scale; revisit with caching/pagination → **Phase 14 (Performance)**.
+- **Teacher list + promote picker list all auth users on each load** (Phase 12.6) — **resolved in
+  Phase 14.** `/teachers` rendered `getTeachers()` + `getPromotableUsers()`, each doing its own full
+  `auth.users` scan (2 per render); both now share one request-scoped React `cache()` accessor
+  (`getAllAuthUsers`, `features/students/identity/queries.ts`) → **1 scan per render**. No persistent
+  cache, no permission/behavior change. See `docs/Performance.md` → "Server read efficiency".
 - **Avatar replace + DB-write failure** (Phase 12.6): the transactional action deletes the uploaded
   object on a DB failure; for a *replace* (rare) this can remove the prior avatar while `avatar_url`
   still points at the path. Self-heals on the next successful upload (stable path). Acceptable;

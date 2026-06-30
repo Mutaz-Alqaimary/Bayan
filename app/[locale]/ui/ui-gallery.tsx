@@ -137,7 +137,7 @@ export function UiGallery() {
     .string()
     .min(3, { error: validationMessages.tooShort(3) })
     .max(40, { error: validationMessages.tooLong(40) })
-    .email({ error: validationMessages.invalidEmail() });
+    .pipe(z.email({ error: validationMessages.invalidEmail() }));
   const emailResult = emailValue ? emailSchema.safeParse(emailValue) : null;
   const emailError = emailResult && !emailResult.success ? emailResult.error.issues[0]?.message : undefined;
 

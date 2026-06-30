@@ -10,8 +10,6 @@
  * Validation is deliberately *not* done here — that is the classifier's job.
  */
 
-import * as XLSX from "xlsx";
-
 import {
   resolveImportHeader,
   STUDENT_IMPORT_HEADERS,
@@ -67,6 +65,8 @@ export async function parseStudentImportFile(
 ): Promise<StudentImportParseResult> {
   let matrix: unknown[][];
   try {
+    // Loaded on demand (SheetJS is large) — see docs/phases/14-performance.md.
+    const XLSX = await import("xlsx");
     const buffer = await file.arrayBuffer();
     const workbook = XLSX.read(buffer, { type: "array", cellDates: true });
     const firstSheetName = workbook.SheetNames[0];

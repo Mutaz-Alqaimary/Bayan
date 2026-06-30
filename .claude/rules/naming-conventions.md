@@ -173,6 +173,7 @@ ClaimStudentMessages        // localized claim-schema copy — identity/schemas.
 
 generateStudentNumber / generateUniqueStudentNumber // high-entropy claim-secret generator — identity/student-number.ts
 getStudentByEmail / getClaimableStudentByNumber / getStudentAccountStatusMap / listAllAuthUsers // server reads — identity/queries.ts
+getAllAuthUsers            // Phase 14: request-scoped React cache() wrapper over listAllAuthUsers (dedupes co-rendered scans) — identity/queries.ts
 claimStudentRecordAction              // student: link own roster row by student_number (admin client) — identity/actions.ts
 generateStudentActivationLinkAction   // admin/teacher: provision + copyable no-SMTP link — identity/actions.ts
 reconcileStudentLinksAction           // admin: one-time link-by-email backfill (dry-run + apply) — identity/actions.ts
