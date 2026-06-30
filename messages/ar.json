@@ -1136,6 +1136,7 @@
       "searchLabel": "ابحث عن طالب",
       "searchPlaceholder": "ابحث بالاسم…",
       "searchEmpty": "لا يوجد طلاب مطابقون.",
+      "searchResults": "{count, plural, =0 {لا يوجد طلاب مطابقون} one {طالب واحد مطابق} two {طالبان مطابقان} few {# طلاب مطابقون} many {# طالبًا مطابقًا} other {# طالب مطابق}}",
       "emptyTitle": "لا يوجد طلاب بعد",
       "emptyDescription": "لا يوجد طلاب لديهم بيانات قراءة في هذه الفترة."
     },

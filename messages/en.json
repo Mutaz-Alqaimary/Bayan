@@ -1136,6 +1136,7 @@
       "searchLabel": "Search students",
       "searchPlaceholder": "Search by name…",
       "searchEmpty": "No matching students.",
+      "searchResults": "{count, plural, =0 {No matching students} one {# matching student} other {# matching students}}",
       "emptyTitle": "No students yet",
       "emptyDescription": "No students have reading data in this range."
     },
