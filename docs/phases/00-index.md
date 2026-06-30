@@ -29,7 +29,7 @@ close it out. Never skip ahead — each phase assumes the previous ones are done
 | 13 | Reading Analytics | `13-reading-analytics.md` | ✅ Done (awaiting manual testing) |
 | 14 | Performance | `14-performance.md` | Planned |
 | 15 | Accessibility Audit | `15-accessibility-audit.md` | ✅ Done (awaiting manual AT testing) |
-| 16 | Testing | `16-testing.md` | Planned |
+| 16 | Testing | `16-testing.md` | ✅ Done (Vitest suite — 146 tests; awaiting owner review) |
 | 17 | Security Review (RLS tightening) | `17-security-review.md` | Planned |
 | 18 | Reporting (incl. PDF) | `18-reporting.md` | Planned |
 | 19 | Deployment | `19-deployment.md` | Planned |

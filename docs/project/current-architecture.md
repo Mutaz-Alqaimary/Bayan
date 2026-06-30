@@ -12,6 +12,7 @@
 >
 > **Companion docs:**
 > - `docs/Performance.md` — Phase 14 performance record (measurements + before/after).
+> - `docs/Testing.md` — Phase 16 test-suite coverage map + conventions (Vitest; offline, deterministic).
 > - `docs/database/manual-supabase-configuration.md` — every manual Supabase setting not in SQL.
 > - `docs/database/phase-12.5-identity-alignment.md` — the (verified, no-op) DB privilege check.
 > - `SupabaseArchitecture.md` — deep dive on clients, session refresh, and the registration saga.
@@ -430,7 +431,6 @@ reachable via direct POST), maps failures to safe localized copy, and revalidate
 |---|---|---|
 | 14 | Performance | `docs/phases/14-performance.md` |
 | 15 | Accessibility Audit | `docs/phases/15-accessibility-audit.md` |
-| 16 | Testing | `docs/phases/16-testing.md` |
 | 17 | Security Review (RLS tightening) | `docs/phases/17-security-review.md` |
 | 18 | Reporting (incl. PDF) | `docs/phases/18-reporting.md` |
 | 19 | Deployment | `docs/phases/19-deployment.md` |
