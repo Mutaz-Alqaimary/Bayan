@@ -215,3 +215,72 @@
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * Print styles (Phase 18 — Reporting) — SCOPED to the reporting surface.
+ *
+ * Every rule is gated behind `body:has([data-report-print-root])`, so it applies
+ * **only** when a report document is on the page; printing any other page of the
+ * app is completely unaffected (no global print behavior is introduced). The
+ * report document (`[data-report-print-root]`, set in `report-document.tsx`) is
+ * isolated with the visibility technique — hide everything, then reveal just the
+ * document subtree — so the app shell (sidebar, top bar) and the on-screen report
+ * toolbar never print, without tagging each of them. The light palette is forced
+ * so a report printed from dark mode still comes out dark-on-white.
+ */
+@media print {
+  @page {
+    margin: 14mm;
+  }
+
+  /* Force the light token values (dark-on-white paper) regardless of the
+     on-screen theme. Scoped to the body that contains a report document; set at
+     body scope so it overrides the `.dark` variables declared on <html>. */
+  body:has([data-report-print-root]) {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.21 0.02 262);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.21 0.02 262);
+    --muted: oklch(0.968 0.004 247);
+    --muted-foreground: oklch(0.44 0.018 258);
+    --border: oklch(0.86 0.005 258);
+    --primary: oklch(0.5 0.13 173);
+    --destructive-text: oklch(0.5 0.2 27);
+    --chart-1: oklch(0.5 0.13 173);
+    --chart-grid: oklch(0.86 0.005 258);
+    --chart-axis: oklch(0.72 0.006 258);
+    --chart-text: oklch(0.4 0.016 262);
+    background: #fff;
+  }
+
+  /* Isolate the report document: hide everything, then reveal only the document
+     subtree and pull it to the page origin. */
+  body:has([data-report-print-root]) * {
+    visibility: hidden;
+  }
+  body:has([data-report-print-root]) [data-report-print-root],
+  body:has([data-report-print-root]) [data-report-print-root] * {
+    visibility: visible;
+  }
+  body:has([data-report-print-root]) [data-report-print-root] {
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  /* Keep backgrounds, borders, and chart colours in the printout (browsers drop
+     them by default). */
+  body:has([data-report-print-root]) [data-report-print-root] *,
+  body:has([data-report-print-root]) [data-report-print-root] *::before,
+  body:has([data-report-print-root]) [data-report-print-root] *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Avoid splitting a KPI card, chart card, or roster row across pages. */
+  body:has([data-report-print-root]) [data-slot="card"],
+  body:has([data-report-print-root]) tr {
+    break-inside: avoid;
+  }
+}

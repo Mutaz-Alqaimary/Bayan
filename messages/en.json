@@ -1175,5 +1175,44 @@
         "needs_more_data": "Only {sessions} sessions so far — more reading will sharpen these insights."
       }
     }
+  },
+  "reports": {
+    "title": "Reports",
+    "loading": "Loading report…",
+    "error": {
+      "title": "Couldn't load the report",
+      "description": "Something went wrong building the report. Please try again."
+    },
+    "brand": "Bayan",
+    "print": "Print / Save as PDF",
+    "cohortTitle": "Program Reading Report",
+    "studentTitle": "Student Progress Report",
+    "grade": "Grade",
+    "range": "Range",
+    "generatedLabel": "Generated",
+    "byLabel": "Prepared by",
+    "backToCohort": "Back to program report",
+    "empty": {
+      "allTitle": "Not enough data to generate a report",
+      "allDescription": "This report will be available once students complete reading sessions.",
+      "rangeTitle": "No sessions in this period",
+      "rangeDescription": "Choose a wider time range to generate this report."
+    },
+    "studentEmpty": {
+      "allTitle": "Not enough data to generate a report",
+      "allDescription": "This student hasn't completed any reading sessions yet."
+    },
+    "picker": {
+      "label": "Report on a student",
+      "placeholder": "Search by name…",
+      "empty": "No matching students."
+    },
+    "roster": {
+      "title": "Student summary",
+      "description": "Reading speed, accuracy, and activity per student for this range.",
+      "name": "Student",
+      "status": "Status",
+      "onTrack": "On track"
+    }
   }
 }

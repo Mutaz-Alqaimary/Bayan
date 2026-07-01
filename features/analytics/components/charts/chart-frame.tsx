@@ -61,23 +61,32 @@ export function ChartFrame({
       >
         {children}
       </svg>
-      <table className="sr-only">
-        <caption>{labels.caption}</caption>
-        <thead>
-          <tr>
-            <th scope="col">{labels.period}</th>
-            <th scope="col">{labels.value}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {points.map((point) => (
-            <tr key={point.bucketId}>
-              <th scope="row">{point.label}</th>
-              <td>{point.value === null ? "—" : formatValue(point.value)}</td>
+      {/* Accessible data-table fallback for the aria-hidden SVG. Wrapped in an
+          `sr-only` DIV (not `sr-only` on the table itself): Tailwind's `sr-only`
+          collapses a normal block to 1×1px via `height:1px; overflow:hidden`,
+          but a <table> ignores that (tables size to content and don't clip), so
+          a `sr-only` table stays full-height and, being absolutely positioned,
+          protrudes and inflates the page's scrollHeight. The div collapses
+          correctly and clips the table, which stays in the accessibility tree. */}
+      <div className="sr-only">
+        <table>
+          <caption>{labels.caption}</caption>
+          <thead>
+            <tr>
+              <th scope="col">{labels.period}</th>
+              <th scope="col">{labels.value}</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {points.map((point) => (
+              <tr key={point.bucketId}>
+                <th scope="row">{point.label}</th>
+                <td>{point.value === null ? "—" : formatValue(point.value)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </figure>
   );
 }

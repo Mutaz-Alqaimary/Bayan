@@ -54,6 +54,7 @@ integration tests are named `*.integration.test.ts` next to their lead module.
 | `features/analytics/aggregate.test.ts` | KPI comparable/null + neutral deadband; empty bucket `null` (averages) vs `0` (counts); `MAX_BUCKETS` cap. |
 | `features/analytics/search-params.test.ts` | The analytics URL-param contract (defaults, invalid coercion, cohort-vs-student). |
 | `features/analytics/reading/insights.test.ts` | Which reading insight fires for which metric shape; each kind at most once. |
+| `features/reporting/report-meta.test.ts` | The pure report core (Phase 18): byline normalization + deterministic `generatedAt` passthrough. |
 | `features/auth/roles.test.ts` | The permission matrix per role (one table-driven test) + every `canChangeRole` rule (Phase 12.6 security invariant). |
 | `features/students/identity/student-number.test.ts` | The claim-secret `BYN-XXXXXXXX` format + charset (not statistical entropy). |
 | `features/dashboard/data/shared.test.ts` | `startOfWeek` Saturday-start (Arabic-locale week). |
@@ -75,6 +76,8 @@ integration tests are named `*.integration.test.ts` next to their lead module.
 | Test | What it asserts |
 | --- | --- |
 | `features/analytics/components/student-picker.test.tsx` | The Phase-15 live-count announcement renders **real translated** Arabic/English copy (count interpolated); a11y-clean. |
+| `features/reporting/components/print-button.test.tsx` | The reporting print control (Phase 18) renders **real translated** AR/EN copy, invokes `window.print()` (the Save-as-PDF path), and is a11y-clean. |
+| `features/analytics/components/charts/chart-frame.test.tsx` | Regression guard (fixed in Phase 18): the chart's accessible data table lives inside an `sr-only` **wrapper** (not `sr-only` on the `<table>`, which won't collapse and inflated page height), and every bucket row stays in the a11y tree. |
 | `features/auth/components/text-field.test.tsx` | BiDi: an email field stays `dir="ltr"` inside an RTL page; accessible error wiring; a11y-clean. |
 | `features/auth/components/form-alert.test.tsx` | Announced `role="alert"`; a11y-clean. |
 

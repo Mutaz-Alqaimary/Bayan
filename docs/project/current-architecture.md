@@ -5,9 +5,10 @@
 > per-phase specs where they disagree about registration, identity, or authorization. The per-phase
 > files under `docs/phases/` remain the historical specs for each phase; this file is the live map.
 >
-> **Last synchronized:** after **Phase 17** (Security Review) — RLS tightened to role-aware least
-> privilege and applied to the live DB. Phases 14 (Performance), 15 (Accessibility Audit), and 16
-> (Testing) are also complete. **Next phase:** 18 (Reporting). See `docs/Security.md`,
+> **Last synchronized:** after **Phase 18** (Reporting) — a print-to-PDF reporting surface layered
+> over the Phase 13 analytics view models (no schema/RLS/Supabase/dependency change). Phases 14
+> (Performance), 15 (Accessibility Audit), 16 (Testing), and 17 (Security Review) are also complete.
+> **Next phase:** 19 (Deployment). See `docs/phases/18-reporting.md`, `docs/Security.md`,
 > `supabase/schema.sql`, and the "Future Considerations" section below.
 >
 > **Companion docs:**
@@ -337,6 +338,22 @@ student are **URL search params** (`parseAnalyticsSearchParams`), so the read is
 refresh/shareable. Charts are dependency-free SVG (`features/analytics/components/charts/`). Future
 domains (vocabulary, AI insights, assignments) attach as sibling modules with reserved type contracts.
 
+### reporting (read-only, admin + teacher — Phase 18)
+No table of its own and **no aggregation of its own** — a **presentation layer over the Phase 13
+analytics view models** in `features/reporting/`, gated by `canAccessReports`
+(`requireRole('admin','teacher')`). `getCohortReport(range)` / `getStudentReport(studentId, range)`
+(server-only) call the Phase 13 queries, wrap their view models (empty states inherited unchanged)
+with document metadata (a `generatedAt` injected once + the staff byline taken from the `SessionUser`
+that `requireRole` already returns — no extra auth round-trip), and
+render a print-optimized document reusing the analytics primitives (`AnalyticsKpi`, `TrendChartCard`,
+`InsightsList`, the SVG chart kit) plus a print-friendly cohort summary table. Range + drilled-in
+student are the **same URL search-param contract** as analytics; `TimeRangeTabs`/`StudentPicker` are
+reused via an added optional `pathname` prop. **"PDF export" is the browser's native Print → Save as
+PDF** (no PDF library, no server generation): the app shell + toolbar are `print:hidden` and a
+print block in `globals.css` forces the light palette, preserves chart colours, and controls page
+breaks — so Arabic shaping + RTL come from the browser's own print engine. **No schema, Supabase,
+RLS, service-role, or dependency change.** Detail: `docs/phases/18-reporting.md`.
+
 ---
 
 ## 13. Routing (current)
@@ -346,8 +363,9 @@ Locale-prefixed (`/ar/...`, `/en/...`) via next-intl. Central paths in `lib/rout
 
 **Implemented pages today** (`IMPLEMENTED_ROUTES`): `home`, `login`, `register`, `forgotPassword`,
 `resetPassword`, `dashboard`, `students`, `teachers` (admin-only, Phase 12.6), `passages`,
-`vocabulary`, `readingSessions`, `analytics` (admin/teacher, Phase 13), `settings`. **Defined but not
-yet built** (nav shows a disabled "coming soon" state, never a 404): `reports` (Phase 18).
+`vocabulary`, `readingSessions`, `analytics` (admin/teacher, Phase 13), `reports` (admin/teacher,
+Phase 18), `settings`. All planned page routes are now built; the `isRouteImplemented` "coming soon"
+fallback stays in place for any future route added ahead of its page.
 
 ---
 
@@ -432,12 +450,10 @@ reachable via direct POST), maps failures to safe localized copy, and revalidate
 
 ## 17. Future phases (planned, not built)
 
+Phases 1 → 18 are complete. Remaining:
+
 | # | Phase | Spec |
 |---|---|---|
-| 14 | Performance | `docs/phases/14-performance.md` |
-| 15 | Accessibility Audit | `docs/phases/15-accessibility-audit.md` |
-| 17 | Security Review (RLS tightening) | `docs/phases/17-security-review.md` |
-| 18 | Reporting (incl. PDF) | `docs/phases/18-reporting.md` |
 | 19 | Deployment | `docs/phases/19-deployment.md` |
 | 20 | Final Refactor | `docs/phases/20-final-refactor.md` |
 

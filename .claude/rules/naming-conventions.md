@@ -280,6 +280,33 @@ deriveTeacherInsights      // features/analytics/insights.ts (future cross-modul
 range + selected student are URL search params), consistent with the reserved-and-unbuilt store
 precedent. No `vocabulary/` folder or stub files are created until that module is actually built.
 
+## Reporting (Phase 18)
+
+Reporting lives in `features/reporting/` and is a **presentation layer over the Phase 13 analytics
+view models** — no aggregation, no schema, no new dependency. Admin + teacher only
+(`canAccessReports`). "PDF export" is the browser's native Print → Save as PDF (no PDF library, no
+server generation). Names:
+
+```
+ReportKind                      // "cohort" | "student" — features/reporting/types.ts
+ReportMeta                      //   document metadata (range, generatedAt, generatedByName)
+CohortReport / StudentReport / Report  // an analytics view model + ReportMeta, discriminated by kind
+
+buildReportMeta                 // pure composition — features/reporting/report-meta.ts
+getCohortReport / getStudentReport                     // server-only reads (reuse Phase 13) — features/reporting/queries.ts
+
+ReportPage / ReportToolbar / ReportDocument / ReportHeader   // features/reporting/components/
+CohortReportBody / StudentReportBody / PrintButton           //   (PrintButton is the only "use client")
+formatInsightValues            // shared insight-value formatter — features/analytics/components/insight-items.ts
+ROUTES.reports                 // lib/routes.ts (added to IMPLEMENTED_ROUTES)
+```
+
+`TimeRangeTabs` / `StudentPicker` (Phase 13) gained an optional `pathname` prop (default
+`ROUTES.analytics`) so the same range selector + student lookup drive `/reports` without duplication.
+No `useReportStore` — report state is the same server-resolved URL search params as analytics.
+Deliberately **not** built (each needs schema/infra of a later phase): XLSX export, scheduled/stored/
+emailed reports, server-side PDF generation.
+
 If a later phase needs something not listed here, derive it by following the same pattern
 (e.g. `<Entity>Record`, `use<Domain>Store`) rather than picking an arbitrary name, and add it to
 this file once decided so it stays the single source of truth.

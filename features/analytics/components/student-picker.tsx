@@ -11,7 +11,7 @@ import {
 } from "@/features/analytics/search-params";
 import type { TimeRange } from "@/features/analytics/time-range";
 import { Link } from "@/i18n/navigation";
-import { ROUTES } from "@/lib/routes";
+import { ROUTES, type AppRoute } from "@/lib/routes";
 
 /** A student reduced to what the picker needs. */
 export type PickerStudent = { id: string; name: string };
@@ -23,6 +23,10 @@ const MAX_MATCHES = 8;
  * Secondary, type-to-filter student lookup (spec §7) — the overview cards/needs
  * attention are the primary drill-down path. Each match is a real link into the
  * per-student view (no client navigation state). Arabic-aware substring match.
+ *
+ * `pathname` defaults to `/analytics` (Phase 13) but is overridable so the same
+ * picker drills into a per-student **report** on `/reports` (Phase 18) without
+ * duplicating the client filtering / live-count-announcement logic.
  */
 export function StudentPicker({
   students,
@@ -30,12 +34,14 @@ export function StudentPicker({
   label,
   placeholder,
   emptyText,
+  pathname = ROUTES.analytics,
 }: {
   students: PickerStudent[];
   range: TimeRange;
   label: string;
   placeholder: string;
   emptyText: string;
+  pathname?: AppRoute;
 }) {
   // The count line is resolved here (not passed in) because it depends on the
   // live match count; the parent is a Server Component and can't pass a
@@ -89,7 +95,7 @@ export function StudentPicker({
               <li key={student.id}>
                 <Link
                   href={{
-                    pathname: ROUTES.analytics,
+                    pathname,
                     query: {
                       [ANALYTICS_RANGE_PARAM]: range,
                       [ANALYTICS_STUDENT_PARAM]: student.id,

@@ -6,7 +6,7 @@ import {
 } from "@/features/analytics/search-params";
 import { TIME_RANGES, type TimeRange } from "@/features/analytics/time-range";
 import { Link } from "@/i18n/navigation";
-import { ROUTES } from "@/lib/routes";
+import { ROUTES, type AppRoute } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
 /**
@@ -14,13 +14,18 @@ import { cn } from "@/lib/utils";
  * client state) so the range lives entirely in the URL — server-resolved and
  * deterministic. Each link preserves the drilled-in student, and the active one
  * carries `aria-current`.
+ *
+ * `pathname` defaults to `/analytics` (Phase 13) but is overridable so the
+ * identical selector is reused on `/reports` (Phase 18) without duplicating it.
  */
 export async function TimeRangeTabs({
   range,
   studentId,
+  pathname = ROUTES.analytics,
 }: {
   range: TimeRange;
   studentId: string | null;
+  pathname?: AppRoute;
 }) {
   const t = await getTranslations("analytics");
 
@@ -36,7 +41,7 @@ export async function TimeRangeTabs({
           <Link
             key={option}
             href={{
-              pathname: ROUTES.analytics,
+              pathname,
               query: {
                 [ANALYTICS_RANGE_PARAM]: option,
                 ...(studentId ? { [ANALYTICS_STUDENT_PARAM]: studentId } : {}),
@@ -44,7 +49,7 @@ export async function TimeRangeTabs({
             }}
             aria-current={active ? "true" : undefined}
             className={cn(
-              "rounded-md px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              "whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               active
                 ? "bg-background text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground",
