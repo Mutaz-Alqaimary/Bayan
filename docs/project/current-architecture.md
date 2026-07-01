@@ -5,10 +5,10 @@
 > per-phase specs where they disagree about registration, identity, or authorization. The per-phase
 > files under `docs/phases/` remain the historical specs for each phase; this file is the live map.
 >
-> **Last synchronized:** after **Phase 14** implementation (Performance) — Phase 13 (Reading
-> Analytics) still awaiting the owner's manual visual testing. **Next phase:** 15 (Accessibility
-> Audit). See `docs/phases/14-performance.md`, `docs/Performance.md`, and the "Future Considerations"
-> section below.
+> **Last synchronized:** after **Phase 17** (Security Review) — RLS tightened to role-aware least
+> privilege and applied to the live DB. Phases 14 (Performance), 15 (Accessibility Audit), and 16
+> (Testing) are also complete. **Next phase:** 18 (Reporting). See `docs/Security.md`,
+> `supabase/schema.sql`, and the "Future Considerations" section below.
 >
 > **Companion docs:**
 > - `docs/Performance.md` — Phase 14 performance record (measurements + before/after).
@@ -98,22 +98,25 @@ so the two never drift.
   `requireRole(role, ...rest)`, and `redirectIfAuthenticated()`. Unauthenticated → login;
   authenticated-but-unauthorized → home.
 
-### RLS contract (current, permissive — to be tightened in Phase 17)
+### RLS contract (role-aware least privilege — tightened in Phase 17)
 
-RLS is enabled on every table. Today's policies:
+RLS is enabled on every table. In **Phase 17** the permissive `using(true)` policies were replaced with
+role-aware policies backed by two `SECURITY DEFINER` helpers — `is_staff()` (current user is
+admin/teacher) and `is_my_student(uuid)` (current user owns the `students` row via `profile_id`). Table
+grants are unchanged; the tightened RLS is the gate. Current policies:
 
 | Table | SELECT | Writes | Implication |
 |---|---|---|---|
 | `profiles` | own row (`auth.uid() = id`) | **no INSERT policy**; **UPDATE own row, `full_name`/`avatar_url` columns only** (Phase 12.6 — column privileges + scoped policy) | Cross-user reads, the registration insert, and **all `role` writes** use `supabaseAdminClient` (role-gated). Self-edit of name/avatar uses the session client; `role` is unwritable by clients. |
 | `user_settings` | own row (`auth.uid() = user_id`) | own row (`settings_insert_own`, etc.) | Each user reads/writes only their own settings. |
-| `students` | any authenticated (`true`) | privileged writes via service-role | Admin/teacher read all; **student reads must scope to their own `student_id` in-query**. |
-| `reading_passages` | any authenticated (`true`) | — | Readable by all roles. |
-| `vocabulary_terms` | any authenticated (`true`) | — | Readable by all roles. |
-| `reading_sessions` | any authenticated (`true`) | student inserts own | Scope per student in app code; never rely on RLS for student isolation. |
+| `students` | `is_staff() OR profile_id = auth.uid()` | INSERT/UPDATE/DELETE gated by `is_staff()` | Staff read/write the whole roster; a student sees only their own linked row. The self-claim writes `profile_id` via the **admin** client (bypasses RLS), so it is unaffected. |
+| `reading_passages` | any authenticated (`true`) | INSERT/UPDATE/DELETE gated by `is_staff()` | All roles read content; only staff write it. |
+| `vocabulary_terms` | any authenticated (`true`) | INSERT/UPDATE/DELETE gated by `is_staff()` | All roles read; only staff write. |
+| `reading_sessions` | `is_staff() OR is_my_student(student_id)` | INSERT `is_my_student(student_id)`; no UPDATE/DELETE policy | Staff read all (analytics/dashboards); a student reads and inserts only their own sessions (forging another `student_id` is denied). |
 
-Because `students`/`reading_passages`/`reading_sessions` SELECT is permissive, app code does the
-scoping; only `profiles`-derived counts cross RLS and use the role-gated admin client. **Tightening
-these `using(true)` policies is explicitly Phase 17 (Security Review) scope** — not done yet.
+App code still scopes student-facing reads defensively (never relying on RLS alone), but the database
+now enforces the permission matrix on its own. Full detail, the verified audit baseline, and the applied
+migration: `docs/Security.md` and `supabase/schema.sql`.
 
 ---
 
@@ -402,8 +405,10 @@ reachable via direct POST), maps failures to safe localized copy, and revalidate
 
 ## 16. Deferred work
 
-- **Tighten the permissive `using(true)` RLS policies** on `students` / `reading_passages` /
-  `reading_sessions` / `vocabulary_terms` → **Phase 17 (Security Review)**.
+- ~~**Tighten the permissive `using(true)` RLS policies**~~ — **done in Phase 17 (Security Review).**
+  `students` / `reading_passages` / `reading_sessions` / `vocabulary_terms` now use role-aware policies
+  (`is_staff()` / `is_my_student()`); see the §4 RLS contract, `docs/Security.md`, and
+  `supabase/schema.sql`.
 - **Account-status derivation lists all auth users on each Student Management load** — **reviewed in
   Phase 14; intentionally re-deferred.** The `/students` render performs a single, necessary
   `auth.users` scan (in `getStudentAccountStatusMap`) — no in-request redundancy to remove, and the

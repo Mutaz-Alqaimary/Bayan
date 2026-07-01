@@ -1,13 +1,14 @@
 # Manual Supabase Configuration (reproduce the live project)
 
-> **Purpose.** This file records every Supabase configuration that exists **outside `setup.sql`** —
-> dashboard settings, auth provider settings, privileges, RLS assumptions, triggers (and their
-> deliberate absence), and environment variables. The goal: another developer can reproduce Bayan's
-> backend configuration from this file alone.
+> **Purpose.** The canonical current-state SQL is [`supabase/schema.sql`](../../supabase/schema.sql)
+> (tables, indexes, triggers, RLS policies, grants, helper functions). **This file records the config
+> that is *not* expressible in SQL** — dashboard/auth-provider settings, the storage bucket, privilege
+> rationale, trigger notes — plus the *why* behind the policies, so another developer can reproduce
+> Bayan's backend from `schema.sql` + this file together.
 >
-> **Database rule (from `CLAUDE.md`):** the live Supabase database is the **source of truth** for
-> authorization behavior. Do not assume `setup.sql` contains all permissions or RLS policies. This
-> file documents what is *actually* configured, including things `setup.sql` does not represent.
+> **Database rule (from `CLAUDE.md`):** the **live Supabase database** remains the ultimate source of
+> truth for authorization behavior; `schema.sql` is its canonical representation (validate against a
+> `supabase db dump` if in doubt).
 >
 > The schema itself (tables/columns) is the locked contract in `.claude/rules/database-schema.md`.
 > **Never** create tables, columns, migrations, or schema changes.
@@ -66,22 +67,23 @@ See `docs/database/phase-12.5-identity-alignment.md` for the full operation-by-p
 
 ## 3. RLS assumptions (current contract)
 
-RLS is **enabled on every table**. The policies below are what the app relies on today. They are
-**permissive on purpose** for now; tightening the `using(true)` policies is **Phase 17 (Security
-Review)** scope.
+RLS is **enabled on every table**. Since **Phase 17 (Security Review)** the earlier permissive
+`using(true)` policies on `students` / `reading_sessions` / `reading_passages` / `vocabulary_terms`
+were **replaced with role-aware least-privilege policies** (see §3b for the helpers + migration). Table
+grants are unchanged; the tightened RLS is now the gate. Current policies:
 
 | Table | SELECT policy | Write policy | App reliance |
 |---|---|---|---|
 | `profiles` | own row (`auth.uid() = id`) | **no INSERT policy**; **UPDATE = own row, columns `full_name`/`avatar_url` only** (Phase 12.6 — see §3a) | Registration profile insert + all cross-user reads/`role` writes use the service-role client (role-gated). Self-service profile editing (name/avatar) uses the session client under the scoped policy. |
 | `user_settings` | own row (`auth.uid() = user_id`) | own row insert/update (`settings_insert_own` + own-row update) | Registration inserts the row via the **session client** under `settings_insert_own`; Settings reads/writes own row only. |
-| `students` | any authenticated (`true`) | privileged writes via service-role | Admin/teacher read all; **student reads scope to own `student_id` in-query** — never rely on RLS for student isolation. |
-| `reading_passages` | any authenticated (`true`) | — | Readable by all roles. |
-| `vocabulary_terms` | any authenticated (`true`) | — | Readable by all roles. |
-| `reading_sessions` | any authenticated (`true`) | student inserts own | Scope per student in app code; never rely on RLS for isolation. |
+| `students` | `is_staff() OR profile_id = auth.uid()` | INSERT/UPDATE/DELETE gated by `is_staff()` | Staff (admin/teacher) read + write the whole roster via the session client; a student sees only their own linked row. The self-claim writes `profile_id` via the **admin** client (bypasses RLS). |
+| `reading_passages` | any authenticated (`true`) | INSERT/UPDATE/DELETE gated by `is_staff()` | All roles read content; only staff write it. |
+| `vocabulary_terms` | any authenticated (`true`) | INSERT/UPDATE/DELETE gated by `is_staff()` | All roles read; only staff write. |
+| `reading_sessions` | `is_staff() OR is_my_student(student_id)` | INSERT gated by `is_my_student(student_id)`; no UPDATE/DELETE policy | Staff read all (analytics/dashboards); a student reads + inserts only their own sessions. |
 
-> **Do not weaken these assumptions in code.** Because `students` / `reading_passages` /
-> `reading_sessions` SELECT is permissive, **app code must do the scoping**. Student-facing reads
-> resolve the student via `profile_id` (`getLinkedStudentId`) and filter by `student_id`.
+> **Defense in depth, not a substitute for app scoping.** App code still resolves the student via
+> `profile_id` (`getLinkedStudentId`) and filters by `student_id`; the tightened RLS now independently
+> enforces the same boundaries so a forged/direct request cannot cross them.
 
 ### 3a. Profiles self-edit hardening (Phase 12.6 — APPLIED)
 
@@ -109,6 +111,38 @@ revoke). `service_role` **UPDATE on `public.profiles`** was verified present (re
 change + the Phase 12.5 email change). The `profiles_updated_at` BEFORE-UPDATE trigger bumps
 `updated_at` automatically, so the user needs no privilege on it (it also serves as the avatar
 cache-bust token).
+
+### 3b. Role-aware RLS tightening (Phase 17 — APPLIED)
+
+Phase 17 (Security Review) replaced the permissive `using(true)` policies on `students`,
+`reading_sessions`, `reading_passages`, and `vocabulary_terms` with role-aware least-privilege
+policies, applied to the live DB via
+[`supabase/schema.sql`](../../supabase/schema.sql). Two
+`SECURITY DEFINER` helper functions back the policies (recursion-safe; `search_path` pinned to
+`public`; `EXECUTE` granted to `authenticated` only):
+
+- **`public.is_staff()`** — the current user's `profiles.role` is `admin` or `teacher`.
+- **`public.is_my_student(sid uuid)`** — the current user owns the `students` row `sid` via
+  `students.profile_id = auth.uid()` (the Phase 12.5 identity link).
+
+Resulting policies (table grants unchanged — the tightened RLS is the gate):
+
+- `students` — SELECT `is_staff() OR profile_id = auth.uid()`; INSERT/UPDATE/DELETE `is_staff()`.
+- `reading_sessions` — SELECT `is_staff() OR is_my_student(student_id)`; INSERT
+  `is_my_student(student_id)`; **no** UPDATE/DELETE policy (the app never updates/deletes sessions).
+- `reading_passages` / `vocabulary_terms` — SELECT stays `true` (all roles read content);
+  INSERT/UPDATE/DELETE `is_staff()`.
+
+`profiles` / `user_settings` were already tight (§3, §3a) and are unchanged. The self-service claim,
+activation-link, reconcile, registration, and email-change flows use the **service-role** admin client
+(bypasses RLS) and are unaffected. The verified live-audit baseline, findings (F1–F8 + D1), and the
+verification matrix live in [`docs/Security.md`](../Security.md).
+
+> **Correction (superseding the pre-Phase-17 text above/§2).** The earlier note that roster/content
+> writes were *"privileged writes via service-role"* did **not** match the live DB — `authenticated`
+> held full table grants and the `using(true)` policies allowed any authenticated user to write. Phase
+> 17's audit verified this and the tightening above closes it. `setup.sql` and any pre-Phase-17 policy
+> description are **historical**; this section + `docs/Security.md` are the current record.
 
 ---
 
@@ -217,8 +251,8 @@ RLS denies that internal SELECT, the upload/replace fails. The write policies al
 
 ## 8. Reproduction checklist (fresh environment)
 
-1. Create the Supabase project and apply the schema (the locked tables in
-   `.claude/rules/database-schema.md`).
+1. Create the Supabase project and apply [`supabase/schema.sql`](../../supabase/schema.sql) (the
+   canonical current-state SQL — tables, indexes, triggers, RLS, grants, helper functions).
 2. **Authentication → Email → Confirm email = OFF.** Leave SMTP unconfigured.
 3. Add each app origin's `/api/auth/callback` URL to the **redirect allow-list**.
 4. Verify `service_role` has `SELECT, INSERT, UPDATE` on `public.students` (§2 query). Grant only if

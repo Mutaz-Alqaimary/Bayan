@@ -29,6 +29,12 @@ import { avatarPublicUrl } from "@/lib/avatar";
  * action. Both are unwritable by clients at the DB layer regardless of this UI.
  */
 export function ProfileCard({ profile }: { profile: ProfileData }) {
+  // React Compiler opt-out for THIS component only. React Hook Form's `formState`
+  // is a Proxy whose per-key subscription relies on render-time getter reads;
+  // compiler memoization caches a stale `isDirty` after the post-save `reset()`,
+  // so Save never re-enables until a full reload. Opting just this component out
+  // restores the live subscription with no logic change.
+  "use no memo";
   const t = useTranslations("settings.profile");
   const messages = useProfileSchemaMessages();
   const router = useRouter();

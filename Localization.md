@@ -1,7 +1,7 @@
 # Localization
 
 How locale routing, message catalogs, and localized validation/errors/toasts work in Bayan.
-Complements [`Architecture.md`](Architecture.md) and `.claude/rules/arabic-rtl-i18n.md`.
+Complements [`docs/project/current-architecture.md`](docs/project/current-architecture.md) and `.claude/rules/arabic-rtl-i18n.md`.
 
 ## Locale routing
 

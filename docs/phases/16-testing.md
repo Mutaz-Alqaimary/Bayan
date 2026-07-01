@@ -1,6 +1,6 @@
 # Phase 16 — Testing
 
-> **Status: Planned — not yet started.** This spec was **rewritten against the current
+> **Status: Complete — Vitest suite implemented (see `docs/Testing.md`).** This spec was **rewritten against the current
 > architecture** (post Phases 1→15, including the Phase 12.5 identity redesign, the Phase 12.6
 > role/profile work, Phase 13 Reading Analytics, Phase 14 Performance, and the Phase 15
 > Accessibility Audit). It **supersedes the original five-bullet draft**, which was authored before

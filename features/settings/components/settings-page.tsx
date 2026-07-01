@@ -80,6 +80,11 @@ export function SettingsPage({
   settings: SettingsData;
   profile: ProfileData;
 }) {
+  // React Compiler opt-out for THIS component only — see the same note in
+  // profile-card.tsx: it keeps RHF's `formState` proxy subscription live so
+  // `isDirty` updates after the post-save `reset()` (Save re-enables without a
+  // reload). No logic change.
+  "use no memo";
   const t = useTranslations("settings");
   const messages = useSettingsSchemaMessages();
   const { theme, setTheme } = useTheme();

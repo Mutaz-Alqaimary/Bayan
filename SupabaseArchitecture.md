@@ -5,6 +5,13 @@ authorization. Established in **Phase 2**. The database is a **fixed, read-only 
 see [`.claude/rules/database-schema.md`](.claude/rules/database-schema.md). Never create tables,
 columns, migrations, or SQL here.
 
+> **RLS note (updated Phase 17).** The "RLS SELECT policies (current contract)" section below describes
+> the **pre-Phase-17** permissive (`using(true)`) state. Phase 17 (Security Review) replaced those with
+> **role-aware least-privilege** policies (`is_staff()` / `is_my_student()`). For the current RLS
+> contract see [`docs/project/current-architecture.md`](docs/project/current-architecture.md) §4,
+> [`docs/database/manual-supabase-configuration.md`](docs/database/manual-supabase-configuration.md) §3/§3b,
+> and [`docs/Security.md`](docs/Security.md). The client/session/registration content here remains current.
+
 ## Environment
 
 Public values are read and validated once in [`lib/supabase/env.ts`](lib/supabase/env.ts):

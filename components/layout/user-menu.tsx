@@ -1,10 +1,9 @@
 "use client";
 
-import { ChevronsUpDown, LogOut, Settings } from "lucide-react";
+import { ChevronsUpDown, LogOut } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useTransition } from "react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -27,8 +26,9 @@ function initials(value: string): string {
 }
 
 /**
- * Account menu in the top bar: identity summary, a (coming-soon) settings entry,
- * and sign out. Sign out runs the server action inside a transition; the action
+ * Account menu in the top bar: identity summary and sign out. Settings lives in
+ * the sidebar navigation (a working `/settings` link), so it is intentionally not
+ * duplicated here. Sign out runs the server action inside a transition; the action
  * clears the session and redirects to login.
  */
 export function UserMenu({ user }: { user: SessionUser }) {
@@ -74,16 +74,6 @@ export function UserMenu({ user }: { user: SessionUser }) {
             </span>
           ) : null}
         </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem disabled className="justify-between">
-          <span className="flex items-center gap-2">
-            <Settings aria-hidden="true" />
-            {t("items.settings")}
-          </span>
-          <Badge variant="secondary" className="text-[0.65rem]">
-            {t("comingSoon")}
-          </Badge>
-        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           disabled={isPending}

@@ -60,8 +60,11 @@ Before making architectural decisions, load all relevant documentation for the c
 
 # Current Implementation State (read this first)
 
-**Phases 1 → 13 are complete** (13 implemented — awaiting the owner's manual visual testing). The next
-planned phase is **14 (Performance)**. Do not start it or any new feature unless explicitly asked.
+**Phases 1 → 17 are complete.** Phases **14 (Performance)**, **15 (Accessibility Audit)**, and **16
+(Testing — Vitest suite)** shipped after Phase 13; **Phase 17 (Security Review)** tightened the
+permissive `using(true)` RLS policies to **role-aware least privilege** (applied to the live DB — see
+`docs/Security.md` and `supabase/schema.sql`). The next planned phase is **18
+(Reporting)**. Do not start it or any new feature unless explicitly asked.
 
 **Phase 13** added **Reading Analytics** — a read-only `/analytics` surface (admin + teacher only,
 `canAccessAnalytics`) that turns `reading_sessions` history into cohort- and student-level trends.
@@ -106,8 +109,10 @@ verifier because they're generated server-side). Both must keep working; don't c
 
 # Focus on this 
 -Database Rule:
-Do not assume setup.sql contains all permissions or RLS policies.
-Treat the live Supabase database as the source of truth for authorization behavior.
+The canonical current-state SQL is `supabase/schema.sql` (tables, RLS, grants, helper functions).
+Treat the live Supabase database as the ultimate source of truth for authorization behavior; validate
+`schema.sql` against a `supabase db dump` if in doubt. Live config not expressible in SQL (dashboard
+settings, bucket) lives in `docs/database/manual-supabase-configuration.md`.
 
 # Required Project Documents
 

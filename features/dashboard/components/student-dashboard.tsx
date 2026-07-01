@@ -1,4 +1,4 @@
-import { Activity, BarChart3, BookOpen, Gauge, Languages } from "lucide-react";
+import { Activity, BookOpen, Gauge, Languages } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/ui/empty-state";
@@ -53,13 +53,6 @@ export async function StudentDashboard({
       icon: BookOpen,
       href: ROUTES.readingSessions,
       implemented: isRouteImplemented(ROUTES.readingSessions),
-    },
-    {
-      key: "viewHistory",
-      label: t("quickActions.viewHistory"),
-      icon: BarChart3,
-      href: ROUTES.analytics,
-      implemented: isRouteImplemented(ROUTES.analytics),
     },
   ];
 

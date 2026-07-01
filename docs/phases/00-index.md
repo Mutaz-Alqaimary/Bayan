@@ -3,8 +3,8 @@
 Built one phase at a time. Use `/start-phase <number>` to begin a phase and `/finish-phase` to
 close it out. Never skip ahead — each phase assumes the previous ones are done and approved.
 
-> **Current state:** Phases **1 → 13 are complete** (13 implemented — awaiting the owner's manual
-> visual testing). Phase 14 (Performance) is next. For how the project actually works *today* (not the
+> **Current state:** Phases **1 → 17 are complete** (Phase 17 RLS tightening applied to the live DB).
+> Phase 18 (Reporting) is next. For how the project actually works *today* (not the
 > per-phase specs), read the single source of truth:
 > [`docs/project/current-architecture.md`](../project/current-architecture.md). Manual Supabase config
 > that isn't in SQL lives in
@@ -27,10 +27,10 @@ close it out. Never skip ahead — each phase assumes the previous ones are done
 | 12.5 | Student Identity & Roster Integration | `12.5-student-identity-and-roster-integration.md` | ✅ Done |
 | 12.6 | Role Management + Profile Editing | `12.6-role-management.md` | ✅ Done (awaiting manual testing) |
 | 13 | Reading Analytics | `13-reading-analytics.md` | ✅ Done (awaiting manual testing) |
-| 14 | Performance | `14-performance.md` | Planned |
+| 14 | Performance | `14-performance.md` | ✅ Done |
 | 15 | Accessibility Audit | `15-accessibility-audit.md` | ✅ Done (awaiting manual AT testing) |
 | 16 | Testing | `16-testing.md` | ✅ Done (Vitest suite — 146 tests; awaiting owner review) |
-| 17 | Security Review (RLS tightening) | `17-security-review.md` | Planned |
+| 17 | Security Review (RLS tightening) | `17-security-review.md` | ✅ Done (RLS tightened + applied) |
 | 18 | Reporting (incl. PDF) | `18-reporting.md` | Planned |
 | 19 | Deployment | `19-deployment.md` | Planned |
 | 20 | Final Refactor | `20-final-refactor.md` | Planned |

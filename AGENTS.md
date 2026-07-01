@@ -60,8 +60,9 @@ Every implementation decision should support answering that question through:
 
 # Focus on this 
 -Database Rule:
-Do not assume setup.sql contains all permissions or RLS policies.
-Treat the live Supabase database as the source of truth for authorization behavior.
+The canonical current-state SQL is `supabase/schema.sql`. Treat the live Supabase database as the
+ultimate source of truth for authorization behavior; live config not in SQL is in
+`docs/database/manual-supabase-configuration.md`.
 
 ---
 

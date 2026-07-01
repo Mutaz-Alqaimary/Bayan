@@ -5,8 +5,10 @@ centers, and teachers. It measures and visualizes whether a student's Arabic rea
 improving over time — reading speed (WPM), accuracy, duration, vocabulary exposure, and progress
 trends.
 
-> **Status:** Phase 1 (Foundation) complete. The platform is built one phase at a time — see
-> [`docs/phases/00-index.md`](docs/phases/00-index.md).
+> **Status:** Phases 1 → 17 complete (foundation through security review). The platform is built one
+> phase at a time — see [`docs/phases/00-index.md`](docs/phases/00-index.md) for the live tracker and
+> [`docs/project/current-architecture.md`](docs/project/current-architecture.md) for how the system
+> works today.
 
 ## Tech stack
 
@@ -74,6 +76,7 @@ The English experience lives at `/en` (LTR).
 
 ## Project structure
 
-See [`Architecture.md`](Architecture.md) for the full breakdown, and the always-on conventions in
-[`.claude/rules/`](.claude/rules). The database is a fixed, read-only contract — see
-[`.claude/rules/database-schema.md`](.claude/rules/database-schema.md).
+See [`docs/project/current-architecture.md`](docs/project/current-architecture.md) for how the whole
+system works today, and the always-on conventions in [`.claude/rules/`](.claude/rules). The database is
+a fixed, read-only contract — see [`.claude/rules/database-schema.md`](.claude/rules/database-schema.md);
+the canonical current DB SQL is [`supabase/schema.sql`](supabase/schema.sql).
