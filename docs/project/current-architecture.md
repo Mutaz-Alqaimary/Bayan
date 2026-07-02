@@ -295,7 +295,12 @@ the admin-gated role-change action via the service-role client — never by the 
 `id, student_number, first_name_ar, last_name_ar, first_name_en, last_name_en, email, grade,
 birth_date, profile_id, created_at, updated_at`. CRUD in `features/students/` (Phase 7); Arabic-aware
 search/sort; account-status column + email management + activation/reconcile dialogs added in Phase
-12.5. Deleting a student with reading history is refused (`23503`) rather than destroying history.
+12.5. **Deleting a student cascades its reading history** (`reading_sessions.student_id` is
+`ON DELETE CASCADE`), so `deleteStudentAction` removes the student *and* their sessions; the code
+still branches on a `23503` foreign-key error, but under the live schema that branch never fires — the
+delete succeeds and cascades. This is a known, owner-accepted trade-off (locked schema); the recommended
+mitigation (an app-level pre-delete history guard) is recorded as finding D1 in
+[`docs/Security.md`](../../Security.md) and in `ProjectReview.md`.
 
 ### user_settings
 `id, user_id, theme, locale, reduced_motion, email_notifications, created_at, updated_at`. One row per

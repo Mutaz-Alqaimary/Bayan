@@ -169,9 +169,13 @@ These existed before Phase 12.5 and the identity model depends on them:
 - **`students.profile_id` → `profiles.id` : `ON DELETE SET NULL`.** Deleting a linked account leaves
   the academic record + reading history intact, with `profile_id` reset to `NULL` (a roster-only row
   again).
-- **`reading_sessions.student_id` → `students.id` : `ON DELETE` restricts/cascades as the history
-  anchor.** Deleting a student with sessions is **refused** by the app (`23503`) rather than
-  destroying reading history.
+- **`reading_sessions.student_id` → `students.id` : `ON DELETE CASCADE`.** Deleting a student with
+  sessions **cascades and removes that reading history** — it is **not** refused. `deleteStudentAction`
+  still branches on a `23503` foreign-key error, but under this schema that branch never fires (a
+  `CASCADE` child never raises `23503`), so the delete succeeds and takes the history with it. This is a
+  known, owner-accepted trade-off under the locked schema; the recommended mitigation (an app-level
+  pre-delete history guard) is recorded as finding **D1** in [`docs/Security.md`](../Security.md).
+  *(Corrects the earlier claim that deletion was refused via `23503` — that did not match the live DB.)*
 - **`profiles.id` / `user_settings.user_id` → `auth.users.id` : cascade.** Deleting an auth user
   cascades its profile + settings (this is what registration rollback relies on).
 
