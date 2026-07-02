@@ -12,7 +12,9 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SkipLink } from "@/components/layout/skip-link";
+import { Link } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
+import { ROUTES } from "@/lib/routes";
 
 const metrics = [
   { key: "speed", Icon: Gauge },
@@ -59,15 +61,15 @@ export default async function HomePage({
                 {t("hero.subtitle")}
               </p>
               <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <a
-                  href="#metrics"
+                <Link
+                  href={ROUTES.register}
                   className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 >
                   {t("hero.ctaPrimary")}
                   <ForwardArrow className="size-4" aria-hidden="true" />
-                </a>
+                </Link>
                 <a
-                  href="#foundation"
+                  href="#metrics"
                   className="inline-flex h-11 items-center justify-center rounded-lg border border-border bg-background px-6 text-sm font-semibold text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 >
                   {t("hero.ctaSecondary")}

@@ -52,6 +52,7 @@
     "openMenu": "Open menu",
     "account": "Account menu",
     "signOut": "Sign out",
+    "login": "Log in",
     "items": {
       "dashboard": "Dashboard",
       "students": "Students",
