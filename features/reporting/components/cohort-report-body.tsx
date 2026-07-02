@@ -177,7 +177,7 @@ export async function CohortReportBody({ report }: { report: CohortReport }) {
           />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[36rem] border-collapse text-sm">
+            <table className="w-full min-w-xl border-collapse text-sm">
               <thead>
                 <tr className="border-b border-border text-start text-xs font-medium text-muted-foreground">
                   <th scope="col" className="py-2 pe-4 text-start font-medium">
@@ -208,7 +208,7 @@ export async function CohortReportBody({ report }: { report: CohortReport }) {
                   >
                     <th
                       scope="row"
-                      className="max-w-[12rem] truncate py-2.5 pe-4 text-start font-medium text-foreground"
+                      className="max-w-48 truncate py-2.5 pe-4 text-start font-medium text-foreground"
                     >
                       {student.name}
                     </th>
