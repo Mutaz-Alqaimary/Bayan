@@ -6,7 +6,9 @@ import { notFound } from "next/navigation";
 import { AppProviders } from "@/components/providers/app-providers";
 import { ThemeInitScript } from "@/components/theme-init-script";
 import { getLocaleDirection, routing, type AppLocale } from "@/i18n/routing";
+import { DEFAULT_LOCALE } from "@/lib/constants";
 import { fontSans } from "@/lib/fonts";
+import { getSiteUrl } from "@/lib/site-url";
 
 import "../globals.css";
 
@@ -22,13 +24,43 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "metadata" });
+  const tBrand = await getTranslations({ locale, namespace: "brand" });
+
+  const title = t("title");
+  const description = t("description");
 
   return {
+    metadataBase: new URL(getSiteUrl()),
     title: {
-      default: t("title"),
-      template: `%s · ${t("title")}`,
+      default: title,
+      template: `%s · ${title}`,
     },
-    description: t("description"),
+    description,
+    // Canonical is the locale root — the primary indexable marketing surface;
+    // `languages` emits hreflang alternates so `/ar` and `/en` cross-reference
+    // each other. Paths are relative and resolved against `metadataBase`.
+    alternates: {
+      canonical: `/${locale}`,
+      languages: {
+        ar: "/ar",
+        en: "/en",
+        "x-default": `/${DEFAULT_LOCALE}`,
+      },
+    },
+    openGraph: {
+      type: "website",
+      siteName: tBrand("name"),
+      title,
+      description,
+      url: `/${locale}`,
+      locale: locale === "ar" ? "ar_AR" : "en_US",
+      alternateLocale: locale === "ar" ? "en_US" : "ar_AR",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 
